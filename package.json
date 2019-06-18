@@ -1,0 +1,34 @@
+{
+  "name": "arrombot",
+  "version": "0.0.1",
+  "description": "Shitty discord bot",
+  "main": "index.ts",
+  "repository": {
+    "url": "https://github.com/skiptirengu/arrombot"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "WTFPL",
+  "dependencies": {
+    "@types/lodash": "^4.14.134",
+    "@types/node": "^12.0.6",
+    "@types/ws": "^6.0.1",
+    "a-syncquence": "github:skiptirengu/a-syncquence#master",
+    "discord.js": "github:discordjs/discord.js",
+    "lodash": "^4.17.11",
+    "reflect-metadata": "^0.1.13",
+    "tsyringex": "^1.0.2",
+    "typescript": "^3.5.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2"
+  }
+}
