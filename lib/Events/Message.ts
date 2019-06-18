@@ -23,17 +23,10 @@ export function message(message: MessagePayload): void {
   const command = normalizeCommandName(commandWithPrefix.slice(1))
 
   // Check if the command is bound to our container
-  let commandInstance: Command
-  // TODO tsringex should have a way to check if a given
-  // dependency is bound on parent containers
-  try {
-    commandInstance = container.resolve<Command>(command)
-  } catch (err) {
-    console.log(err)
-    return
-  }
+  if (!container.isRegistered(command, true)) return
 
-  commandInstance
+  container
+    .resolve<Command>(command)
     // Run the command
     .run(message, messageParts)
     // TODO properly log the

@@ -20,7 +20,7 @@
     "discord.js": "github:discordjs/discord.js",
     "lodash": "^4.17.11",
     "reflect-metadata": "^0.1.13",
-    "tsyringex": "^1.0.2",
+    "tsyringex": "^1.1.0",
     "typescript": "^3.5.1"
   },
   "devDependencies": {
