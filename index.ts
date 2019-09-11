@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import './lib/Extensions'
 import { Client } from 'discord.js'
 import { Config } from './lib/Config'
 import { bootstrap as bootstrapContainer, container } from './lib/Container'

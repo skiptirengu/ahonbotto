@@ -13,15 +13,16 @@
   "author": "",
   "license": "WTFPL",
   "dependencies": {
-    "@types/lodash": "^4.14.134",
-    "@types/node": "^12.0.6",
-    "@types/ws": "^6.0.1",
+    "@types/lodash": "^4.14.138",
+    "@types/node": "^12.7.4",
+    "@types/ws": "^6.0.3",
     "a-syncquence": "github:skiptirengu/a-syncquence#master",
     "discord.js": "github:discordjs/discord.js",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "reflect-metadata": "^0.1.13",
     "tsyringex": "^1.1.0",
-    "typescript": "^3.5.1"
+    "typescript": "^3.6.2",
+    "youtube-search": "^1.1.4"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^1.9.0",
