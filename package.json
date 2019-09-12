@@ -16,12 +16,16 @@
     "@types/lodash": "^4.14.138",
     "@types/node": "^12.7.4",
     "@types/ws": "^6.0.3",
+    "@types/youtube-dl": "^1.12.2",
     "a-syncquence": "github:skiptirengu/a-syncquence#master",
     "discord.js": "github:discordjs/discord.js",
+    "libsodium-wrappers": "^0.7.5",
     "lodash": "^4.17.15",
+    "opusscript": "^0.0.7",
     "reflect-metadata": "^0.1.13",
     "tsyringex": "^1.1.0",
     "typescript": "^3.6.2",
+    "youtube-dl": "^2.0.1",
     "youtube-search": "^1.1.4"
   },
   "devDependencies": {

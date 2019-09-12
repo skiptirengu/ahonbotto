@@ -11,6 +11,10 @@ import { Karen as KarenCommand, definition as karenDefinition } from '../Command
 import { Usage as UsageCommand, definition as usageDefinition } from '../Commands/Text/Usage'
 
 import { Search as SearchCommand, definition as searchDefinition } from '../Commands/Voice/Search'
+import { Select as SelectCommand, definition as selectDefinition } from '../Commands/Voice/Select'
+import { PlayerQueue } from '../Player/PlayerQueue'
+import { Player } from '../Player/Player'
+import { Parser } from '../Player/Parser'
 
 const scopeMap = new Map<string, DependencyContainer>()
 
@@ -27,8 +31,11 @@ export function bootstrap(client: Client): void {
   })
   // register client
   container.register(Client, { useValue: client })
-  // register SearchRepository
+  // register player related classes
   container.registerScoped(SearchRepository, SearchRepository)
+  container.registerScoped(PlayerQueue, PlayerQueue)
+  container.registerScoped(Player, Player)
+  container.registerScoped(Parser, Parser)
   // Bind text commands
   bindTextCommands()
   // Bind voice commands
@@ -44,6 +51,7 @@ export function scopeFactory(name: string): DependencyContainer {
 
 function bindVoiceCommands(): void {
   registerCommand(SearchCommand, searchDefinition)
+  registerCommand(SelectCommand, selectDefinition)
 }
 
 function bindTextCommands(): void {

@@ -3,7 +3,8 @@ import { Message } from 'discord.js'
 import { injectable, inject } from 'tsyringex'
 import { Config } from '../../Config'
 import youtubeSearch from 'youtube-search'
-import { SearchRepository, SearchResult } from '../../Player/SearchRepository'
+import { SearchRepository } from '../../Player/SearchRepository'
+import { Playable } from '../../Player/Playable'
 
 export const definition: CommandDefinition = {
   /**
@@ -20,7 +21,7 @@ export const definition: CommandDefinition = {
   usage: () => ({
     title: '<query...>',
     description:
-      'Search a video on youtube and prints the 5 more relevant entries. See also **!select**.',
+      'Search a video on youtube and prints the top entries. See also **select** command.',
     fields: [{ name: 'Example:', value: '`!search open the tcheka`', inline: true }]
   })
 }
@@ -55,7 +56,7 @@ export class Search implements Command {
 
     const storageKey = this.buildKey(message)
     const results = response.results.map(
-      (value): SearchResult => ({ name: value.title, url: value.link })
+      (value): Playable => ({ name: value.title, uri: value.link })
     )
 
     this.repository.push(storageKey, results)
