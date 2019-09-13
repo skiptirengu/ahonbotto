@@ -11,4 +11,8 @@ export interface Config {
    * Supported command prefixes
    */
   commandPrefixes: string[]
+  /**
+   * Runtime folder
+   */
+  runtimeFolder: string
 }

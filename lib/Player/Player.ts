@@ -1,10 +1,12 @@
-import { injectable, inject } from 'tsyringex'
+import { inject, scoped } from 'tsyringex'
 import { VoiceChannel, VoiceConnection } from 'discord.js'
 import { PlayerQueue } from './PlayerQueue'
 import { Playable } from './Playable'
-import { Parser } from './Parser'
+import { UrlParser } from './Handlers/UrlParser'
+import { create } from './Handlers/HandlerFactory'
+import { Readable } from 'stream'
 
-@injectable()
+@scoped()
 export class Player {
   /**
    * The voice channel the bot is currently connected to
@@ -23,7 +25,7 @@ export class Player {
     /**
      * URL parser
      */
-    @inject(Parser) protected readonly parser: Parser
+    @inject(UrlParser) protected readonly parser: UrlParser
   ) {
     this.queue.on('playable', () => this.play())
   }
@@ -31,7 +33,7 @@ export class Player {
   public queuePlayable(channel: VoiceChannel, playable: Playable, times: number): void {
     this.voiceChannel = this.voiceChannel || channel
     Array(times)
-      .fill(null)
+      .fill(undefined)
       .forEach(() => this.queue.push(playable))
   }
 
@@ -39,15 +41,31 @@ export class Player {
     this.voiceChannel!.join()
       .then((connection) => (this.voiceConnection = connection))
       .then(() => this.playNext())
-      .catch(console.log)
+      .catch(console.error)
   }
 
   private async playNext(): Promise<void> {
     const next = this.queue.pop()
+
     if (!next) {
+      this.disconnect()
       return
     }
-    const actualUrl = await this.parser.parse(next.uri)
-    this.voiceConnection!.play(actualUrl.uri).once('end', () => this.playNext())
+
+    const handler = await create(next.uri)
+    const readable = await handler.stream()
+
+    this.voiceConnection!.play(readable)
+      .on('debug', console.log)
+      .on('error', console.error)
+      .once('end', () => this.playNext())
+  }
+
+  private disconnect(): void {
+    if (this.voiceChannel) this.voiceChannel = undefined
+    if (this.voiceConnection) {
+      this.voiceConnection.disconnect()
+      this.voiceConnection = undefined
+    }
   }
 }

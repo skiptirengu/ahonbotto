@@ -1,29 +1,32 @@
 import { Command, CommandDefinition, normalizeCommandName, CommandType, typedCommandName } from '..'
-import { Message } from 'discord.js'
-import { injectAll, injectable } from 'tsyringex'
+import { Message, MessageEmbedOptions } from 'discord.js'
+import { injectAll, scoped, singleton } from 'tsyringex'
 import { first } from 'lodash'
 import { withCommandPrefix } from '../../Util'
 
-export const definition: CommandDefinition = {
+@singleton()
+export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type: CommandType.Text,
+  type = CommandType.Text
   /**
    * @inheritdoc
    */
-  command: 'Usage',
+  command = 'Usage'
   /**
    * @inheritdoc
    */
-  usage: () => ({
-    title: '<command>',
-    description: 'It does ***EXACTLY*** what you think it does.',
-    fields: [{ name: 'Example:', value: `\`${withCommandPrefix('usage')} usage\``, inline: true }]
-  })
+  public usage(): MessageEmbedOptions {
+    return {
+      title: '<command>',
+      description: 'It does ***EXACTLY*** what you think it does.',
+      fields: [{ name: 'Example:', value: `\`${withCommandPrefix('usage')} usage\``, inline: true }]
+    }
+  }
 }
 
-@injectable()
+@scoped('Usage')
 export class Usage implements Command {
   public constructor(
     @injectAll('CommandDefinition') private readonly definitions: CommandDefinition[]

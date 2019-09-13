@@ -1,40 +1,43 @@
 import { CommandDefinition, CommandType, Command } from '..'
-import { Message, MessageEmbed, ImageSize, User } from 'discord.js'
+import { Message, MessageEmbed, ImageSize, User, MessageEmbedOptions } from 'discord.js'
 import { withCommandPrefix } from '../../Util'
-import { injectable } from 'tsyringex'
+import { scoped, singleton } from 'tsyringex'
 
 interface UserAvatar {
   user: User
   urls: string[]
 }
 
-export const definition: CommandDefinition = {
+@singleton()
+export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type: CommandType.Text,
+  type = CommandType.Text
   /**
    * @inheritdoc
    */
-  command: 'Avatar',
+  command = 'Avatar'
   /**
    * @inheritdoc
    */
-  usage: () => ({
-    title: '<mention>',
-    description:
-      'Show someone\'s avatar. If "**mention**" is not defined, show the user\'s profile picture.',
-    fields: [
-      {
-        name: 'Example:',
-        value: `\`${withCommandPrefix('avatar')} @Someone#2469\``,
-        inline: true
-      }
-    ]
-  })
+  public usage(): MessageEmbedOptions {
+    return {
+      title: '<mention>',
+      description:
+        'Show someone\'s avatar. If "**mention**" is not defined, show the user\'s profile picture.',
+      fields: [
+        {
+          name: 'Example:',
+          value: `\`${withCommandPrefix('avatar')} @Someone#2469\``,
+          inline: true
+        }
+      ]
+    }
+  }
 }
 
-@injectable()
+@scoped('Avatar')
 export class Avatar implements Command {
   /**
    * Avatar sizes

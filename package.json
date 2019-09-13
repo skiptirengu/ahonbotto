@@ -13,27 +13,34 @@
   "author": "",
   "license": "WTFPL",
   "dependencies": {
+    "@types/app-root-path": "^1.2.4",
+    "@types/fs-extra": "^8.0.0",
     "@types/lodash": "^4.14.138",
     "@types/node": "^12.7.4",
-    "@types/ws": "^6.0.3",
     "@types/youtube-dl": "^1.12.2",
-    "a-syncquence": "github:skiptirengu/a-syncquence#master",
-    "discord.js": "github:discordjs/discord.js",
+    "app-root-path": "^2.2.1",
+    "bufferutil": "^4.0.1",
+    "discord.js": "github:skiptirengu/discord.js#master",
+    "fs-extra": "^8.1.0",
     "libsodium-wrappers": "^0.7.5",
     "lodash": "^4.17.15",
-    "opusscript": "^0.0.7",
+    "miniget": "^1.5.3",
+    "node-opus": "github:skiptirengu/node-opus#master",
     "reflect-metadata": "^0.1.13",
     "tsyringex": "^1.1.0",
     "typescript": "^3.6.2",
+    "uri-js": "^4.2.2",
     "youtube-dl": "^2.0.1",
-    "youtube-search": "^1.1.4"
+    "youtube-search": "^1.1.4",
+    "zucc": "^0.1.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^1.9.0",
-    "@typescript-eslint/parser": "^1.9.0",
-    "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.3.0",
+    "@typescript-eslint/eslint-plugin": "^2.2.0",
+    "@typescript-eslint/parser": "^2.2.0",
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-prettier": "^3.1.0",
+    "node-gyp": "^5.0.3",
     "prettier": "^1.18.2"
   }
 }

@@ -1,3 +1,11 @@
+import './Text/About'
+import './Text/Avatar'
+import './Text/Help'
+import './Text/Karen'
+import './Text/Usage'
+import './Voice/Search'
+import './Voice/Select'
+
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { chain } from 'lodash'
 

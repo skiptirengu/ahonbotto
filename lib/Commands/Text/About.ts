@@ -1,26 +1,29 @@
 import { Command, CommandType, CommandDefinition } from '..'
-import { Message, MessageEmbed } from 'discord.js'
-import { injectable } from 'tsyringex'
+import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
+import { scoped, singleton } from 'tsyringex'
 import json from '../../../package.json'
 
-export const definition: CommandDefinition = {
+@singleton()
+export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type: CommandType.Text,
+  type = CommandType.Text
   /**
    * @inheritdoc
    */
-  command: 'About',
+  command = 'About'
   /**
    * @inheritdoc
    */
-  usage: () => ({
-    description: 'Show some useless information about this bot.'
-  })
+  public usage(): MessageEmbedOptions {
+    return {
+      description: 'Show some useless information about this bot.'
+    }
+  }
 }
 
-@injectable()
+@scoped('About')
 export class About implements Command {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public run(message: Message, _params: string[]): Promise<Message | Message[]> {

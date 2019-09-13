@@ -1,27 +1,30 @@
 import { Command, CommandType, CommandDefinition } from '..'
-import { Message, MessageEmbed } from 'discord.js'
-import { injectAll, injectable, inject } from 'tsyringex'
+import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
+import { injectAll, inject, scoped, singleton } from 'tsyringex'
 import { Config } from '../../Config'
 import { withCommandPrefix } from '../../Util'
 
-export const definition: CommandDefinition = {
+@singleton()
+export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type: CommandType.Text,
+  type = CommandType.Text
   /**
    * @inheritdoc
    */
-  command: 'Help',
+  command = 'Help'
   /**
    * @inheritdoc
    */
-  usage: () => ({
-    title: 'List all commands this bot has.'
-  })
+  public usage(): MessageEmbedOptions {
+    return {
+      title: 'List all commands this bot has.'
+    }
+  }
 }
 
-@injectable()
+@scoped('Help')
 export class Help implements Command {
   public constructor(
     /**

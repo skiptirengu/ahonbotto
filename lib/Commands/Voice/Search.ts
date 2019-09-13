@@ -1,32 +1,35 @@
 import { Command, CommandType, CommandDefinition } from '..'
-import { Message } from 'discord.js'
-import { injectable, inject } from 'tsyringex'
+import { Message, MessageEmbedOptions } from 'discord.js'
+import { inject, scoped, singleton } from 'tsyringex'
 import { Config } from '../../Config'
 import youtubeSearch from 'youtube-search'
 import { SearchRepository } from '../../Player/SearchRepository'
 import { Playable } from '../../Player/Playable'
 
-export const definition: CommandDefinition = {
+@singleton()
+export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type: CommandType.Voice,
+  type = CommandType.Voice
   /**
    * @inheritdoc
    */
-  command: 'Search',
+  command = 'Search'
   /**
    * @inheritdoc
    */
-  usage: () => ({
-    title: '<query...>',
-    description:
-      'Search a video on youtube and prints the top entries. See also **select** command.',
-    fields: [{ name: 'Example:', value: '`!search open the tcheka`', inline: true }]
-  })
+  public usage(): MessageEmbedOptions {
+    return {
+      title: '<query...>',
+      description:
+        'Search a video on youtube and prints the top entries. See also **select** command.',
+      fields: [{ name: 'Example:', value: '`!search open the tcheka`', inline: true }]
+    }
+  }
 }
 
-@injectable()
+@scoped('Search')
 export class Search implements Command {
   public constructor(
     /**

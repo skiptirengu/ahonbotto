@@ -1,14 +1,8 @@
 import youtubedl, { Info } from 'youtube-dl'
-import { Playable } from './Playable'
-import { injectable } from 'tsyringex'
+import { Playable } from '../Playable'
+import { autoInjectable, singleton } from 'tsyringex'
 
-const youtubedlOptions = [
-  '-f',
-  'bestaudio/best',
-  '--skip-download',
-  '--force-ipv4',
-  '--prefer-insecure'
-]
+const youtubedlOptions = ['-f', 'bestaudio/best', '--skip-download', '--prefer-insecure']
 
 declare module 'youtube-dl' {
   /**
@@ -20,8 +14,9 @@ declare module 'youtube-dl' {
   }
 }
 
-@injectable()
-export class Parser {
+@autoInjectable()
+@singleton()
+export class UrlParser {
   /**
    * Parses a URL and returns the actual playable url
    */

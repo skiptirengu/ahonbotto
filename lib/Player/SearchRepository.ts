@@ -1,6 +1,6 @@
 import { Playable } from './Playable'
 import { Message } from 'discord.js'
-import { injectable } from 'tsyringex'
+import { scoped } from 'tsyringex'
 
 interface SearchResultInternal {
   /**
@@ -15,7 +15,7 @@ interface SearchResultInternal {
 
 const defaultTimer = 300000
 
-@injectable()
+@scoped()
 export class SearchRepository {
   public constructor(
     /**
@@ -37,7 +37,7 @@ export class SearchRepository {
    * Returns how many itens are stored for a the given key
    */
   public size(key: string): number {
-    let stored = this.resultMap.get(key)
+    const stored = this.resultMap.get(key)
     if (!stored) {
       return 0
     }
@@ -48,18 +48,18 @@ export class SearchRepository {
    * Returns the result stored on the repository on a 1-n index based
    */
   public get(key: string, index: number): Playable | null {
-    let stored = this.resultMap.get(key)
+    const stored = this.resultMap.get(key)
     if (!stored) {
       return null
     }
-    return stored.result[index]
+    return stored.result[index - 1]
   }
 
   /**
    * Removes a key from the repository
    */
   public delete(key: string): void {
-    let stored = this.resultMap.get(key)
+    const stored = this.resultMap.get(key)
     if (stored) {
       clearTimeout(stored.timer)
     }

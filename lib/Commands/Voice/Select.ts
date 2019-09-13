@@ -1,33 +1,36 @@
 import { Command, CommandDefinition, CommandType } from '..'
-import { inject, injectable } from 'tsyringex'
+import { inject, scoped, singleton } from 'tsyringex'
 import { SearchRepository } from '../../Player/SearchRepository'
-import { Message } from 'discord.js'
+import { Message, MessageEmbedOptions } from 'discord.js'
 import { Player } from '../../Player/Player'
 
-export const definition: CommandDefinition = {
+@singleton()
+export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type: CommandType.Voice,
+  type = CommandType.Voice
   /**
    * @inheritdoc
    */
-  command: 'Select',
+  command = 'Select'
   /**
    * @inheritdoc
    */
-  usage: () => ({
-    title: '<url> [<repeat-x-times>]',
-    description:
-      'Adds a music to the play queue, being "**url**" an youtube video id or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites.',
-    fields: [
-      { name: 'Example:', value: '`!queue http://my.video.com/xD.mp4`', inline: true },
-      { name: 'Or:', value: '`!queue dQw4w9WgXcQ 4`', inline: true }
-    ]
-  })
+  public usage(): MessageEmbedOptions {
+    return {
+      title: '<url> [<repeat-x-times>]',
+      description:
+        'Adds a music to the play queue, being "**url**" an youtube video id or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites.',
+      fields: [
+        { name: 'Example:', value: '`!queue http://my.video.com/xD.mp4`', inline: true },
+        { name: 'Or:', value: '`!queue dQw4w9WgXcQ 4`', inline: true }
+      ]
+    }
+  }
 }
 
-@injectable()
+@scoped('Select')
 export class Select implements Command {
   public constructor(
     /**

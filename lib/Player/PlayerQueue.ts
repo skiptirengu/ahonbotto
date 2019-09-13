@@ -1,11 +1,11 @@
 import { Playable } from './Playable'
 import { EventEmitter } from 'events'
-import { injectable } from 'tsyringex'
+import { scoped } from 'tsyringex'
 
 /**
  * @event PlayerQueue#playable
  */
-@injectable()
+@scoped()
 export class PlayerQueue extends EventEmitter {
   /**
    * Music queue

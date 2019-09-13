@@ -1,25 +1,28 @@
 import { Command, CommandType, CommandDefinition } from '..'
-import { Message } from 'discord.js'
-import { injectable } from 'tsyringex'
+import { Message, MessageEmbedOptions } from 'discord.js'
+import { scoped, singleton } from 'tsyringex'
 
-export const definition: CommandDefinition = {
+@singleton()
+export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type: CommandType.Text,
+  type = CommandType.Text
   /**
    * @inheritdoc
    */
-  command: 'Karen',
+  command = 'Karen'
   /**
    * @inheritdoc
    */
-  usage: () => ({
-    description: '¯\\_(ツ)_/¯'
-  })
+  public usage(): MessageEmbedOptions {
+    return {
+      description: '¯\\_(ツ)_/¯'
+    }
+  }
 }
 
-@injectable()
+@scoped('Karen')
 export class Karen implements Command {
   /**
    * LUL
