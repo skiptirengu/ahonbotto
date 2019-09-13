@@ -4,18 +4,21 @@ import { PlayerQueue } from './PlayerQueue'
 import { Playable } from './Playable'
 import { UrlParser } from './Handlers/UrlParser'
 import { create } from './Handlers/HandlerFactory'
-import { Readable } from 'stream'
 
 @scoped()
 export class Player {
   /**
    * The voice channel the bot is currently connected to
    */
-  public voiceChannel?: VoiceChannel
+  protected voiceChannel?: VoiceChannel
   /**
    * The current voice connection the bot is streaming to
    */
-  public voiceConnection?: VoiceConnection
+  protected voiceConnection?: VoiceConnection
+  /**
+   * Current playable
+   */
+  protected current?: Playable
 
   public constructor(
     /**
@@ -38,6 +41,7 @@ export class Player {
   }
 
   private play(): void {
+    if (this.current) return
     this.voiceChannel!.join()
       .then((connection) => (this.voiceConnection = connection))
       .then(() => this.playNext())
@@ -45,14 +49,14 @@ export class Player {
   }
 
   private async playNext(): Promise<void> {
-    const next = this.queue.pop()
+    this.current = this.queue.pop()
 
-    if (!next) {
+    if (!this.current) {
       this.disconnect()
       return
     }
 
-    const handler = await create(next.uri)
+    const handler = await create(this.current.uri)
     const readable = await handler.stream()
 
     this.voiceConnection!.play(readable)

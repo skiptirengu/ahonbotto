@@ -2,17 +2,17 @@ import { randomBytes } from 'crypto'
 import { inject, autoInjectable } from 'tsyringex'
 import { ensureFile } from 'fs-extra'
 import { Readable, Writable } from 'stream'
-import { createWriteStream, createReadStream, read } from 'fs'
+import { createWriteStream, createReadStream } from 'fs'
 import { join } from 'path'
 import { StreamingHandler } from './StreamingHandler'
 import { Config } from '../../Config'
 import { UrlParser } from './UrlParser'
 import { Playable } from '../Playable'
-import miniget from 'miniget'
+import miniget, { MinigetOptions } from 'miniget'
 
-const initialBufferSize = 1 << 16
 const cacheFolder = 'http-cache'
-const minigetOptions = {
+const initialBufferSize = 1 << 17
+const minigetOptions: MinigetOptions = {
   highWaterMark: initialBufferSize
 }
 
@@ -55,11 +55,8 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     const readable = await this.getReadableStream()
     // Destroy readable if the writer errors
     writable.once('error', (err) => readable.destroy(err))
-    console.log(`Readable buffer ${readable.readableLength}`)
-    // await new Promise((resolve) => setTimeout(resolve, 500))
-    return readable
-    // return duplexer(writable, readable).once('end', () => this.markForCleanup())
-    // return readable
+    // Mark for deletion once the readable ends
+    return readable.once('end', () => this.markForCleanup())
   }
 
   private markForCleanup(): void {
@@ -71,15 +68,15 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     const request = miniget(this.playable!.uri, minigetOptions)
     // Buffer the file locally
     const stream = request.pipe(createWriteStream(this.filename!))
-    // Wait the buffer to grow a considerable size
-    let written = 0
+
     return new Promise((resolve) => {
-      // TODO check for a better to bind this function
-      stream.on('drain', function onDrain() {
-        written += stream.writableLength
+      let written = 0
+      // Wait the buffer to grow a considerable size
+      request.on('data', function onData(chunk: Buffer) {
+        written += chunk.length
         // Only resolve when we got enough data
         if (written >= initialBufferSize) {
-          stream.removeListener('close', onDrain)
+          request.removeListener('close', onData)
           resolve(stream)
         }
       })

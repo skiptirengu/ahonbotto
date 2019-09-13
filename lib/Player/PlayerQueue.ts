@@ -31,7 +31,7 @@ export class PlayerQueue extends EventEmitter {
   /**
    * Returns the next playable in queue
    */
-  public pop(): Playable | null {
-    return this.stack.pop() || null
+  public pop(): Playable | undefined {
+    return this.stack.pop()
   }
 }
