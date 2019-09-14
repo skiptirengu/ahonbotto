@@ -22,7 +22,11 @@ export class UrlParser {
    */
   public async parse(url: string): Promise<Playable> {
     const info = await this.execute(url)
-    return { name: info.title, uri: info.url }
+    return {
+      name: info.title,
+      fileUri: info.url,
+      uri: url
+    }
   }
 
   private execute(url: string): Promise<Info> {

@@ -1,8 +1,9 @@
 import appRoot from 'app-root-path'
-import { Client } from 'discord.js'
+import { Client, Guild } from 'discord.js'
 import { container, DependencyContainer } from 'tsyringex'
 import { join } from 'path'
 import { Config } from '../Config'
+import './../Storage'
 import './../Player'
 import './../Commands'
 
@@ -23,10 +24,18 @@ export function bootstrap(client: Client): void {
 }
 
 export function scopeFactory(name: string): DependencyContainer {
-  return (
-    (scopeMap.has(name) && scopeMap.get(name)!) ||
-    scopeMap.set(name, container.createScope()).get(name)!
-  )
+  if (scopeMap.has(name)) return scopeMap.get(name)!
+
+  const scope = scopeMap.set(name, container.createScope()).get(name)!
+
+  scope.register(Guild, {
+    useFactory: (dependencyContainer) => {
+      const client = dependencyContainer.resolve(Client)
+      return client.guilds.get(name)
+    }
+  })
+
+  return scope
 }
 
 export { container }

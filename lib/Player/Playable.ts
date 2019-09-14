@@ -7,4 +7,8 @@ export interface Playable {
    * URL of the search result
    */
   uri: string
+  /**
+   * Parsed URL with the file
+   */
+  fileUri?: string
 }

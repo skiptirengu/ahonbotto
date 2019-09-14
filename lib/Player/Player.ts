@@ -1,5 +1,5 @@
 import { inject, scoped } from 'tsyringex'
-import { VoiceChannel, VoiceConnection, StreamDispatcher } from 'discord.js'
+import { VoiceChannel, VoiceConnection, StreamDispatcher, Guild } from 'discord.js'
 import { PlayerQueue } from './PlayerQueue'
 import { Playable } from './Playable'
 import { UrlParser } from './UrlParser'
@@ -22,7 +22,7 @@ export class Player {
   /**
    * Current stream dispatcher
    */
-  protected handler?: StreamDispatcher
+  protected dispatcher?: StreamDispatcher
 
   public constructor(
     /**
@@ -32,7 +32,11 @@ export class Player {
     /**
      * URL parser
      */
-    @inject(UrlParser) protected readonly parser: UrlParser
+    @inject(UrlParser) protected readonly parser: UrlParser,
+    /**
+     * Current guild
+     */
+    @inject(Guild) protected readonly guild: Guild
   ) {
     this.queue.on('playable', () => this.startPlaying())
   }
@@ -50,7 +54,7 @@ export class Player {
   }
 
   public next(): void {
-    if (this.handler) this.handler.end()
+    if (this.dispatcher) this.dispatcher.end()
   }
 
   private startPlaying(): void {
@@ -70,10 +74,10 @@ export class Player {
       return
     }
 
-    const handler = await create(this.current.uri)
+    const handler = await create(this.current.uri, this.guild)
     const readable = await handler.stream()
 
-    this.handler = this.voiceConnection!.play(readable)
+    this.dispatcher = this.voiceConnection!.play(readable)
       .once('unpipe', () => this.playNext())
       .on('error', console.error)
   }
@@ -88,9 +92,9 @@ export class Player {
   }
 
   private clearCurrentHandler(): void {
-    if (this.handler) {
-      this.handler.destroy()
-      this.handler = undefined
+    if (this.dispatcher) {
+      this.dispatcher.destroy()
+      this.dispatcher = undefined
     }
   }
 

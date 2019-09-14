@@ -30,5 +30,5 @@ export function message(message: MessagePayload): void {
     // Run the command
     .run(message, messageParts)
     // TODO properly log the
-    .catch((reason): void => console.log(reason))
+    .catch((reason) => console.log(reason))
 }
