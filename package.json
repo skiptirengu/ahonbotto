@@ -33,6 +33,7 @@
     "tsyringex": "^1.1.0",
     "typescript": "^3.6.2",
     "uri-js": "^4.2.2",
+    "winston": "^3.2.1",
     "youtube-dl": "^2.0.1",
     "youtube-search": "^1.1.4",
     "zucc": "^0.1.2"

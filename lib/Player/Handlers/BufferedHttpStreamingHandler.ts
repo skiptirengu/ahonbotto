@@ -1,5 +1,5 @@
 import { createHash } from 'crypto'
-import { inject, autoInjectable } from 'tsyringex'
+import { inject, injectable } from 'tsyringex'
 import { pathExists, ensureFile } from 'fs-extra'
 import { Readable, Writable } from 'stream'
 import { createWriteStream, createReadStream } from 'fs'
@@ -19,7 +19,7 @@ const minigetOptions: MinigetOptions = {
   highWaterMark: initialBufferSize
 }
 
-@autoInjectable()
+@injectable()
 export class BufferedHttpStreamingHandler implements StreamingHandler {
   /**
    * Parsed playable
@@ -33,30 +33,29 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
    * Full file path
    */
   private filepath?: string
-  /**
-   * Current guild
-   */
-  private guild?: Guild
 
   public constructor(
     /**
      * Bot configuration object
      */
-    @inject('Config') protected readonly config?: Config,
+    @inject('Config') protected readonly config: Config,
     /**
      * URL parser
      */
-    @inject(UrlParser) protected readonly parser?: UrlParser,
+    @inject(UrlParser) protected readonly parser: UrlParser,
     /**
      * SQLite Repository for media
      */
-    @inject(MediaRepository) protected readonly media?: MediaRepository
+    @inject(MediaRepository) protected readonly media: MediaRepository,
+    /**
+     * Current guild
+     */
+    @inject(Guild) protected readonly guild: Guild
   ) {}
 
-  public async setContext(uri: string, guild: Guild): Promise<StreamingHandler> {
+  public async setContext(uri: string): Promise<StreamingHandler> {
     if (!this.playable) {
-      this.guild = guild
-      this.playable = await this.parser!.parse(uri)
+      this.playable = await this.parser.parse(uri)
       this.setFilenameAndPath()
     }
     return this
@@ -68,7 +67,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     const exists = await pathExists(this.filepath!)
 
     // Use local version
-    if (this.media!.checkAndEnable(this.filename!) && exists) {
+    if (this.media.checkAndEnable(this.filename!) && exists) {
       return this.attachCleanupEvent(await this.getReadableStream())
     }
 
@@ -82,15 +81,9 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     // Open the read stream
     const readable = await this.getReadableStream()
     // Destroy readable if the writer errors
-    writable.once('error', (err) => {
-      console.error('Writable received error', err)
-      readable.destroy(err)
-    })
-    readable.on('error', (err) => {
-      console.error('Readable received error', err)
-    })
+    writable.once('error', (err) => readable.destroy(err))
     // Add to database
-    this.media!.upsert(this.filename!)
+    this.media.upsert(this.filename!)
     // Mark for deletion once the readable ends
     return this.attachCleanupEvent(readable)
   }
@@ -105,7 +98,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   }
 
   private markForCleanup(): void {
-    this.media!.markForDeletion(this.filename!)
+    this.media.markForDeletion(this.filename!)
   }
 
   private getWritableStream(): Promise<Writable> {
@@ -115,7 +108,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     request.once(
       'end',
       handleStreamError(request, () => {
-        this.media!.complete(this.filename!)
+        this.media.complete(this.filename!)
       })
     )
     // Buffer the file locally
@@ -125,7 +118,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
 
     return new Promise((resolve) => {
       let written = 0
-      // Wait the buffer to grow a considerable size
+      // Wait the buffer to grow to a considerable size
       request.on('data', function onData(chunk: Buffer) {
         written += chunk.length
         // Only resolve when we got enough data
@@ -145,12 +138,12 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   }
 
   private setFilenameAndPath(): void {
-    const name = `${this.guild!.id}-${this.playable!.uri}`
+    const name = `${this.guild.id}-${this.playable!.uri}`
 
     this.filename = createHash('sha256')
       .update(name)
       .digest('hex')
 
-    this.filepath = join(this.config!.runtimeFolder, cacheFolder, this.filename)
+    this.filepath = join(this.config.runtimeFolder, cacheFolder, this.filename)
   }
 }

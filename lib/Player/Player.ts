@@ -3,7 +3,8 @@ import { VoiceChannel, VoiceConnection, StreamDispatcher, Guild } from 'discord.
 import { PlayerQueue } from './PlayerQueue'
 import { Playable } from './Playable'
 import { UrlParser } from './UrlParser'
-import { create } from './Handlers/HandlerFactory'
+import { HandlerFactory } from './Handlers/HandlerFactory'
+import { Logger } from 'winston'
 
 @scoped()
 export class Player {
@@ -36,7 +37,15 @@ export class Player {
     /**
      * Current guild
      */
-    @inject(Guild) protected readonly guild: Guild
+    @inject(Guild) protected readonly guild: Guild,
+    /**
+     * Scoped dependency container
+     */
+    @inject(HandlerFactory) protected readonly factory: HandlerFactory,
+    /**
+     * Scoped logger
+     */
+    @inject('Logger') protected readonly logger: Logger
   ) {
     this.queue.on('playable', () => this.startPlaying())
   }
@@ -63,7 +72,7 @@ export class Player {
     this.voiceChannel!.join()
       .then((connection) => (this.voiceConnection = connection))
       .then(() => this.playNext())
-      .catch(console.error)
+      .catch((err) => this.logger.error('Error starting voice connection', err))
   }
 
   private async playNext(): Promise<void> {
@@ -74,12 +83,11 @@ export class Player {
       return
     }
 
-    const handler = await create(this.current.uri, this.guild)
-    const readable = await handler.stream()
+    const handler = await this.factory.create(this.current.uri)
 
-    this.dispatcher = this.voiceConnection!.play(readable)
+    this.dispatcher = this.voiceConnection!.play(await handler.stream())
       .once('unpipe', () => this.playNext())
-      .on('error', (err) => console.error('error dispatcher', err))
+      .once('error', (err) => this.logger.error('Stream dispatcher error', err))
   }
 
   private disconnect(): void {
