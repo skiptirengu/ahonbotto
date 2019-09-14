@@ -1,14 +1,14 @@
 import { CommandDefinition, CommandType, Command } from '..'
 import { Message, MessageEmbed, ImageSize, User, MessageEmbedOptions } from 'discord.js'
 import { withCommandPrefix } from '../../Util'
-import { scoped, singleton } from 'tsyringex'
+import { scoped } from 'tsyringex'
 
 interface UserAvatar {
   user: User
   urls: string[]
 }
 
-@singleton()
+@scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -59,7 +59,7 @@ export class Avatar implements Command {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, _params: string[]): Promise<Message | Message[]> {
+  public run(message: Message, params: string[]): Promise<Message | Message[]> {
     const userAvatar = this.getUserAvatar(message)
 
     const embed = new MessageEmbed({

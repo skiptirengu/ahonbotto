@@ -1,12 +1,12 @@
 import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { inject, scoped, singleton } from 'tsyringex'
+import { inject, scoped } from 'tsyringex'
 import { Config } from '../../Config'
 import youtubeSearch from 'youtube-search'
 import { SearchRepository } from '../../Player/SearchRepository'
 import { Playable } from '../../Player/Playable'
 
-@singleton()
+@scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc

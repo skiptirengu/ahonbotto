@@ -1,10 +1,10 @@
 import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
-import { injectAll, inject, scoped, singleton } from 'tsyringex'
+import { injectAll, inject, scoped } from 'tsyringex'
 import { Config } from '../../Config'
 import { withCommandPrefix } from '../../Util'
 
-@singleton()
+@scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -45,7 +45,7 @@ export class Help implements Command {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, _params: string[]): Promise<Message | Message[]> {
+  public run(message: Message, params: string[]): Promise<Message | Message[]> {
     const embed = new MessageEmbed({
       fields: [
         {

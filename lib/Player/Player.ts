@@ -1,8 +1,8 @@
 import { inject, scoped } from 'tsyringex'
-import { VoiceChannel, VoiceConnection } from 'discord.js'
+import { VoiceChannel, VoiceConnection, StreamDispatcher } from 'discord.js'
 import { PlayerQueue } from './PlayerQueue'
 import { Playable } from './Playable'
-import { UrlParser } from './Handlers/UrlParser'
+import { UrlParser } from './UrlParser'
 import { create } from './Handlers/HandlerFactory'
 
 @scoped()
@@ -19,6 +19,10 @@ export class Player {
    * Current playable
    */
   protected current?: Playable
+  /**
+   * Current stream dispatcher
+   */
+  protected handler?: StreamDispatcher
 
   public constructor(
     /**
@@ -30,18 +34,28 @@ export class Player {
      */
     @inject(UrlParser) protected readonly parser: UrlParser
   ) {
-    this.queue.on('playable', () => this.play())
+    this.queue.on('playable', () => this.startPlaying())
   }
 
-  public queuePlayable(channel: VoiceChannel, playable: Playable, times: number): void {
+  public push(channel: VoiceChannel, playable: Playable, times: number): void {
     this.voiceChannel = this.voiceChannel || channel
     Array(times)
       .fill(undefined)
       .forEach(() => this.queue.push(playable))
   }
 
-  private play(): void {
+  public stop(): void {
+    this.queue.clear()
+    this.disconnect()
+  }
+
+  public next(): void {
+    if (this.handler) this.handler.end()
+  }
+
+  private startPlaying(): void {
     if (this.current) return
+
     this.voiceChannel!.join()
       .then((connection) => (this.voiceConnection = connection))
       .then(() => this.playNext())
@@ -59,14 +73,32 @@ export class Player {
     const handler = await create(this.current.uri)
     const readable = await handler.stream()
 
-    this.voiceConnection!.play(readable)
-      .on('debug', console.log)
+    this.handler = this.voiceConnection!.play(readable)
+      .once('unpipe', () => this.playNext())
       .on('error', console.error)
-      .once('end', () => this.playNext())
   }
 
   private disconnect(): void {
+    // Stop handler first if it still playing
+    this.clearCurrentHandler()
+    // Set the current voice channel to undefined
+    this.clearVoiceChannel()
+    // And dispose the voice connection
+    this.disconnectVoiceConnection()
+  }
+
+  private clearCurrentHandler(): void {
+    if (this.handler) {
+      this.handler.destroy()
+      this.handler = undefined
+    }
+  }
+
+  private clearVoiceChannel(): void {
     if (this.voiceChannel) this.voiceChannel = undefined
+  }
+
+  private disconnectVoiceConnection(): void {
     if (this.voiceConnection) {
       this.voiceConnection.disconnect()
       this.voiceConnection = undefined

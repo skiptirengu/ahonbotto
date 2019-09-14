@@ -1,10 +1,10 @@
 import { Command, CommandDefinition, CommandType } from '..'
-import { inject, scoped, singleton } from 'tsyringex'
+import { inject, scoped } from 'tsyringex'
 import { SearchRepository } from '../../Player/SearchRepository'
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { Player } from '../../Player/Player'
 
-@singleton()
+@scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -67,7 +67,7 @@ export class Select implements Command {
     }
 
     const times = Number(params.shift()) || 1
-    this.player.queuePlayable(message.member!.voice.channel!, value, times)
+    this.player.push(message.member!.voice.channel!, value, times)
 
     return message.channel.send(`${value.name} queued ${times} time(s)`.codeWrap())
   }

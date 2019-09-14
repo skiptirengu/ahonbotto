@@ -6,12 +6,12 @@ import { createWriteStream, createReadStream } from 'fs'
 import { join } from 'path'
 import { StreamingHandler } from './StreamingHandler'
 import { Config } from '../../Config'
-import { UrlParser } from './UrlParser'
+import { UrlParser } from '../UrlParser'
 import { Playable } from '../Playable'
 import miniget, { MinigetOptions } from 'miniget'
 
 const cacheFolder = 'http-cache'
-const initialBufferSize = 1 << 17
+const initialBufferSize = 1 << 18
 const minigetOptions: MinigetOptions = {
   highWaterMark: initialBufferSize
 }
@@ -54,7 +54,13 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     // Open the read stream
     const readable = await this.getReadableStream()
     // Destroy readable if the writer errors
-    writable.once('error', (err) => readable.destroy(err))
+    writable.once('error', (err) => {
+      console.log('Writable received error', err)
+      readable.destroy(err)
+    })
+    readable.on('error', (err) => {
+      console.log('Readable received error', err)
+    })
     // Mark for deletion once the readable ends
     return readable.once('end', () => this.markForCleanup())
   }
@@ -76,7 +82,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
         written += chunk.length
         // Only resolve when we got enough data
         if (written >= initialBufferSize) {
-          request.removeListener('close', onData)
+          request.removeListener('data', onData)
           resolve(stream)
         }
       })

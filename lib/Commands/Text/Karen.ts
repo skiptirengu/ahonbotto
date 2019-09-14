@@ -1,8 +1,8 @@
 import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { scoped, singleton } from 'tsyringex'
+import { scoped } from 'tsyringex'
 
-@singleton()
+@scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -30,7 +30,7 @@ export class Karen implements Command {
   private readonly url: string = 'https://skiptirengu.com/karen.png'
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, _params: string[]): Promise<Message | Message[]> {
+  public run(message: Message, params: string[]): Promise<Message | Message[]> {
     return message.channel.send(this.url)
   }
 }

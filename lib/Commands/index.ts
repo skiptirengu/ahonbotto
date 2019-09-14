@@ -3,8 +3,10 @@ import './Text/Avatar'
 import './Text/Help'
 import './Text/Karen'
 import './Text/Usage'
+import './Voice/Next'
 import './Voice/Search'
 import './Voice/Select'
+import './Voice/Stop'
 
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { chain } from 'lodash'
@@ -18,7 +20,7 @@ export interface Command {
    * @param message The discord message instance
    * @param params The command params
    */
-  run(message: Message, params: string[]): Promise<Message | Message[]>
+  run(message: Message, params: string[]): Promise<Message | Message[] | void>
 }
 
 /**

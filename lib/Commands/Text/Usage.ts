@@ -1,10 +1,10 @@
 import { Command, CommandDefinition, normalizeCommandName, CommandType, typedCommandName } from '..'
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { injectAll, scoped, singleton } from 'tsyringex'
+import { injectAll, scoped } from 'tsyringex'
 import { first } from 'lodash'
 import { withCommandPrefix } from '../../Util'
 
-@singleton()
+@scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -29,6 +29,9 @@ export class Definition implements CommandDefinition {
 @scoped('Usage')
 export class Usage implements Command {
   public constructor(
+    /**
+     * All command definitions bound to the container
+     */
     @injectAll('CommandDefinition') private readonly definitions: CommandDefinition[]
   ) {}
 

@@ -18,6 +18,13 @@ export class PlayerQueue extends EventEmitter {
   }
 
   /**
+   * Clears the entire queue
+   */
+  public clear(): void {
+    this.stack.splice(0)
+  }
+
+  /**
    * Pushes a playable to the queue
    */
   public push(playable: Playable): void {

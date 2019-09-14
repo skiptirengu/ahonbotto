@@ -1,9 +1,9 @@
 import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
-import { scoped, singleton } from 'tsyringex'
+import { scoped } from 'tsyringex'
 import json from '../../../package.json'
 
-@singleton()
+@scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -26,7 +26,7 @@ export class Definition implements CommandDefinition {
 @scoped('About')
 export class About implements Command {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, _params: string[]): Promise<Message | Message[]> {
+  public run(message: Message, params: string[]): Promise<Message | Message[]> {
     const embed = new MessageEmbed({
       title: json.description,
       url: json.repository.url,
