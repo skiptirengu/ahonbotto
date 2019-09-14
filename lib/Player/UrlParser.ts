@@ -9,8 +9,18 @@ declare module 'youtube-dl' {
    * Additional properties to the info interface
    */
   interface Info {
+    /**
+     * Actual URL with the video
+     */
     url: string
+    /**
+     * Video title
+     */
     title: string
+    /**
+     * Friendly URL
+     */
+    webpage_url: string
   }
 }
 
@@ -22,11 +32,7 @@ export class UrlParser {
    */
   public async parse(url: string): Promise<Playable> {
     const info = await this.execute(url)
-    return {
-      name: info.title,
-      fileUri: info.url,
-      uri: url
-    }
+    return { name: info.title, fileUri: info.url, uri: info.webpage_url }
   }
 
   private execute(url: string): Promise<Info> {
