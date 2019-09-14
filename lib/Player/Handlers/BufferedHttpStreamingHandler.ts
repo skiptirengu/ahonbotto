@@ -11,6 +11,7 @@ import { Playable } from '../Playable'
 import { MediaRepository } from '../../Storage/MediaRepository'
 import miniget, { MinigetOptions } from 'miniget'
 import { Guild } from 'discord.js'
+import { handleStreamError } from '../../Util'
 
 const cacheFolder = 'http-cache'
 const initialBufferSize = 1 << 18
@@ -95,7 +96,12 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   }
 
   private attachCleanupEvent(stream: Readable): Readable {
-    return stream.once('end', () => this.markForCleanup())
+    return stream.once(
+      'end',
+      handleStreamError(stream, () => {
+        this.markForCleanup()
+      })
+    )
   }
 
   private markForCleanup(): void {
@@ -106,9 +112,16 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     // Download URL
     const request = miniget(this.playable!.fileUri!, minigetOptions)
     // Set status on database once complete
-    request.once('end', () => this.media!.complete(this.filename!))
+    request.once(
+      'end',
+      handleStreamError(request, () => {
+        this.media!.complete(this.filename!)
+      })
+    )
     // Buffer the file locally
     const stream = request.pipe(createWriteStream(this.filepath!))
+    // Pipe all errors to write stream
+    request.once('error', (err) => stream.destroy(err))
 
     return new Promise((resolve) => {
       let written = 0

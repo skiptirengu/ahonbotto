@@ -79,7 +79,7 @@ export class Player {
 
     this.dispatcher = this.voiceConnection!.play(readable)
       .once('unpipe', () => this.playNext())
-      .on('error', console.error)
+      .on('error', (err) => console.error('error dispatcher', err))
   }
 
   private disconnect(): void {
