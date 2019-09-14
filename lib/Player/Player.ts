@@ -50,6 +50,14 @@ export class Player {
     this.queue.on('playable', () => this.startPlaying())
   }
 
+  public getStreamingTime(): number {
+    return (this.dispatcher && this.dispatcher.streamTime) || 0
+  }
+
+  public getCurrentPlayable(): Playable | undefined {
+    return this.current
+  }
+
   public push(channel: VoiceChannel, playable: Playable, times: number): void {
     this.voiceChannel = this.voiceChannel || channel
     Array(times)
@@ -84,8 +92,7 @@ export class Player {
     }
 
     try {
-      const handler = await this.factory.create(this.current.uri)
-
+      const handler = await this.factory.create(this.current)
       this.dispatcher = this.voiceConnection!.play(await handler.stream())
         .once('unpipe', () => this.playNext())
         .once('error', (err) => this.logger.error('Stream dispatcher error', err))

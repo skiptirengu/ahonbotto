@@ -53,9 +53,9 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     @inject(Guild) protected readonly guild: Guild
   ) {}
 
-  public async setContext(uri: string): Promise<StreamingHandler> {
+  public async setContext(playable: Playable): Promise<StreamingHandler> {
     if (!this.playable) {
-      this.playable = await this.parser.parse(uri)
+      this.playable = playable.fileUri ? playable : await this.parser.parse(playable.uri)
       this.setFilenameAndPath()
     }
     return this

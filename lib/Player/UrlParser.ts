@@ -21,6 +21,10 @@ declare module 'youtube-dl' {
      * Friendly URL
      */
     webpage_url: string
+    /**
+     * Video thumb
+     */
+    thumbnail: string
   }
 }
 
@@ -32,7 +36,14 @@ export class UrlParser {
    */
   public async parse(url: string): Promise<Playable> {
     const info = await this.execute(url)
-    return { name: info.title, fileUri: info.url, uri: info.webpage_url }
+    return {
+      name: info.title,
+      fileUri: info.url,
+      uri: info.webpage_url,
+      isLocal: false,
+      totalTime: info._duration_raw || 0,
+      thumbnail: info.thumbnail
+    }
   }
 
   private execute(url: string): Promise<Info> {

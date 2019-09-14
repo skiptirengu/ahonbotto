@@ -59,7 +59,7 @@ export class Search implements Command {
 
     const storageKey = this.buildKey(message)
     const results = response.results.map(
-      (value): Playable => ({ name: value.title, uri: value.link })
+      (value): Playable => ({ name: value.title, uri: value.link, isLocal: false })
     )
 
     this.repository.push(storageKey, results)
