@@ -45,7 +45,7 @@ export class Queue implements Command {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async run(message: Message, params: string[]): Promise<Message> {
+  public async run(message: Message, params: string[]): Promise<Message | void> {
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
       return message.channel.send(
         embed({
@@ -67,10 +67,12 @@ export class Queue implements Command {
     const times = Number(params.shift()) || 1
 
     this.player.push(message.member.voice.channel, playable, times)
-    return message.channel.send(
+    await message.channel.send(
       embed({
         description: `${playable.name} queued ${times} time(s)`
       })
     )
+
+    await message.delete()
   }
 }
