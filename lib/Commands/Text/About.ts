@@ -40,7 +40,7 @@ export class About implements Command {
       color: this.config.embedColor,
       thumbnail: {
         url:
-          'https://cdn.discordapp.com/avatars/219948790403170306/48f855ad7016d300fff2df33491a8aaf.webp'
+          'https://cdn.discordapp.com/avatars/320239308273352705/9d5adbe6435f196bd0b92fdffb6e8136.webp'
       },
       author: {
         name: 'Thomas Turbando (Skiptir Engu#6682)',
