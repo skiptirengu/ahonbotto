@@ -30,7 +30,6 @@ export class Connection {
       CREATE TABLE IF NOT EXISTS media (
         filename             VARCHAR(64) PRIMARY KEY,
         time_marked_deletion INTEGER DEFAULT NULL,
-        deleted              BOOLEAN,
         completed            BOOLEAN DEFAULT FALSE
       )
     `)

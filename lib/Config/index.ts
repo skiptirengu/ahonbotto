@@ -19,4 +19,12 @@ export interface Config {
    * Color for embed messages
    */
   embedColor: number
+  /**
+   * Job cleanup interval
+   */
+  cleanupInverval: number
+  /**
+   * Folder used to cache songs
+   */
+  httpCacheFolder: string
 }

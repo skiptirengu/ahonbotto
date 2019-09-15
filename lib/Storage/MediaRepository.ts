@@ -21,6 +21,14 @@ export class MediaRepository {
    * Set flag completed on database
    */
   private readonly stmtComplete: Statement<any[]>
+  /**
+   * Select by time
+   */
+  private readonly stmtSelectTime: Statement<any[]>
+  /**
+   * Delete by key
+   */
+  private readonly stmtDelete: Statement<any[]>
 
   public constructor(
     /**
@@ -35,11 +43,22 @@ export class MediaRepository {
       'UPDATE media SET time_marked_deletion = @time WHERE filename = @file AND completed IS TRUE'
     )
     this.stmtUpsert = this.connection.database.prepare(
-      'INSERT OR REPLACE INTO media (filename, deleted, completed) VALUES (@file, FALSE, FALSE)'
+      'INSERT OR REPLACE INTO media (filename, completed) VALUES (@file, FALSE)'
     )
     this.stmtSelect = this.connection.database.prepare(
       'SELECT * FROM media WHERE filename = @filename AND completed IS TRUE'
     )
+    this.stmtSelectTime = this.connection.database.prepare(
+      'SELECT filename FROM media WHERE time_marked_deletion IS NOT NULL AND time_marked_deletion <= @time'
+    )
+    this.stmtDelete = this.connection.database.prepare(
+      'DELETE FROM media WHERE filename = @filename'
+    )
+  }
+
+  public marked(time: number): string[] {
+    const data = this.stmtSelectTime.all({ time })
+    return data.map((x) => x.filename)
   }
 
   public complete(file: string): void {
@@ -63,5 +82,9 @@ export class MediaRepository {
 
   private setDeletion(file: string, time?: number | null): void {
     this.stmtDeletion.run({ time, file })
+  }
+
+  public remove(filename: string): void {
+    this.stmtDelete.run({ filename })
   }
 }

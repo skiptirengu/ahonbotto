@@ -7,10 +7,12 @@ import { loggers, format, transports, LoggerOptions } from 'winston'
 import './../Storage'
 import './../Player'
 import './../Commands'
+import './../Jobs'
 import dayjs from 'dayjs'
 
 const runtimeFolder = join(appRoot.path, 'runtime')
 const logFolder = 'logs'
+const cacheFolder = 'http-cache'
 
 const scopeMap = new Map<string, DependencyContainer>()
 
@@ -18,11 +20,13 @@ export function bootstrap(client: Client): void {
   // register config object
   container.register<Config>('Config', {
     useValue: {
-      discordToken: process.env['discordToken'] as string,
-      youtubeToken: process.env['youtubeToken'] as string,
-      commandPrefixes: ['$'],
+      discordToken: process.env['DISCORD_TOKEN'] as string,
+      youtubeToken: process.env['YOUTUBE_TOKEN'] as string,
+      commandPrefixes: ['!'],
       runtimeFolder: runtimeFolder,
-      embedColor: 0x1882ac
+      embedColor: 0x1882ac,
+      cleanupInverval: 15,
+      httpCacheFolder: join(runtimeFolder, cacheFolder)
     }
   })
   // shared logger
@@ -68,7 +72,9 @@ function createLogger(id: string, label: string): LoggerOptions {
       // @ts-ignore
       format.timestamp({
         format: () => {
-          const localDate = new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' })
+          const localDate = new Date().toLocaleString('en-US', {
+            timeZone: 'America/Sao_Paulo'
+          })
           return dayjs(localDate).format()
         }
       }),

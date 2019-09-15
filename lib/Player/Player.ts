@@ -80,7 +80,7 @@ export class Player {
     this.voiceChannel!.join()
       .then((connection) => (this.voiceConnection = connection))
       .then(() => this.playNext())
-      .catch((err) => this.logger.error('Error starting voice connection', err))
+      .catch((error) => this.logger.error('Error starting voice connection', { error }))
   }
 
   private async playNext(): Promise<void> {
@@ -95,9 +95,9 @@ export class Player {
       const handler = await this.factory.create(this.current)
       this.dispatcher = this.voiceConnection!.play(await handler.stream())
         .once('unpipe', () => this.playNext())
-        .once('error', (err) => this.logger.error('Stream dispatcher error', err))
-    } catch (err) {
-      this.logger.error('Unable to start stream', this.current, err)
+        .once('error', (error) => this.logger.error('Stream dispatcher error', { error }))
+    } catch (error) {
+      this.logger.error('Unable to start stream', { playable: this.current, error })
       this.playNext()
     }
   }

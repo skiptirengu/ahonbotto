@@ -9,5 +9,5 @@ export function ready(): void {
   client
     .user!.setActivity(`Try ${withCommandPrefix('help')} command`, { type: 'PLAYING' })
     .then(() => logger.info('Initialization completed'))
-    .catch((err) => logger.error('Uncaught error on ready event handler', err))
+    .catch((error) => logger.error('Uncaught error on ready event handler', { error }))
 }

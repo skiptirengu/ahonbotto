@@ -33,6 +33,5 @@ export function message(message: MessagePayload): void {
     .resolve<Command>(command)
     // Run the command
     .run(message, messageParts)
-    // TODO properly log the
-    .catch((reason) => logger.error('Uncaught message event handler error', reason))
+    .catch((error) => logger.error('Uncaught message event handler error', { error }))
 }

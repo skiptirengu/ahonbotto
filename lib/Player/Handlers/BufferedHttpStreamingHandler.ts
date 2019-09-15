@@ -13,7 +13,6 @@ import miniget, { MinigetOptions } from 'miniget'
 import { Guild } from 'discord.js'
 import { handleStreamError } from '../../Util'
 
-const cacheFolder = 'http-cache'
 const initialBufferSize = 1 << 18
 const minigetOptions: MinigetOptions = {
   highWaterMark: initialBufferSize
@@ -90,7 +89,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
 
   private attachCleanupEvent(stream: Readable): Readable {
     return stream.once(
-      'end',
+      'close',
       handleStreamError(stream, () => {
         this.markForCleanup()
       })
@@ -131,7 +130,9 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   }
 
   private getReadableStream(): Promise<Readable> {
-    const stream = createReadStream(this.filepath!)
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    const stream = createReadStream(this.filepath!, { emitClose: true })
     return new Promise((resolve) => {
       stream.once('readable', () => resolve(stream))
     })
@@ -144,6 +145,6 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
       .update(name)
       .digest('hex')
 
-    this.filepath = join(this.config.runtimeFolder, cacheFolder, this.filename)
+    this.filepath = join(this.config.httpCacheFolder, this.filename)
   }
 }
