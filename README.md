@@ -2,7 +2,6 @@
 
 Yet another discord bot.  
 This bot is generic enough for you to use on any discord server.
-To add this bot to your channel visit the [following link](https://discordapp.com/oauth2/authorize?&client_id=320239308273352705&scope=bot&permissions=2000).
 
 ### RUNNING THE BOT
 
