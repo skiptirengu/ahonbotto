@@ -8,9 +8,10 @@ This bot is generic enough for you to use on any discord server.
 1. Clone this repo `git clone https://github.com/skiptirengu/arrombot`
 2. Install the packages `yarn install`
 3. Create a `.env` file in the root directory and place your tokens there
-```
+```env
 DISCORD_TOKEN=my_super_secret_discord_token
 YOUTUBE_TOKEN=my_super_secret_youtube_token
+COMMAND_PREFIXES=$,% // comma separeted command prefixes 
 ```
 4. Start the bot with `yarn start`
 

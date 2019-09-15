@@ -23,7 +23,8 @@ export function bootstrap(client: Client): void {
     useValue: {
       discordToken: process.env['DISCORD_TOKEN'] as string,
       youtubeToken: process.env['YOUTUBE_TOKEN'] as string,
-      commandPrefixes: ['!'],
+      commandPrefixes: (process.env['COMMAND_PREFIXES'] &&
+        process.env['COMMAND_PREFIXES']!.split(',')) || ['!'],
       runtimeFolder: runtimeFolder,
       embedColor: 0x1882ac,
       cleanupInverval: 15,
@@ -75,7 +76,11 @@ function createLogger(id: string, label: string): Logger {
       format.timestamp({
         format: () => {
           const localDate = new Date().toLocaleString('en-US', {
-            timeZone: 'America/Sao_Paulo'
+            timeZone: 'America/Sao_Paulo',
+            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+            // @ts-ignore
+            timeStyle: 'long',
+            dateStyle: 'medium'
           })
           return dayjs(localDate).format()
         }
