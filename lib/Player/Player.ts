@@ -109,6 +109,7 @@ export class Player {
   }
 
   private disconnect(): void {
+    this.current = undefined
     // Stop handler first if it still playing
     this.clearCurrentHandler()
     // Set the current voice channel to undefined

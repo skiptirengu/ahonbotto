@@ -123,15 +123,19 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     request.once('error', (err: any) => stream.destroy(err))
 
     return new Promise((resolve) => {
-      let written = 0
-      // Wait the buffer to grow to a considerable size
-      request.on('data', function onData(chunk: Buffer) {
-        written += chunk.length
-        // Only resolve when we got enough data
-        if (written >= initialBufferSize) {
-          request.removeListener('data', onData)
-          resolve(stream)
-        }
+      // Wait for the response
+      request.once('response', (res: any) => {
+        const length = parseInt(res.headers['content-length'], 10)
+        // Wait the buffer to grow to a considerable size
+        let written = 0
+        request.on('data', function onData(chunk: Buffer) {
+          written += chunk.length
+          // Only resolve when we got enough data
+          if (written >= initialBufferSize || written >= length) {
+            request.removeListener('data', onData)
+            resolve(stream)
+          }
+        })
       })
     })
   }
