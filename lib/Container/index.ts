@@ -3,7 +3,7 @@ import { Client, Guild } from 'discord.js'
 import { container, DependencyContainer } from 'tsyringex'
 import { join } from 'path'
 import { Config } from '../Config'
-import { loggers, format, transports, LoggerOptions } from 'winston'
+import { loggers, format, transports, Logger } from 'winston'
 import './../Storage'
 import './../Player'
 import './../Commands'
@@ -64,7 +64,7 @@ export function scopeFactory(guild: Guild): DependencyContainer {
   return scope
 }
 
-function createLogger(id: string, label: string): LoggerOptions {
+function createLogger(id: string, label: string): Logger {
   return loggers.add(id, {
     format: format.combine(
       format.label({ label }),

@@ -4,6 +4,7 @@ import { Player } from '../../Player/Player'
 import { CommandDefinition, CommandType, Command } from '../Command'
 import dayjs from 'dayjs'
 import { embed } from '../../Util'
+import { Config } from '../../Config'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -31,7 +32,11 @@ export class Playing implements Command {
     /**
      * All command definitions bound to the container
      */
-    @inject(Player) private readonly player: Player
+    @inject(Player) private readonly player: Player,
+    /**
+     * Bot configuration object
+     */
+    @inject('Config') protected readonly config: Config
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,7 +54,8 @@ export class Playing implements Command {
     const streamingTime = this.player.getStreamingTime()
     const messageEmbed: MessageEmbedOptions = {
       title: current!.name,
-      fields: []
+      fields: [],
+      color: this.config.embedColor
     }
 
     if (current!.totalTime && current!.totalTime > 0) {
