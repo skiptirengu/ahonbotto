@@ -80,7 +80,7 @@ function createLogger(id: string, label: string): Logger {
           return dayjs(localDate).format()
         }
       }),
-      format.simple()
+      format.prettyPrint()
     ),
     transports: [
       new transports.File({

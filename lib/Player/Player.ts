@@ -93,10 +93,15 @@ export class Player {
 
     try {
       const handler = await this.factory.create(this.current)
+      const stream = await handler.stream()
+
       this.current = handler.getPlayable()
-      this.dispatcher = this.voiceConnection!.play(await handler.stream())
-        .once('unpipe', () => this.playNext())
+      this.dispatcher = this.voiceConnection!.play(stream)
         .once('error', (error) => this.logger.error('Stream dispatcher error', { error }))
+        .once('unpipe', () => {
+          this.playNext()
+          stream.destroy()
+        })
     } catch (error) {
       this.logger.error('Unable to start stream', { playable: this.current, error })
       this.playNext()
