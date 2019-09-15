@@ -1,6 +1,9 @@
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { scoped } from 'tsyringex'
+import { scoped, inject } from 'tsyringex'
 import { CommandDefinition, CommandType, Command } from '../Command'
+import { Config } from '../../Config'
+import { join } from 'path'
+import { embed } from '../../Util'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -24,13 +27,27 @@ export class Definition implements CommandDefinition {
 
 @scoped('Karen')
 export class Karen implements Command {
-  /**
-   * LUL
-   */
-  private readonly url: string = 'https://skiptirengu.com/karen.png'
+  public constructor(
+    /**
+     * Bot configuration object
+     */
+    @inject('Config') protected readonly config: Config
+  ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, params: string[]): Promise<Message | Message[]> {
-    return message.channel.send(this.url)
+  public async run(message: Message, params: string[]): Promise<Message | Message[]> {
+    const messageEmbed = embed({
+      title: 'muu',
+      image: {
+        url: 'attachment://karen.png'
+      },
+      files: [
+        {
+          attachment: join(this.config.resourcesFolder, 'images', 'karen.png')
+        }
+      ]
+    })
+
+    return message.channel.send(messageEmbed)
   }
 }

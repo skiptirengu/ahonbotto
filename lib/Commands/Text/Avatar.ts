@@ -67,7 +67,7 @@ export class Avatar implements Command {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, params: string[]): Promise<Message | Message[]> {
+  public async run(message: Message, params: string[]): Promise<Message | Message[]> {
     const userAvatar = this.getUserAvatar(message)
 
     const embed = new MessageEmbed({

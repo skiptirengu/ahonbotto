@@ -45,7 +45,7 @@ export class Help implements Command {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, params: string[]): Promise<Message | Message[]> {
+  public async run(message: Message, params: string[]): Promise<Message | Message[]> {
     const embed = new MessageEmbed({
       color: this.config.embedColor,
       fields: [

@@ -33,7 +33,7 @@ export class Stop implements Command {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, params: string[]): Promise<void> {
+  public async run(message: Message, params: string[]): Promise<void> {
     this.player.stop()
     return Promise.resolve()
   }

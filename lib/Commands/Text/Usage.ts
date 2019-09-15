@@ -41,7 +41,7 @@ export class Usage implements Command {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, params: string[]): Promise<Message | Message[]> {
+  public async run(message: Message, params: string[]): Promise<Message | Message[]> {
     const commandName = first(params)
 
     if (!commandName) {

@@ -40,7 +40,7 @@ export class Playing implements Command {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, params: string[]): Promise<Message> {
+  public async run(message: Message, params: string[]): Promise<Message> {
     const current = this.player.getCurrentPlayable()
 
     if (!current) {

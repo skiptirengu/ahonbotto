@@ -4,13 +4,14 @@ import { container, DependencyContainer } from 'tsyringex'
 import { join } from 'path'
 import { Config } from '../Config'
 import { loggers, format, transports, Logger } from 'winston'
+import dayjs from 'dayjs'
 import './../Storage'
 import './../Player'
 import './../Commands'
 import './../Jobs'
-import dayjs from 'dayjs'
 
 const runtimeFolder = join(appRoot.path, 'runtime')
+const resourcesFolder = 'resources'
 const logFolder = 'logs'
 const cacheFolder = 'http-cache'
 
@@ -26,7 +27,8 @@ export function bootstrap(client: Client): void {
       runtimeFolder: runtimeFolder,
       embedColor: 0x1882ac,
       cleanupInverval: 15,
-      httpCacheFolder: join(runtimeFolder, cacheFolder)
+      httpCacheFolder: join(runtimeFolder, cacheFolder),
+      resourcesFolder: join(appRoot.path, resourcesFolder)
     }
   })
   // shared logger

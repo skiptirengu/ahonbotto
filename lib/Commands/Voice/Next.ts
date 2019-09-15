@@ -33,7 +33,7 @@ export class Next implements Command {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, params: string[]): Promise<void> {
+  public async run(message: Message, params: string[]): Promise<void> {
     this.player.next()
     return Promise.resolve()
   }

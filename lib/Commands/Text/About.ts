@@ -33,7 +33,7 @@ export class About implements Command {
     @inject('Config') protected readonly config: Config
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public run(message: Message, params: string[]): Promise<Message | Message[]> {
+  public async run(message: Message, params: string[]): Promise<Message | Message[]> {
     const embed = new MessageEmbed({
       title: json.description,
       url: json.repository.url,

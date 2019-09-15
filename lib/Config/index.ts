@@ -27,4 +27,8 @@ export interface Config {
    * Folder used to cache songs
    */
   httpCacheFolder: string
+  /**
+   * Folder containing bot resources
+   */
+  resourcesFolder: string
 }
