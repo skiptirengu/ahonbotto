@@ -11,4 +11,8 @@ export interface StreamingHandler {
    * Gets a readable stream from the context
    */
   stream(): Promise<Readable>
+  /**
+   * Gets the playable
+   */
+  getPlayable(): Playable | undefined
 }

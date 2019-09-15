@@ -60,6 +60,10 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     return this
   }
 
+  public getPlayable(): Playable | undefined {
+    return this.playable
+  }
+
   public async stream(): Promise<Readable> {
     if (!this.playable) throw new Error('no context provided')
 

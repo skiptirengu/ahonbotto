@@ -93,6 +93,7 @@ export class Player {
 
     try {
       const handler = await this.factory.create(this.current)
+      this.current = handler.getPlayable()
       this.dispatcher = this.voiceConnection!.play(await handler.stream())
         .once('unpipe', () => this.playNext())
         .once('error', (error) => this.logger.error('Stream dispatcher error', { error }))
