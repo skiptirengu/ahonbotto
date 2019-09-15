@@ -1,8 +1,9 @@
-import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { scoped, inject } from 'tsyringex'
 import { Player } from '../../Player/Player'
-import dayjs = require('dayjs')
+import { CommandDefinition, CommandType, Command } from '../Command'
+import dayjs from 'dayjs'
+import { embed } from '../../Util'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -37,28 +38,37 @@ export class Playing implements Command {
   public run(message: Message, params: string[]): Promise<Message> {
     const current = this.player.getCurrentPlayable()
 
-    if (!current) message.channel.send("There's nothing playing at the moment".codeWrap())
+    if (!current) {
+      return message.channel.send(
+        embed({
+          description: "There's nothing playing at the moment"
+        })
+      )
+    }
 
-    const time = this.player.getStreamingTime()
-    const embed: MessageEmbedOptions = {
+    const streamingTime = this.player.getStreamingTime()
+    const messageEmbed: MessageEmbedOptions = {
       title: current!.name,
       fields: []
     }
 
     if (current!.totalTime && current!.totalTime > 0) {
-      embed.fields!.push({ name: 'Length', value: this.getTimeInfo(current!.totalTime) })
+      messageEmbed.fields!.push({ name: 'Length', value: this.getTimeInfo(current!.totalTime) })
     }
-    if (!current!.isLocal && time > 0) {
-      embed.fields!.push({ name: 'Playing for', value: this.getTimeInfo(time / 1000) })
+    if (!current!.isLocal && streamingTime > 0) {
+      messageEmbed.fields!.push({
+        name: 'Playing for',
+        value: this.getTimeInfo(streamingTime / 1000)
+      })
     }
     if (!current!.isLocal) {
-      embed.url = current!.uri
+      messageEmbed.url = current!.uri
     }
     if (current!.thumbnail) {
-      embed.thumbnail = { url: current!.thumbnail }
+      messageEmbed.thumbnail = { url: current!.thumbnail }
     }
 
-    return message.channel.send({ embed })
+    return message.channel.send({ embed: messageEmbed })
   }
 
   private getTimeInfo(secs: number): string {

@@ -1,8 +1,8 @@
-import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
 import { injectAll, inject, scoped } from 'tsyringex'
 import { Config } from '../../Config'
 import { withCommandPrefix } from '../../Util'
+import { CommandDefinition, CommandType, Command } from '../Command'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -47,6 +47,7 @@ export class Help implements Command {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public run(message: Message, params: string[]): Promise<Message | Message[]> {
     const embed = new MessageEmbed({
+      color: this.config.embedColor,
       fields: [
         {
           name: 'Voice commands:',

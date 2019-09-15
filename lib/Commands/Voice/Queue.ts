@@ -1,8 +1,9 @@
-import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { scoped, inject } from 'tsyringex'
 import { Player } from '../../Player/Player'
 import { UrlParser } from '../../Player/UrlParser'
+import { CommandDefinition, CommandType, Command } from '../Command'
+import { embed } from '../../Util'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -47,19 +48,29 @@ export class Queue implements Command {
   public async run(message: Message, params: string[]): Promise<Message> {
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
       return message.channel.send(
-        'You must be connected to a voice channel in order to queue a song'.codeWrap()
+        embed({
+          description: 'You must be connected to a voice channel in order to queue a song'
+        })
       )
     }
 
     const url = params.shift()
     if (!url) {
-      return message.channel.send('You should provide a valid URL'.codeWrap())
+      return message.channel.send(
+        embed({
+          description: 'You should provide a valid URL'
+        })
+      )
     }
 
     const playable = await this.parser.parse(url)
     const times = Number(params.shift()) || 1
 
     this.player.push(message.member.voice.channel, playable, times)
-    return message.channel.send(`${playable.name} queued ${times} time(s)`.codeWrap())
+    return message.channel.send(
+      embed({
+        description: `${playable.name} queued ${times} time(s)`
+      })
+    )
   }
 }

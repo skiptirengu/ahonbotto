@@ -15,4 +15,8 @@ export interface Config {
    * Runtime folder
    */
   runtimeFolder: string
+  /**
+   * Color for embed messages
+   */
+  embedColor: number
 }

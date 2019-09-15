@@ -21,7 +21,8 @@ export function bootstrap(client: Client): void {
       discordToken: process.env['discordToken'] as string,
       youtubeToken: process.env['youtubeToken'] as string,
       commandPrefixes: ['$'],
-      runtimeFolder: runtimeFolder
+      runtimeFolder: runtimeFolder,
+      embedColor: 0x1882ac
     }
   })
   // shared logger

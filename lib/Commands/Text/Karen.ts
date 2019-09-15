@@ -1,6 +1,6 @@
-import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { scoped } from 'tsyringex'
+import { CommandDefinition, CommandType, Command } from '../Command'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {

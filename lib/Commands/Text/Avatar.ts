@@ -1,7 +1,8 @@
-import { CommandDefinition, CommandType, Command } from '..'
 import { Message, MessageEmbed, ImageSize, User, MessageEmbedOptions } from 'discord.js'
 import { withCommandPrefix } from '../../Util'
-import { scoped } from 'tsyringex'
+import { scoped, inject } from 'tsyringex'
+import { CommandDefinition, CommandType, Command } from '../Command'
+import { Config } from '../../Config'
 
 interface UserAvatar {
   user: User
@@ -44,6 +45,13 @@ export class Avatar implements Command {
    */
   private readonly sizes: ImageSize[] = [256, 1024, 2048]
 
+  public constructor(
+    /**
+     * Bot configuration object
+     */
+    @inject('Config') protected readonly config: Config
+  ) {}
+
   /**
    * @param message
    */
@@ -63,12 +71,13 @@ export class Avatar implements Command {
     const userAvatar = this.getUserAvatar(message)
 
     const embed = new MessageEmbed({
+      color: this.config.embedColor,
       description: userAvatar.urls.join('\n'),
       image: {
         url: userAvatar.user.displayAvatarURL({ size: 1024 })
       }
     })
 
-    return message.channel.send(embed)
+    return message.channel.send({ embed })
   }
 }

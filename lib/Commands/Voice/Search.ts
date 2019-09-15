@@ -1,10 +1,11 @@
-import { Command, CommandType, CommandDefinition } from '..'
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { inject, scoped } from 'tsyringex'
 import { Config } from '../../Config'
 import youtubeSearch from 'youtube-search'
 import { SearchRepository } from '../../Player/SearchRepository'
 import { Playable } from '../../Player/Playable'
+import { CommandType, CommandDefinition, Command } from '../Command'
+import { embed } from '../../Util'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -54,7 +55,11 @@ export class Search implements Command {
     })
 
     if (!response.results.length) {
-      return message.channel.send("Couldn't find what you're looking for :/".codeWrap())
+      return message.channel.send(
+        embed({
+          description: "Couldn't find what you're looking for :/"
+        })
+      )
     }
 
     const storageKey = this.buildKey(message)
@@ -64,12 +69,15 @@ export class Search implements Command {
 
     this.repository.push(storageKey, results)
 
-    const responseMessage = response.results
-      .map((value, index) => `${index + 1}. ${value.title}`)
-      .join('\n')
-      .codeWrap()
+    const description = response.results
+      .map((value, index) => `**${index + 1}** →  ${value.title}`)
+      .join('\n\n')
 
-    return message.channel.send(responseMessage)
+    return message.channel.send(
+      embed({
+        description
+      })
+    )
   }
 
   protected buildKey(message: Message): string {

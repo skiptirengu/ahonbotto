@@ -1,9 +1,10 @@
 import { Message as MessagePayload } from 'discord.js'
 import { toString, includes } from 'lodash'
 import { scopeFactory } from '../Container'
-import { Command, normalizeCommandName } from '../Commands'
 import { Config } from '../Config'
 import { Logger } from 'winston'
+import { Command } from '../Commands/Command'
+import { normalizeCommandName } from '../Util'
 
 export function message(message: MessagePayload): void {
   const usrId = message.author && message.author.id
