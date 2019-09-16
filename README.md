@@ -1,11 +1,11 @@
-# Arrombot
+# アホンボット (Ahonbotto)
 
 Yet another discord bot.  
 This bot is generic enough for you to use on any discord server.
 
 ### RUNNING THE BOT
 
-1. Clone this repo `git clone https://github.com/skiptirengu/arrombot`
+1. Clone this repo `git clone https://github.com/skiptirengu/ahonbotto`
 2. Install the packages `yarn install`
 3. Create a `.env` file in the root directory and place your tokens there
 ```env
