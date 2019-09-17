@@ -2,7 +2,7 @@ import { createHash } from 'crypto'
 import { inject, injectable } from 'tsyringex'
 import { pathExists, ensureFile } from 'fs-extra'
 import { Readable, Writable } from 'stream'
-import { createWriteStream, createReadStream } from 'fs'
+import { createWriteStream, createReadStream } from 'fs-extra'
 import { join } from 'path'
 import { StreamingHandler } from './StreamingHandler'
 import { Config } from '../../Config'
@@ -54,7 +54,8 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
 
   public async setContext(playable: Playable): Promise<StreamingHandler> {
     if (!this.playable) {
-      this.playable = playable.fileUri ? playable : await this.parser.parse(playable.uri)
+      this.playable = playable.fileUri ? playable : await this.parser.parse(playable.uri.href)
+      this.playable.streamType = 'unknown'
       this.setFilenameAndPath()
     }
     return this

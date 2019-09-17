@@ -39,8 +39,7 @@ export class About implements Command {
       url: json.repository.url,
       color: this.config.embedColor,
       thumbnail: {
-        url:
-          'https://cdn.discordapp.com/avatars/320239308273352705/9d5adbe6435f196bd0b92fdffb6e8136.webp'
+        url: message.client.user!.avatarURL() || message.client.user!.defaultAvatarURL
       },
       author: {
         name: 'Thomas Turbando (Skiptir Engu#6682)',

@@ -6,6 +6,7 @@ import { SearchRepository } from '../../Player/SearchRepository'
 import { Playable } from '../../Player/Playable'
 import { CommandType, CommandDefinition, Command } from '../Command'
 import { embed } from '../../Util'
+import { URL } from 'url'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -64,7 +65,7 @@ export class Search implements Command {
 
     const storageKey = this.buildKey(message)
     const results = response.results.map(
-      (value): Playable => ({ name: value.title, uri: value.link, isLocal: false })
+      (value): Playable => ({ name: value.title, uri: new URL(value.link), isLocal: false })
     )
 
     this.repository.push(storageKey, results)

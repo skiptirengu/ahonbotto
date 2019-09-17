@@ -1,5 +1,5 @@
 import { inject, scoped } from 'tsyringex'
-import { VoiceChannel, VoiceConnection, StreamDispatcher, Guild } from 'discord.js'
+import { VoiceChannel, VoiceConnection, StreamDispatcher, Guild, StreamOptions } from 'discord.js'
 import { PlayerQueue } from './PlayerQueue'
 import { Playable } from './Playable'
 import { UrlParser } from './UrlParser'
@@ -96,7 +96,12 @@ export class Player {
       const stream = await handler.stream()
 
       this.current = handler.getPlayable()
-      this.dispatcher = this.voiceConnection!.play(stream)
+      const streamOptions: StreamOptions = {
+        volume: this.current!.volume || false,
+        type: this.current!.streamType || 'unknown'
+      }
+
+      this.dispatcher = this.voiceConnection!.play(stream, streamOptions)
         .once('error', (error) => this.logger.error('Stream dispatcher error', { error }))
         .once('unpipe', () => {
           this.playNext()

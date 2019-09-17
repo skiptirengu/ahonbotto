@@ -1,3 +1,6 @@
+import { StreamType } from 'discord.js'
+import { URL } from 'url'
+
 export interface Playable {
   /**
    * Result name
@@ -6,7 +9,7 @@ export interface Playable {
   /**
    * URL of the search result
    */
-  uri: string
+  uri: URL
   /**
    * Whether this is a local stream
    */
@@ -14,7 +17,7 @@ export interface Playable {
   /**
    * Parsed URL with the file
    */
-  fileUri?: string
+  fileUri?: URL
   /**
    * Total time in seconds
    */
@@ -23,4 +26,12 @@ export interface Playable {
    * Video thumbnail
    */
   thumbnail?: string
+  /**
+   * Audio volume
+   */
+  volume?: number
+  /**
+   * Stream type (opus, unknown, etc)
+   */
+  streamType?: StreamType
 }

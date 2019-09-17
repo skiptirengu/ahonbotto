@@ -68,7 +68,7 @@ export class Playing implements Command {
       })
     }
     if (!current!.isLocal) {
-      messageEmbed.url = current!.uri
+      messageEmbed.url = current!.uri.href
     }
     if (current!.thumbnail) {
       messageEmbed.thumbnail = { url: current!.thumbnail }

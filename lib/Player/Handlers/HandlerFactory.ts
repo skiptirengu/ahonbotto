@@ -1,6 +1,6 @@
 import { StreamingHandler } from './StreamingHandler'
-import { parse } from 'uri-js'
 import { BufferedHttpStreamingHandler } from './BufferedHttpStreamingHandler'
+import { LocalFileStreamingHandler } from './LocalFileStreamingHandler'
 import { DependencyContainer, scoped, inject } from 'tsyringex'
 import { Playable } from '../Playable'
 
@@ -17,12 +17,14 @@ export class HandlerFactory {
    * Returns an appropriate StreamingHandler for the given URI
    */
   public create(playable: Playable): Promise<StreamingHandler> {
-    const uri = parse(playable.uri)
-
-    if (!uri.scheme || !['http', 'https'].includes(uri.scheme)) {
-      throw new Error(`unknown scheme ${uri.scheme}`)
+    switch (playable.uri.protocol.replace(':', '')) {
+      case 'http':
+      case 'https':
+        return this.container.resolve(BufferedHttpStreamingHandler).setContext(playable)
+      case 'file':
+        return this.container.resolve(LocalFileStreamingHandler).setContext(playable)
+      default:
+        throw new Error(`unknown scheme ${playable.uri.protocol}`)
     }
-
-    return this.container.resolve(BufferedHttpStreamingHandler).setContext(playable)
   }
 }

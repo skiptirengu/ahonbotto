@@ -4,6 +4,7 @@ import { Message, MessageEmbedOptions } from 'discord.js'
 import { Player } from '../../Player/Player'
 import { CommandDefinition, CommandType, Command } from '../Command'
 import { embed } from '../../Util'
+import { toNumber } from 'lodash'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -64,7 +65,7 @@ export class Select implements Command {
       )
     }
 
-    const index = Number(params.shift())
+    const index = toNumber(params.shift())
     const value = this.repository.get(storageKey, index)
 
     if (!index || !value) {
@@ -75,7 +76,7 @@ export class Select implements Command {
       )
     }
 
-    const times = Number(params.shift()) || 1
+    const times = toNumber(params.shift()) || 1
     this.player.push(message.member!.voice.channel!, value, times)
 
     return message.channel.send(
