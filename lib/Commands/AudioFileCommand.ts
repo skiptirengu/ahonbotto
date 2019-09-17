@@ -57,6 +57,8 @@ export abstract class AudioFileCommand implements Command {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<void> {
+    await message.delete()
+
     if (!message.member || !message.member.voice || !message.member.voice.channel) return
 
     const path = join(this.config.resourcesFolder, audioFolder, this.filename)
@@ -74,7 +76,5 @@ export abstract class AudioFileCommand implements Command {
     const playable: Playable = { isLocal: true, name: this.name, uri, volume }
 
     this.player.push(message.member.voice.channel, playable, 1)
-
-    await message.delete()
   }
 }
