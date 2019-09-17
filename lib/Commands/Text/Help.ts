@@ -41,6 +41,7 @@ export class Help implements Command {
     return this.commands
       .filter((x): boolean => x.type == type)
       .map((x): string => withCommandPrefix(x.command.toLowerCase()))
+      .sort()
       .join(' ')
   }
 
