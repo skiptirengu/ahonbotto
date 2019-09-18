@@ -16,7 +16,7 @@ export class HandlerFactory {
   /**
    * Returns an appropriate StreamingHandler for the given URI
    */
-  public create(playable: Playable): Promise<StreamingHandler> {
+  public async create(playable: Playable): Promise<StreamingHandler> {
     switch (playable.uri.protocol.replace(':', '')) {
       case 'http':
       case 'https':

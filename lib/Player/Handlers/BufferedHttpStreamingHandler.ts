@@ -108,7 +108,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     this.media.markForDeletion(this.filename!)
   }
 
-  private getWritableStream(): Promise<Writable> {
+  private async getWritableStream(): Promise<Writable> {
     // Download URL
     const request = miniget(this.playable!.fileUri!.href, minigetOptions)
     // Set status on database once complete
@@ -141,7 +141,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     })
   }
 
-  private getReadableStream(): Promise<Readable> {
+  private async getReadableStream(): Promise<Readable> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     const stream = createReadStream(this.filepath!, { emitClose: true })

@@ -47,7 +47,7 @@ export class UrlParser {
     }
   }
 
-  private execute(url: string): Promise<Info> {
+  private async execute(url: string): Promise<Info> {
     return new Promise((resolve, reject) => {
       youtubedl.getInfo(url, youtubedlOptions, (err, out) => {
         if (err) {

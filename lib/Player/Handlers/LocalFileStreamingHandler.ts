@@ -11,7 +11,7 @@ export class LocalFileStreamingHandler implements StreamingHandler {
    */
   private playable?: Playable
 
-  public setContext(playable: Playable): Promise<StreamingHandler> {
+  public async setContext(playable: Playable): Promise<StreamingHandler> {
     this.playable = playable
     this.playable.fileUri = this.playable.uri
     this.playable.isLocal = true
