@@ -8,7 +8,7 @@ module.exports = {
       autorestart: true,
       watch: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      ignore_watch: ['node_modules', 'dist']
+      ignore_watch: ['node_modules', 'dist', 'runtime']
     }
   ]
 }
