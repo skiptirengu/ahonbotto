@@ -76,7 +76,7 @@ function createLogger(id: string, label: string): Logger {
           format.printf((info): string => {
             const { timestamp, level, message, label, ...args } = info
             return `${timestamp} [${level}][${label}]: ${message} ${
-              Object.keys(args).length ? JSON.stringify(args, null, 2) : null
+              Object.keys(args).length ? JSON.stringify(args, null, 2) : ''
             }`
           })
         )
