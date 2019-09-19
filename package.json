@@ -10,7 +10,8 @@
     "build": "tsc",
     "lint": "eslint lib/**/*.ts --fix",
     "start": "yarn tsc && node dist/index.js",
-    "yt": "node ./node_modules/youtube-dl/scripts/download.js"
+    "yt": "node ./node_modules/youtube-dl/scripts/download.js",
+    "runtime:cleanup": "rm -rf ./runtime/db && rm -rf ./runtime/http-cache && rm -rf ./runtime/logs"
   },
   "author": "",
   "license": "WTFPL",

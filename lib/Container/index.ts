@@ -4,7 +4,6 @@ import { container, DependencyContainer } from 'tsyringex'
 import { join } from 'path'
 import { Config } from '../Config'
 import { loggers, format, transports, Logger } from 'winston'
-import dayjs from 'dayjs'
 import './../Storage'
 import './../Player'
 import './../Commands'
@@ -69,27 +68,22 @@ export function scopeFactory(guild: Guild): DependencyContainer {
 
 function createLogger(id: string, label: string): Logger {
   return loggers.add(id, {
-    format: format.combine(
-      format.label({ label }),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      format.timestamp({
-        format: () => {
-          const localDate = new Date().toLocaleString('en-US', {
-            timeZone: 'America/Sao_Paulo',
-            // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-            // @ts-ignore
-            timeStyle: 'long',
-            dateStyle: 'medium'
-          })
-          return dayjs(localDate).format()
-        }
-      }),
-      format.prettyPrint()
-    ),
+    format: format.combine(format.label({ label }), format.timestamp()),
     transports: [
+      new transports.Console({
+        format: format.combine(
+          format.colorize({ all: true }),
+          format.printf((info): string => {
+            const { timestamp, level, message, label, ...args } = info
+            return `${timestamp} [${level}][${label}]: ${message} ${
+              Object.keys(args).length ? JSON.stringify(args, null, 2) : null
+            }`
+          })
+        )
+      }),
       new transports.File({
-        filename: join(runtimeFolder, logFolder, 'combined.log')
+        filename: join(runtimeFolder, logFolder, 'combined.log'),
+        format: format.prettyPrint()
       })
     ]
   })
