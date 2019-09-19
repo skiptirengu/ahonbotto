@@ -63,9 +63,9 @@ export class Wiki implements Command {
       await message.reply("Here's your wikipedia link", messageEmbed)
     } catch (err) {
       await message.reply(
+        'Sorry',
         embed({
-          description:
-            "Sorry, I'm having a hard time searching for what you're looking for ( ´•︵•` )"
+          description: "I'm having a hard time searching for what you're looking for ( ´•︵•` )"
         })
       )
       throw err
