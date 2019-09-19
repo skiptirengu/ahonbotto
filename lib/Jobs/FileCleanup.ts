@@ -5,7 +5,7 @@ import { MediaRepository } from '../Storage/MediaRepository'
 import { Job } from './Job'
 import { Config } from '../Config'
 import { join } from 'path'
-import { xor, concat } from 'lodash'
+import { xor } from 'lodash'
 import { Logger } from 'winston'
 
 @injectable()
@@ -49,13 +49,15 @@ export class FileCleanup implements Job {
       return remove(filepath)
     })
 
+    await Promise.all(marked)
+
     const orphans = xor(this.media.all(), await readdir(this.config.httpCacheFolder)).map(
       async (filename) => {
         return remove(join(this.config.httpCacheFolder, filename))
       }
     )
 
-    await Promise.all(concat(marked, orphans))
+    await Promise.all(orphans)
 
     if (marked.length > 0 || orphans.length > 0) {
       this.logger.info(

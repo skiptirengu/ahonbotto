@@ -1,5 +1,8 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json'
+  },
   plugins: ['@typescript-eslint'],
   extends: [
     'plugin:@typescript-eslint/recommended',
@@ -32,6 +35,9 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': [
       'warn',
       { allowExpressions: true }
+    ],
+    '@typescript-eslint/promise-function-async': [
+      'error'
     ],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',

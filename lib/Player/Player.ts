@@ -79,7 +79,7 @@ export class Player {
 
     this.voiceChannel!.join()
       .then((connection) => (this.voiceConnection = connection))
-      .then(() => this.playNext())
+      .then(async () => this.playNext())
       .catch((error) => this.logger.error('Error starting voice connection', { error }))
   }
 
