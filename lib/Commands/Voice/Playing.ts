@@ -64,7 +64,7 @@ export class Playing implements Command {
     if (!current!.isLocal && streamingTime > 0) {
       messageEmbed.fields!.push({
         name: 'Playing for',
-        value: this.getTimeInfo(streamingTime / 1000)
+        value: this.getTimeInfo(streamingTime / 1000) || 'Just started'
       })
     }
     if (!current!.isLocal) {
