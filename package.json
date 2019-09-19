@@ -1,10 +1,10 @@
 {
-  "name": "arrombot",
-  "version": "0.0.1",
+  "name": "ahonbotto",
+  "version": "1.0.0",
   "description": "Shitty discord bot",
   "main": "index.ts",
   "repository": {
-    "url": "https://github.com/skiptirengu/arrombot"
+    "url": "https://github.com/skiptirengu/ahonbotto"
   },
   "scripts": {
     "build": "tsc",
@@ -13,7 +13,7 @@
     "yt": "node ./node_modules/youtube-dl/scripts/download.js",
     "runtime:cleanup": "rm -rf ./runtime/db && rm -rf ./runtime/http-cache && rm -rf ./runtime/logs"
   },
-  "author": "",
+  "author": "Me",
   "license": "WTFPL",
   "dependencies": {
     "app-root-path": "^2.2.1",
@@ -30,6 +30,7 @@
     "reflect-metadata": "^0.1.13",
     "tsyringex": "^1.1.0",
     "typescript": "^3.6.3",
+    "wikijs": "^6.0.0",
     "winston": "^3.2.1",
     "youtube-dl": "^2.0.1",
     "youtube-search": "^1.1.4",

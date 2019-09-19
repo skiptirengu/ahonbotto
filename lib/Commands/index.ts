@@ -3,6 +3,8 @@ import './Text/Avatar'
 import './Text/Help'
 import './Text/Karen'
 import './Text/Usage'
+import './Text/Wiki'
+
 import './Voice/Next'
 import './Voice/Playing'
 import './Voice/Queue'
