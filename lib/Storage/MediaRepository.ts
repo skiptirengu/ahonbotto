@@ -3,6 +3,10 @@ import { Connection } from './Connection'
 import { Statement } from 'better-sqlite3'
 import dayjs from 'dayjs'
 
+interface MediaRow {
+  filename: string
+}
+
 @singleton()
 export class MediaRepository {
   /**
@@ -29,6 +33,10 @@ export class MediaRepository {
    * Delete by key
    */
   private readonly stmtDelete: Statement<any[]>
+  /**
+   * Select all
+   */
+  private readonly stmtSelectAll: Statement<any[]>
 
   public constructor(
     /**
@@ -54,11 +62,15 @@ export class MediaRepository {
     this.stmtDelete = this.connection.database.prepare(
       'DELETE FROM media WHERE filename = @filename'
     )
+    this.stmtSelectAll = this.connection.database.prepare('SELECT filename FROM media')
+  }
+
+  public all(): string[] {
+    return this.stmtSelectAll.all().map((x: MediaRow) => x.filename)
   }
 
   public marked(time: number): string[] {
-    const data = this.stmtSelectTime.all({ time })
-    return data.map((x) => x.filename)
+    return this.stmtSelectTime.all({ time }).map((x: MediaRow) => x.filename)
   }
 
   public complete(file: string): void {

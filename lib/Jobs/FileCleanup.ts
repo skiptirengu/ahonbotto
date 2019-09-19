@@ -1,10 +1,12 @@
 import dayjs from 'dayjs'
-import { remove } from 'fs-extra'
+import { remove, readdir } from 'fs-extra'
 import { inject, registry, injectable } from 'tsyringex'
 import { MediaRepository } from '../Storage/MediaRepository'
 import { Job } from './Job'
 import { Config } from '../Config'
 import { join } from 'path'
+import { xor, concat } from 'lodash'
+import { Logger } from 'winston'
 
 @injectable()
 @registry([
@@ -27,7 +29,11 @@ export class FileCleanup implements Job {
     /**
      * Bot configuration object
      */
-    @inject('Config') protected readonly config: Config
+    @inject('Config') protected readonly config: Config,
+    /**
+     * Logger
+     */
+    @inject('Logger') protected readonly logger: Logger
   ) {
     this.interval = this.config.cleanupInverval
   }
@@ -37,12 +43,24 @@ export class FileCleanup implements Job {
       .subtract(this.config.cleanupInverval, 'minute')
       .unix()
 
-    const promises = this.media.marked(time).map(async (filename) => {
+    const marked = this.media.marked(time).map(async (filename) => {
       const filepath = join(this.config.httpCacheFolder, filename)
-      await remove(filepath)
       this.media.remove(filename)
+      return remove(filepath)
     })
 
-    await Promise.all(promises)
+    const orphans = xor(this.media.all(), await readdir(this.config.httpCacheFolder)).map(
+      async (filename) => {
+        return remove(join(this.config.httpCacheFolder, filename))
+      }
+    )
+
+    await Promise.all(concat(marked, orphans))
+
+    if (marked.length > 0 || orphans.length > 0) {
+      this.logger.info(
+        `Deleted ${marked.length} marked file(s) and ${orphans.length} orphan file(s)`
+      )
+    }
   }
 }
