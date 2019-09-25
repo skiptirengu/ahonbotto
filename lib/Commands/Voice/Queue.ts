@@ -79,14 +79,13 @@ export class Queue implements Command {
       parsed = await this.parser.parse(url)
     } catch (err) {
       if (err instanceof MalformedUrl || err instanceof UnsupportedPlaylist) {
-        return message.channel.send(
+        await message.delete()
+        await message.channel.send(
           embed({
             description: err.message
           })
         )
       }
-    } finally {
-      await message.delete()
     }
 
     if (isPlaylist(parsed)) {
@@ -124,5 +123,7 @@ export class Queue implements Command {
         })
       )
     }
+
+    return message.delete()
   }
 }
