@@ -32,8 +32,9 @@
     "typescript": "^3.6.3",
     "wikijs": "^6.0.0",
     "winston": "^3.2.1",
-    "youtube-dl": "^2.0.1",
+    "youtube-dl": "skiptirengu/node-youtube-dl",
     "youtube-search": "^1.1.4",
+    "ytdl-core": "^0.29.7",
     "zucc": "^0.1.2"
   },
   "devDependencies": {

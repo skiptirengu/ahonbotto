@@ -2,7 +2,7 @@ import { inject, scoped } from 'tsyringex'
 import { VoiceChannel, VoiceConnection, StreamDispatcher, Guild, StreamOptions } from 'discord.js'
 import { PlayerQueue } from './PlayerQueue'
 import { Playable } from './Playable'
-import { UrlParser } from './UrlParser'
+import { AutoParser } from './Parser/AutoParser'
 import { HandlerFactory } from './Handlers/HandlerFactory'
 import { Logger } from 'winston'
 
@@ -33,7 +33,7 @@ export class Player {
     /**
      * URL parser
      */
-    @inject(UrlParser) protected readonly parser: UrlParser,
+    @inject(AutoParser) protected readonly parser: AutoParser,
     /**
      * Current guild
      */
@@ -56,6 +56,11 @@ export class Player {
 
   public getCurrentPlayable(): Playable | undefined {
     return this.current
+  }
+
+  public pushAll(channel: VoiceChannel, playables: Playable[]): void {
+    this.voiceChannel = this.voiceChannel || channel
+    playables.reverse().forEach((playable) => this.queue.push(playable))
   }
 
   public push(channel: VoiceChannel, playable: Playable, times: number): void {

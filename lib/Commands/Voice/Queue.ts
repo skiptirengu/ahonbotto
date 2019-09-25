@@ -1,9 +1,14 @@
+import { shuffle, lowerCase } from 'lodash'
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { scoped, inject } from 'tsyringex'
 import { Player } from '../../Player/Player'
-import { UrlParser } from '../../Player/UrlParser'
+import { AutoParser } from '../../Player/Parser/AutoParser'
 import { CommandDefinition, CommandType, Command } from '../Command'
 import { embed } from '../../Util'
+import { isPlaylist, Playlist } from '../../Player/Playlist'
+import { Playable } from '../../Player/Playable'
+import { MalformedUrl } from '../../Player/Exceptions/MalformedUrl'
+import { UnsupportedPlaylist } from '../../Player/Exceptions/UnsupportedPlaylist'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -22,10 +27,15 @@ export class Definition implements CommandDefinition {
     return {
       title: '<url> [<repeat-x-times>]',
       description:
-        'Adds a music to the play queue, being "**url**" an youtube video id or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites.',
+        'Adds a music to the play queue, being "**url**" an youtube video id, playlist url or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites. To shuffle a playlist pass the argument "**shuffle**" after the playlist link.',
       fields: [
         { name: 'Example:', value: '`!queue http://my.video.com/xD.mp4`', inline: true },
-        { name: 'Or:', value: '`!queue dQw4w9WgXcQ 4`', inline: true }
+        {
+          name: 'Suffle playlist:',
+          value:
+            '`!queue https://www.youtube.com/playlist?list=PLhQ3EYAhJISH9kToXYGNNQOLrCo6o2eao shuffle`',
+          inline: true
+        }
       ]
     }
   }
@@ -41,7 +51,7 @@ export class Queue implements Command {
     /**
      * Youtubedl URL parser
      */
-    @inject(UrlParser) private readonly parser: UrlParser
+    @inject(AutoParser) private readonly parser: AutoParser
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -63,16 +73,56 @@ export class Queue implements Command {
       )
     }
 
-    const playable = await this.parser.parse(url)
-    const times = Number(params.shift()) || 1
+    let parsed: Playable | Playlist | null = null
 
-    this.player.push(message.member.voice.channel, playable, times)
-    await message.channel.send(
-      embed({
-        description: `${playable.name} queued ${times} time(s)`
-      })
-    )
+    try {
+      parsed = await this.parser.parse(url)
+    } catch (err) {
+      if (err instanceof MalformedUrl || err instanceof UnsupportedPlaylist) {
+        return message.channel.send(
+          embed({
+            description: err.message
+          })
+        )
+      }
+    } finally {
+      await message.delete()
+    }
 
-    await message.delete()
+    if (isPlaylist(parsed)) {
+      let playables = parsed.playables
+
+      // Shuffle the playlist
+      const shouldSuffle = lowerCase(params.shift()) === 'shuffle'
+      if (shouldSuffle) {
+        playables = shuffle(playables)
+      }
+
+      // Add all playlist itens to the queue
+      this.player.pushAll(message.member.voice.channel, playables)
+      await message.channel.send(
+        embed({
+          description: `Playlist ${parsed.title} queued (${parsed.playables.length} songs)`,
+          fields: [
+            {
+              name: 'Shuffle mode',
+              value: shouldSuffle ? 'Yes' : 'No',
+              inline: true
+            }
+          ]
+        })
+      )
+    } else {
+      // Add the requested item to the queue x times
+      const playable = parsed as Playable
+      const times = Number(params.shift()) || 1
+
+      this.player.push(message.member.voice.channel, playable, times)
+      await message.channel.send(
+        embed({
+          description: `${playable.name} queued ${times} time(s)`
+        })
+      )
+    }
   }
 }

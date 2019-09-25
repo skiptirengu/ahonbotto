@@ -6,7 +6,7 @@ import { createWriteStream, createReadStream } from 'fs-extra'
 import { join } from 'path'
 import { StreamingHandler } from './StreamingHandler'
 import { Config } from '../../Config'
-import { UrlParser } from '../UrlParser'
+import { AutoParser } from '../Parser/AutoParser'
 import { Playable } from '../Playable'
 import { MediaRepository } from '../../Storage/MediaRepository'
 import miniget, { MinigetOptions } from 'miniget'
@@ -41,7 +41,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     /**
      * URL parser
      */
-    @inject(UrlParser) protected readonly parser: UrlParser,
+    @inject(AutoParser) protected readonly parser: AutoParser,
     /**
      * SQLite Repository for media
      */
@@ -53,11 +53,14 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   ) {}
 
   public async setContext(playable: Playable): Promise<StreamingHandler> {
-    if (!this.playable) {
-      this.playable = playable.fileUri ? playable : await this.parser.parse(playable.uri.href)
-      this.playable.streamType = 'unknown'
-      this.setFilenameAndPath()
+    if (this.playable) return this
+    if (!playable.fileUri) {
+      this.playable = (await this.parser.parse(playable.uri.href, true)) as Playable
+    } else {
+      this.playable = playable
     }
+    this.playable.streamType = 'unknown'
+    this.setFilenameAndPath()
     return this
   }
 
