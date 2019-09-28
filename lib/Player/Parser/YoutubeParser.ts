@@ -7,13 +7,21 @@ import { UnsupportedPlaylist } from '../Exceptions/UnsupportedPlaylist'
 import { Playlist } from '../Playlist'
 import { linkFromId, getInfo } from '../../Util'
 import { toNumber } from 'lodash'
-import { scoped } from 'tsyringex'
+import { scoped, inject } from 'tsyringex'
+import { Logger } from 'winston'
 
 const mixPlaylistRe = /^([A-Za-z0-9_-]){13}$/
 const playlistArgs = ['--dump-single-json', '--flat-playlist']
 
 @scoped()
 export class YoutubeParser implements Parser {
+  public constructor(
+    /**
+     * Scoped logger
+     */
+    @inject('Logger') protected readonly logger: Logger
+  ) {}
+
   /**
    * @inheritdoc
    */
@@ -62,6 +70,7 @@ export class YoutubeParser implements Parser {
       format.container == 'webm' &&
       format.audio_sample_rate == '48000'
     ) {
+      this.logger.info('Found webm/opus compatible stream!', { video: info.title })
       playable.streamType = 'webm/opus'
     }
   }
