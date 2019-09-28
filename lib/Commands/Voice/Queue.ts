@@ -8,7 +8,7 @@ import { embed } from '../../Util'
 import { isPlaylist, Playlist } from '../../Player/Playlist'
 import { Playable } from '../../Player/Playable'
 import { MalformedUrl } from '../../Player/Exceptions/MalformedUrl'
-import { UnsupportedPlaylist } from '../../Player/Exceptions/UnsupportedPlaylist'
+import { UnsupportedFormat } from '../../Player/Exceptions/UnsupportedFormat'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -31,7 +31,7 @@ export class Definition implements CommandDefinition {
       fields: [
         { name: 'Example:', value: '`!queue http://my.video.com/xD.mp4`', inline: true },
         {
-          name: 'Suffle playlist:',
+          name: 'Shuffle playlist:',
           value:
             '`!queue https://www.youtube.com/playlist?list=PLhQ3EYAhJISH9kToXYGNNQOLrCo6o2eao shuffle`',
           inline: true
@@ -78,22 +78,23 @@ export class Queue implements Command {
     try {
       parsed = await this.parser.parse(url)
     } catch (err) {
-      if (err instanceof MalformedUrl || err instanceof UnsupportedPlaylist) {
-        await message.delete()
-        await message.channel.send(
+      if (err instanceof MalformedUrl || err instanceof UnsupportedFormat) {
+        return message.channel.send(
           embed({
             description: err.message
           })
         )
       }
+    } finally {
+      await message.delete()
     }
 
     if (isPlaylist(parsed)) {
       let playables = parsed.playables
 
       // Shuffle the playlist
-      const shouldSuffle = lowerCase(params.shift()) === 'shuffle'
-      if (shouldSuffle) {
+      const shouldShuffle = lowerCase(params.shift()) === 'shuffle'
+      if (shouldShuffle) {
         playables = shuffle(playables)
       }
 
@@ -105,7 +106,7 @@ export class Queue implements Command {
           fields: [
             {
               name: 'Shuffle mode',
-              value: shouldSuffle ? 'Yes' : 'No',
+              value: shouldShuffle ? 'Yes' : 'No',
               inline: true
             }
           ]
@@ -123,7 +124,5 @@ export class Queue implements Command {
         })
       )
     }
-
-    return message.delete()
   }
 }

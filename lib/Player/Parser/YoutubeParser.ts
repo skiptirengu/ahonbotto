@@ -3,7 +3,7 @@ import ytdlCore, { videoInfo } from 'ytdl-core'
 import { Parser } from './Parser'
 import { Playable } from '../Playable'
 import { URL } from 'url'
-import { UnsupportedPlaylist } from '../Exceptions/UnsupportedPlaylist'
+import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat'
 import { Playlist } from '../Playlist'
 import { linkFromId, getInfo } from '../../Util'
 import { toNumber } from 'lodash'
@@ -36,7 +36,11 @@ export class YoutubeParser implements Parser {
   }
 
   private async parseVideo(uri: URL, full?: boolean): Promise<Playable> {
-    const info = await (full ? ytdlCore.getInfo(uri.href) : ytdlCore.getBasicInfo(uri.href))
+    const info = await ytdlCore.getInfo(uri.href)
+
+    if (info.formats.some((format) => format.live)) {
+      throw new UnsupportedFormat('Live streaming not supported')
+    }
 
     const playable: Playable = {
       isLocal: false,
@@ -52,27 +56,38 @@ export class YoutubeParser implements Parser {
   }
 
   private setStreamDetails(info: videoInfo, playable: Playable): void {
-    let format = ytdlCore.chooseFormat(info.formats, {
+    const webmOpusFormat = info.formats.find(
+      (format) =>
+        format.audioEncoding == 'opus' &&
+        format.container == 'webm' &&
+        Number(format.audio_sample_rate) === 48000
+    )
+
+    if (webmOpusFormat) {
+      this.logger.info('Found webm/opus compatible stream!', { video: info.title })
+      playable.streamType = 'webm/opus'
+      playable.fileUri = new URL(webmOpusFormat.url)
+      return
+    }
+
+    const formats = info.formats.filter((format) => !format.isDashMPD)
+
+    let format = ytdlCore.chooseFormat(formats, {
       quality: 'highestaudio',
       filter: 'audioonly'
     })
 
-    if (!format) format = ytdlCore.chooseFormat(info.formats, { quality: 'lowestvideo' })
+    if (format instanceof Error) {
+      format = ytdlCore.chooseFormat(formats, {
+        quality: 'lowestvideo'
+      })
+    }
 
     if (format instanceof Error) {
       throw format
     }
 
     playable.fileUri = new URL(format.url)
-
-    if (
-      format.audioEncoding == 'opus' &&
-      format.container == 'webm' &&
-      format.audio_sample_rate == '48000'
-    ) {
-      this.logger.info('Found webm/opus compatible stream!', { video: info.title })
-      playable.streamType = 'webm/opus'
-    }
   }
 
   private selectThumb(info: videoInfo): string | undefined {
@@ -89,7 +104,7 @@ export class YoutubeParser implements Parser {
     const list = uri.searchParams.get('list')!
 
     if (mixPlaylistRe.test(list)) {
-      throw new UnsupportedPlaylist(
+      throw new UnsupportedFormat(
         'Youtube "Mix" playlists are not supported. Consider saving the playlist before queing it up again.'
       )
     }

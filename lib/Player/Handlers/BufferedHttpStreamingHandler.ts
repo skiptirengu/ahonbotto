@@ -55,11 +55,10 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   public async setContext(playable: Playable): Promise<StreamingHandler> {
     if (this.playable) return this
 
-    if (!playable.fileUri) {
-      this.playable = (await this.parser.parse(playable.uri.href, true)) as Playable
-    } else {
-      this.playable = playable
-    }
+    this.playable = !playable.fileUri
+      ? ((await this.parser.parse(playable.uri.href, true)) as Playable)
+      : playable
+
     if (!this.playable.streamType) {
       this.playable.streamType = 'unknown'
     }

@@ -4,7 +4,7 @@ import ytdl from 'youtube-dl'
 
 export const getInfo = promisify<string, string[], Info>(ytdl.getInfo)
 
-export function isPlaylist(info: any): boolean {
+export function isYtdlPlaylist(info: any): boolean {
   return (
     typeof info === 'object' &&
     'entries' in info &&

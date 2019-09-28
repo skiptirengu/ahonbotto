@@ -1,9 +1,9 @@
 import { Parser } from './Parser'
 import { Playable } from '../Playable'
-import { getInfo, isPlaylist } from '../../Util'
+import { getInfo, isYtdlPlaylist } from '../../Util'
 import { Info } from 'youtube-dl'
 import { Playlist } from '../Playlist'
-import { UnsupportedPlaylist } from '../Exceptions/UnsupportedPlaylist'
+import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat'
 import { scoped } from 'tsyringex'
 
 const youtubedlOptions = [
@@ -24,8 +24,8 @@ export class AnyParser implements Parser {
   public async parse(url: string): Promise<Playable | Playlist> {
     const info = await this.execute(url)
 
-    if (isPlaylist(info)) {
-      throw new UnsupportedPlaylist('Only Youtube playlists are supported')
+    if (isYtdlPlaylist(info)) {
+      throw new UnsupportedFormat('Only Youtube playlists are supported')
     }
 
     return {
