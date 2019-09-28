@@ -38,15 +38,32 @@ export class YoutubeParser implements Parser {
       totalTime: toNumber(info.length_seconds)
     }
 
-    if (full) {
-      const format = ytdlCore.chooseFormat(info.formats, { quality: 'highestaudio' })
-      if (format instanceof Error) {
-        throw format
-      }
-      playable.fileUri = new URL(format.url)
-    }
+    if (full) this.setStreamDetails(info, playable)
 
     return playable
+  }
+
+  private setStreamDetails(info: videoInfo, playable: Playable): void {
+    let format = ytdlCore.chooseFormat(info.formats, {
+      quality: 'highestaudio',
+      filter: 'audioonly'
+    })
+
+    if (!format) format = ytdlCore.chooseFormat(info.formats, { quality: 'lowestvideo' })
+
+    if (format instanceof Error) {
+      throw format
+    }
+
+    playable.fileUri = new URL(format.url)
+
+    if (
+      format.audioEncoding == 'opus' &&
+      format.container == 'webm' &&
+      format.audio_sample_rate == '48000'
+    ) {
+      playable.streamType = 'webm/opus'
+    }
   }
 
   private selectThumb(info: videoInfo): string | undefined {

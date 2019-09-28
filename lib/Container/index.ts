@@ -26,7 +26,7 @@ export function bootstrap(client: Client): void {
         process.env['COMMAND_PREFIXES']!.split(',')) || ['!'],
       runtimeFolder: runtimeFolder,
       embedColor: 0x1882ac,
-      cleanupInverval: 15,
+      cleanupInverval: 10,
       httpCacheFolder: join(runtimeFolder, cacheFolder),
       resourcesFolder: join(appRoot.path, resourcesFolder)
     }

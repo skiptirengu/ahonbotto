@@ -54,12 +54,16 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
 
   public async setContext(playable: Playable): Promise<StreamingHandler> {
     if (this.playable) return this
+
     if (!playable.fileUri) {
       this.playable = (await this.parser.parse(playable.uri.href, true)) as Playable
     } else {
       this.playable = playable
     }
-    this.playable.streamType = 'unknown'
+    if (!this.playable.streamType) {
+      this.playable.streamType = 'unknown'
+    }
+
     this.setFilenameAndPath()
     return this
   }
@@ -89,8 +93,6 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     const readable = await this.getReadableStream()
     // Destroy readable if the writer errors
     writable.once('error', (err) => readable.destroy(err))
-    // Add to database
-    this.media.upsert(this.filename!)
     // Mark for deletion once the readable ends
     return this.attachCleanupEvent(readable)
   }
@@ -114,6 +116,8 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   private async getWritableStream(): Promise<Writable> {
     // Download URL
     const request = miniget(this.playable!.fileUri!.href, minigetOptions)
+    // Add to database
+    this.media.upsert(this.filename!)
     // Set status on database once complete
     request.once(
       'end',

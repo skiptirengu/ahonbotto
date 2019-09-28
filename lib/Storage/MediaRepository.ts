@@ -48,7 +48,7 @@ export class MediaRepository {
       'UPDATE media SET completed = @completed WHERE filename = @file'
     )
     this.stmtDeletion = this.connection.database.prepare(
-      'UPDATE media SET time_marked_deletion = @time WHERE filename = @file AND completed IS TRUE'
+      'UPDATE media SET time_marked_deletion = @time WHERE filename = @file'
     )
     this.stmtUpsert = this.connection.database.prepare(
       'INSERT OR REPLACE INTO media (filename, completed) VALUES (@file, FALSE)'
