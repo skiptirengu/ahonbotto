@@ -114,7 +114,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
 
   private async getWritableStream(): Promise<Writable> {
     // Download URL
-    const request = miniget(this.playable!.fileUri!.href, minigetOptions)
+    const request = miniget(this.playable!.fileUri!.href, minigetOptions)!
     // Add to database
     this.media.upsert(this.filename!)
     // Set status on database once complete
