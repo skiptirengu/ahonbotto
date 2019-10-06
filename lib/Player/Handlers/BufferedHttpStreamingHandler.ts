@@ -99,6 +99,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   private attachCleanupEvent(stream: Readable): Readable {
     const event = once(
       handleStreamError(stream, () => {
+        ;['close', 'end', 'error'].forEach((name) => stream.removeListener(name, event))
         this.markForCleanup()
       })
     )
