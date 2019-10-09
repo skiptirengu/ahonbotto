@@ -11,7 +11,7 @@ import { Playable } from '../Playable'
 import { MediaRepository } from '../../Storage/MediaRepository'
 import miniget, { MinigetOptions } from 'miniget'
 import { Guild } from 'discord.js'
-import { handleStreamError, once } from '../../Util'
+import { handleStreamError, anyOnce } from '../../Util'
 
 const initialBufferSize = 1 << 18
 const minigetOptions: MinigetOptions = {
@@ -97,16 +97,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   }
 
   private attachCleanupEvent(stream: Readable): Readable {
-    const event = once(
-      handleStreamError(stream, () => {
-        ;['close', 'end', 'error'].forEach((name) => stream.removeListener(name, event))
-        this.markForCleanup()
-      })
-    )
-    return stream
-      .once('close', event)
-      .once('end', event)
-      .once('error', event)
+    return anyOnce(stream, ['close', 'end', 'error'], () => this.markForCleanup())
   }
 
   private markForCleanup(): void {

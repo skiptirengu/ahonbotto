@@ -5,6 +5,7 @@ import { Playable } from './Playable'
 import { AutoParser } from './Parser/AutoParser'
 import { HandlerFactory } from './Handlers/HandlerFactory'
 import { Logger } from 'winston'
+import { anyOnce } from '../Util'
 
 @scoped()
 export class Player {
@@ -48,6 +49,16 @@ export class Player {
     @inject('Logger') protected readonly logger: Logger
   ) {
     this.queue.on('playable', () => this.startPlaying())
+  }
+
+  public togglePlayingState(): void {
+    if (!this.current || this.current.isLocal || !this.dispatcher) return
+
+    if (!this.dispatcher.paused) {
+      this.dispatcher.pause(true)
+    } else {
+      this.dispatcher.resume()
+    }
   }
 
   public getStreamingTime(): number {
@@ -106,12 +117,14 @@ export class Player {
         type: this.current!.streamType || 'unknown'
       }
 
-      this.dispatcher = this.voiceConnection!.play(stream, streamOptions)
-        .once('error', (error) => this.logger.error('Stream dispatcher error', { error }))
-        .once('unpipe', () => {
-          this.playNext()
-          stream.destroy()
-        })
+      this.dispatcher = this.voiceConnection!.play(stream, streamOptions).once('error', (error) =>
+        this.logger.error('Stream dispatcher error', { error })
+      )
+
+      anyOnce(this.dispatcher, ['end', 'finish', 'close'], () => {
+        this.playNext()
+        stream.destroy()
+      })
     } catch (error) {
       this.logger.error('Unable to start stream', { playable: this.current, error })
       this.playNext()

@@ -45,7 +45,8 @@ export class Select implements Command {
     @inject(Player) protected readonly player: Player
   ) {}
 
-  public async run(message: Message, params: string[]): Promise<Message | Message[]> {
+  public async run(message: Message, params: string[]): Promise<Message> {
+    await message.delete()
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
       return message.channel.send(
         embed({

@@ -1,7 +1,7 @@
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { scoped, inject } from 'tsyringex'
 import { Player } from '../../Player/Player'
-import { Command, CommandDefinition, CommandType } from '../Command'
+import { CommandDefinition, CommandType, Command } from '../Command'
 
 @scoped('CommandDefinition')
 export class Definition implements CommandDefinition {
@@ -12,19 +12,19 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  command = 'Stop'
+  command = 'Pause'
   /**
    * @inheritdoc
    */
   public usage(): MessageEmbedOptions {
     return {
-      description: 'Stop the current playing music and clears the queue'
+      description: 'Pause/Resume the current audio'
     }
   }
 }
 
-@scoped('Stop')
-export class Stop implements Command {
+@scoped('Pause')
+export class Pause implements Command {
   public constructor(
     /**
      * All command definitions bound to the container
@@ -35,6 +35,6 @@ export class Stop implements Command {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<void> {
     await message.delete()
-    this.player.stop()
+    this.player.togglePlayingState()
   }
 }

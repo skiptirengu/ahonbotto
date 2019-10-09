@@ -6,6 +6,7 @@ import './Text/Usage'
 import './Text/Wiki'
 
 import './Voice/Next'
+import './Voice/Pause'
 import './Voice/Playing'
 import './Voice/Queue'
 import './Voice/Search'

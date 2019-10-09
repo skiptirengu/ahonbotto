@@ -1,8 +1,8 @@
+import dayjs from 'dayjs'
 import { Message, MessageEmbedOptions } from 'discord.js'
 import { scoped, inject } from 'tsyringex'
 import { Player } from '../../Player/Player'
 import { CommandDefinition, CommandType, Command } from '../Command'
-import dayjs from 'dayjs'
 import { embed } from '../../Util'
 import { Config } from '../../Config'
 
@@ -40,7 +40,8 @@ export class Playing implements Command {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async run(message: Message, params: string[]): Promise<Message> {
+  public async run(message: Message, params: string[]): Promise<void | Message> {
+    await message.delete()
     const current = this.player.getCurrentPlayable()
 
     if (!current) {
@@ -74,7 +75,7 @@ export class Playing implements Command {
       messageEmbed.thumbnail = { url: current!.thumbnail }
     }
 
-    return message.channel.send({ embed: messageEmbed })
+    await message.channel.send({ embed: messageEmbed })
   }
 
   private getTimeInfo(secs: number): string {
