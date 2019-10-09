@@ -23,7 +23,7 @@ The bot logs can be found on the `runtime/logs` directory.
 **A:** Why not?
 
 **Q:** _What does this do?_  
-**A:** It has a optimized, resilient and brainlet proof audio streaming system, allowing url queueing and youtube api searching (for the latter you need to create a YouTube api token). It also has some other text commands (see !help for a complete list).
+**A:** It has a optimized, resilient and brainlet proof audio streaming system, allowing url queueing, youtube playlists and youtube api searching (for the latter you need to create a YouTube api token). It also has some other text commands (see !help for a complete list).
 
 **Q:** _Can I copy, share, sell, tell my friends I programmed this bot, give it as a birthday present to my grandma, etc?_  
 **A:** Yes, you can [Do What The F*ck You Want](LICENSE) with it.
