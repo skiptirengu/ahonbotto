@@ -100,7 +100,7 @@ export class Player {
   }
 
   private async playNext(): Promise<void> {
-    this.current = this.queue.pop()
+    this.current = this.queue.shift()
 
     if (!this.current) {
       this.disconnect()
