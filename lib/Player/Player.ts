@@ -1,13 +1,15 @@
-import { inject, scoped } from 'tsyringex'
-import { VoiceChannel, VoiceConnection, StreamDispatcher, Guild, StreamOptions } from 'discord.js'
-import { PlayerQueue } from './PlayerQueue'
-import { Playable } from './Playable'
-import { AutoParser } from './Parser/AutoParser'
-import { HandlerFactory } from './Handlers/HandlerFactory'
+import { Guild, StreamDispatcher, StreamOptions, VoiceChannel, VoiceConnection } from 'discord.js'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
 import { Logger } from 'winston'
-import { anyOnce } from '../Util'
 
-@scoped()
+import { anyOnce } from '../Util'
+import { HandlerFactory } from './Handlers/HandlerFactory'
+import { AutoParser } from './Parser/AutoParser'
+import { Playable } from './Playable'
+import { PlayerQueue } from './PlayerQueue'
+
+@scoped(Lifecycle.ContainerScoped)
 export class Player {
   /**
    * The voice channel the bot is currently connected to

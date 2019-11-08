@@ -1,8 +1,9 @@
-import { StreamingHandler } from './StreamingHandler'
-import { injectable } from 'tsyringex'
-import { Playable } from '../Playable'
-import { Readable } from 'stream'
 import { createReadStream } from 'fs-extra'
+import { Readable } from 'stream'
+import { injectable } from 'tsyringe'
+
+import { Playable } from '../Playable'
+import { StreamingHandler } from './StreamingHandler'
 
 @injectable()
 export class LocalFileStreamingHandler implements StreamingHandler {

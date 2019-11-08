@@ -1,19 +1,21 @@
 import { get } from 'lodash'
-import ytdlCore, { videoInfo } from 'ytdl-core'
-import { Parser } from './Parser'
-import { Playable } from '../Playable'
-import { URL } from 'url'
-import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat'
-import { Playlist } from '../Playlist'
-import { linkFromId, getInfo } from '../../Util'
 import { toNumber } from 'lodash'
-import { scoped, inject } from 'tsyringex'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+import { URL } from 'url'
 import { Logger } from 'winston'
+import ytdlCore, { videoInfo } from 'ytdl-core'
+
+import { getInfo, linkFromId } from '../../Util'
+import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat'
+import { Playable } from '../Playable'
+import { Playlist } from '../Playlist'
+import { Parser } from './Parser'
 
 const mixPlaylistRe = /^([A-Za-z0-9_-]){13}$/
 const playlistArgs = ['--dump-single-json', '--flat-playlist']
 
-@scoped()
+@scoped(Lifecycle.ContainerScoped)
 export class YoutubeParser implements Parser {
   public constructor(
     /**
@@ -112,6 +114,7 @@ export class YoutubeParser implements Parser {
     const info = await getInfo(uri.href, playlistArgs)
     const playlist: Playlist = {
       title: info.title,
+      thumbnail: info.thumbnail,
       playables: info.entries!.map(
         (item): Playable => ({
           name: item.title,

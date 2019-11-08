@@ -1,14 +1,16 @@
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { inject, scoped } from 'tsyringex'
-import { Config } from '../../Config'
-import youtubeSearch from 'youtube-search'
-import { SearchRepository } from '../../Player/SearchRepository'
-import { Playable } from '../../Player/Playable'
-import { CommandType, CommandDefinition, Command } from '../Command'
-import { embed } from '../../Util'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
 import { URL } from 'url'
+import youtubeSearch from 'youtube-search'
 
-@scoped('CommandDefinition')
+import { Config } from '../../Config'
+import { Playable } from '../../Player/Playable'
+import { SearchRepository } from '../../Player/SearchRepository'
+import { embed } from '../../Util'
+import { Command, CommandDefinition, CommandType } from '../Command'
+
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -31,7 +33,7 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('Search')
+@scoped(Lifecycle.ContainerScoped, 'Search')
 export class Search implements Command {
   public constructor(
     /**

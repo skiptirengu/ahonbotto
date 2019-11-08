@@ -1,9 +1,10 @@
 import { Message as MessagePayload } from 'discord.js'
-import { toString, includes } from 'lodash'
-import { scopeFactory } from '../Container'
-import { Config } from '../Config'
+import { includes, toString } from 'lodash'
 import { Logger } from 'winston'
+
 import { Command } from '../Commands/Command'
+import { Config } from '../Config'
+import { scopeFactory } from '../Container'
 import { normalizeCommandName } from '../Util'
 
 export function message(message: MessagePayload): void {

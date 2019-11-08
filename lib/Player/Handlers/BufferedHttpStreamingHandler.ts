@@ -1,20 +1,21 @@
 import { createHash } from 'crypto'
-import { inject, injectable } from 'tsyringex'
-import { pathExists, ensureFile } from 'fs-extra'
-import { Readable, Writable } from 'stream'
-import { createWriteStream, createReadStream } from 'fs-extra'
+import { Guild } from 'discord.js'
+import { ensureFile, pathExists } from 'fs-extra'
+import { createReadStream, createWriteStream } from 'fs-extra'
+import miniget, { Options } from 'miniget'
 import { join } from 'path'
-import { StreamingHandler } from './StreamingHandler'
+import { Readable, Writable } from 'stream'
+import { inject, injectable } from 'tsyringe'
+
 import { Config } from '../../Config'
+import { MediaRepository } from '../../Storage/MediaRepository'
+import { anyOnce, handleStreamError } from '../../Util'
 import { AutoParser } from '../Parser/AutoParser'
 import { Playable } from '../Playable'
-import { MediaRepository } from '../../Storage/MediaRepository'
-import miniget, { MinigetOptions } from 'miniget'
-import { Guild } from 'discord.js'
-import { handleStreamError, anyOnce } from '../../Util'
+import { StreamingHandler } from './StreamingHandler'
 
 const initialBufferSize = 1 << 18
-const minigetOptions: MinigetOptions = {
+const minigetOptions: Options = {
   highWaterMark: initialBufferSize
 }
 

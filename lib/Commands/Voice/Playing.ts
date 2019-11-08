@@ -1,12 +1,12 @@
-import dayjs from 'dayjs'
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { scoped, inject } from 'tsyringex'
-import { Player } from '../../Player/Player'
-import { CommandDefinition, CommandType, Command } from '../Command'
-import { embed } from '../../Util'
-import { Config } from '../../Config'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
 
-@scoped('CommandDefinition')
+import { Player } from '../../Player/Player'
+import { buildPlayableInfo, embed } from '../../Util'
+import { Command, CommandDefinition, CommandType } from '../Command'
+
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -26,17 +26,13 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('Playing')
+@scoped(Lifecycle.ContainerScoped, 'Playing')
 export class Playing implements Command {
   public constructor(
     /**
      * All command definitions bound to the container
      */
-    @inject(Player) private readonly player: Player,
-    /**
-     * Bot configuration object
-     */
-    @inject('Config') protected readonly config: Config
+    @inject(Player) private readonly player: Player
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -53,47 +49,8 @@ export class Playing implements Command {
     }
 
     const streamingTime = this.player.getStreamingTime()
-    const messageEmbed: MessageEmbedOptions = {
-      title: current!.name,
-      fields: [],
-      color: this.config.embedColor
-    }
-
-    if (current!.totalTime && current!.totalTime > 0) {
-      messageEmbed.fields!.push({ name: 'Length', value: this.getTimeInfo(current!.totalTime) })
-    }
-    if (!current!.isLocal && streamingTime > 0) {
-      messageEmbed.fields!.push({
-        name: 'Playing for',
-        value: this.getTimeInfo(streamingTime / 1000) || 'Just started'
-      })
-    }
-    if (!current!.isLocal) {
-      messageEmbed.url = current!.uri.href
-    }
-    if (current!.thumbnail) {
-      messageEmbed.thumbnail = { url: current!.thumbnail }
-    }
+    const messageEmbed = buildPlayableInfo(current, streamingTime)
 
     await message.channel.send({ embed: messageEmbed })
-  }
-
-  private getTimeInfo(secs: number): string {
-    const timeString: string[] = []
-    const timeInfo = dayjs()
-      .startOf('day')
-      .add(secs, 'second')
-
-    if (timeInfo.hour() > 0) {
-      timeString.push(`${timeInfo.hour()} hour(s)`)
-    }
-    if (timeInfo.minute() > 0) {
-      timeString.push(`${timeInfo.minute()} minute(s)`)
-    }
-    if (timeInfo.second() > 0) {
-      timeString.push(`${timeInfo.second()} second(s)`)
-    }
-
-    return timeString.join(', ')
   }
 }

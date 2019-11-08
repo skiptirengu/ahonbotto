@@ -1,4 +1,4 @@
-import { MessageEmbedOptions, Message } from 'discord.js'
+import { Message, MessageEmbedOptions } from 'discord.js'
 
 /**
  * Types of commands

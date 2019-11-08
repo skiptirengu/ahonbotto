@@ -1,11 +1,13 @@
-import './env'
 import 'reflect-metadata'
+import './env'
 import './lib/Extensions'
+
 import { Client } from 'discord.js'
+import { Logger } from 'winston'
+
 import { Config } from './lib/Config'
 import { bootstrap as bootstrapContainer, container } from './lib/Container'
 import { bootstrap as bootstrapEvents } from './lib/Events'
-import { Logger } from 'winston'
 import { Scheduler } from './lib/Jobs/Scheduler'
 
 const client = new Client()

@@ -1,9 +1,11 @@
-import { AudioFileCommand, AudioFileCommandDefinition } from '../AudioFileCommand'
-import { scoped, inject } from 'tsyringex'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+
 import { Config } from '../../Config'
 import { Player } from '../../Player/Player'
+import { AudioFileCommand, AudioFileCommandDefinition } from '../AudioFileCommand'
 
-@scoped('CommandDefinition')
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class CommandDefinition extends AudioFileCommandDefinition {
   /**
    * @inheritdoc
@@ -15,7 +17,7 @@ export class CommandDefinition extends AudioFileCommandDefinition {
   command = 'Jeff'
 }
 
-@scoped('Jeff')
+@scoped(Lifecycle.ContainerScoped, 'Jeff')
 export class Jeff extends AudioFileCommand {
   /**
    * @inheritdoc

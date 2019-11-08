@@ -1,12 +1,13 @@
 import dayjs from 'dayjs'
-import { remove, readdir } from 'fs-extra'
-import { inject, registry, injectable } from 'tsyringex'
+import { readdir, remove } from 'fs-extra'
+import { xor } from 'lodash'
+import { join } from 'path'
+import { inject, injectable, registry } from 'tsyringe'
+import { Logger } from 'winston'
+
+import { Config } from '../Config'
 import { MediaRepository } from '../Storage/MediaRepository'
 import { Job } from './Job'
-import { Config } from '../Config'
-import { join } from 'path'
-import { xor } from 'lodash'
-import { Logger } from 'winston'
 
 @injectable()
 @registry([

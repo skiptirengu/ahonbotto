@@ -1,10 +1,12 @@
-import { StreamingHandler } from './StreamingHandler'
+import { DependencyContainer, inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+
+import { Playable } from '../Playable'
 import { BufferedHttpStreamingHandler } from './BufferedHttpStreamingHandler'
 import { LocalFileStreamingHandler } from './LocalFileStreamingHandler'
-import { DependencyContainer, scoped, inject } from 'tsyringex'
-import { Playable } from '../Playable'
+import { StreamingHandler } from './StreamingHandler'
 
-@scoped()
+@scoped(Lifecycle.ContainerScoped)
 export class HandlerFactory {
   public constructor(
     /**

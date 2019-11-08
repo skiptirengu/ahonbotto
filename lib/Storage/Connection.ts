@@ -1,8 +1,9 @@
-import { singleton, inject } from 'tsyringex'
-import { Config } from '../Config'
-import { join } from 'path'
-import { ensureFileSync } from 'fs-extra'
 import SqliteDatabase, { Database } from 'better-sqlite3'
+import { ensureFileSync } from 'fs-extra'
+import { join } from 'path'
+import { inject, singleton } from 'tsyringe'
+
+import { Config } from '../Config'
 
 const dbFolder = 'db'
 

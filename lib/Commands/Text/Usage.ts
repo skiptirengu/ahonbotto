@@ -1,11 +1,13 @@
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { injectAll, scoped, inject } from 'tsyringex'
 import { first } from 'lodash'
-import { withCommandPrefix, normalizeCommandName, typedCommandName, embed } from '../../Util'
-import { CommandDefinition, CommandType, Command } from '../Command'
-import { Config } from '../../Config'
+import { inject, injectAll, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
 
-@scoped('CommandDefinition')
+import { Config } from '../../Config'
+import { embed, normalizeCommandName, typedCommandName, withCommandPrefix } from '../../Util'
+import { Command, CommandDefinition, CommandType } from '../Command'
+
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -27,7 +29,7 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('Usage')
+@scoped(Lifecycle.ContainerScoped, 'Usage')
 export class Usage implements Command {
   public constructor(
     /**

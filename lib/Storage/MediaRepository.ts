@@ -1,7 +1,8 @@
-import { singleton, inject } from 'tsyringex'
-import { Connection } from './Connection'
 import { Statement } from 'better-sqlite3'
 import dayjs from 'dayjs'
+import { inject, singleton } from 'tsyringe'
+
+import { Connection } from './Connection'
 
 interface MediaRow {
   filename: string

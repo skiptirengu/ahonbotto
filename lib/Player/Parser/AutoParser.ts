@@ -1,14 +1,16 @@
+import { container, DependencyContainer, inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+
+import { isValidUrl } from '../../Util/url'
+import { isVideoId, isYoutubeUrl, linkFromId } from '../../Util/youtube'
+import { MalformedUrl } from '../Exceptions/MalformedUrl'
 import { Playable } from '../Playable'
-import { inject, DependencyContainer, container, scoped } from 'tsyringex'
+import { Playlist } from '../Playlist'
+import { AnyParser } from './AnyParser'
 import { Parser } from './Parser'
 import { YoutubeParser } from './YoutubeParser'
-import { AnyParser } from './AnyParser'
-import { linkFromId, isVideoId, isYoutubeUrl } from '../../Util/youtube'
-import { isValidUrl } from '../../Util/url'
-import { MalformedUrl } from '../Exceptions/MalformedUrl'
-import { Playlist } from '../Playlist'
 
-@scoped()
+@scoped(Lifecycle.ContainerScoped)
 export class AutoParser implements Parser {
   constructor(
     /**

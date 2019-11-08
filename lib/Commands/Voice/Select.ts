@@ -1,12 +1,16 @@
-import { inject, scoped } from 'tsyringex'
-import { SearchRepository } from '../../Player/SearchRepository'
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { Player } from '../../Player/Player'
-import { CommandDefinition, CommandType, Command } from '../Command'
-import { embed } from '../../Util'
 import { toNumber } from 'lodash'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
 
-@scoped('CommandDefinition')
+import { AutoParser } from '../../Player/Parser/AutoParser'
+import { Playable } from '../../Player/Playable'
+import { Player } from '../../Player/Player'
+import { SearchRepository } from '../../Player/SearchRepository'
+import { buildPlayableInfo, embed } from '../../Util'
+import { Command, CommandDefinition, CommandType } from '../Command'
+
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -32,7 +36,7 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('Select')
+@scoped(Lifecycle.ContainerScoped, 'Select')
 export class Select implements Command {
   public constructor(
     /**
@@ -42,7 +46,11 @@ export class Select implements Command {
     /**
      * Player instance
      */
-    @inject(Player) protected readonly player: Player
+    @inject(Player) protected readonly player: Player,
+    /**
+     * Youtubedl URL parser
+     */
+    @inject(AutoParser) private readonly parser: AutoParser
   ) {}
 
   public async run(message: Message, params: string[]): Promise<Message> {
@@ -77,13 +85,10 @@ export class Select implements Command {
       )
     }
 
+    const playable = (await this.parser.parse(value.uri.toString())) as Playable
     const times = toNumber(params.shift()) || 1
-    this.player.push(message.member!.voice.channel!, value, times)
-
-    return message.channel.send(
-      embed({
-        description: `${value.name} queued ${times} time(s)`
-      })
-    )
+    this.player.push(message.member!.voice.channel!, playable, times)
+    const embedOptions = buildPlayableInfo(playable, undefined, times)
+    return message.channel.send(embed(embedOptions))
   }
 }

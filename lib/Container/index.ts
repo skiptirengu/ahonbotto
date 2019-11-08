@@ -1,13 +1,15 @@
-import appRoot from 'app-root-path'
-import { Client, Guild } from 'discord.js'
-import { container, DependencyContainer } from 'tsyringex'
-import { join } from 'path'
-import { Config } from '../Config'
-import { loggers, format, transports, Logger } from 'winston'
 import './../Storage'
 import './../Player'
 import './../Commands'
 import './../Jobs'
+
+import appRoot from 'app-root-path'
+import { Client, Guild } from 'discord.js'
+import { join } from 'path'
+import { container, DependencyContainer } from 'tsyringe'
+import { format, Logger, loggers, transports } from 'winston'
+
+import { Config } from '../Config'
 
 const runtimeFolder = join(appRoot.path, 'runtime')
 const resourcesFolder = 'resources'
@@ -43,7 +45,7 @@ export function scopeFactory(guild: Guild): DependencyContainer {
   const name = guild.id
   if (scopeMap.has(name)) return scopeMap.get(name)!
 
-  const scope = scopeMap.set(name, container.createScope()).get(name)!
+  const scope = scopeMap.set(name, container.createChildContainer()).get(name)!
 
   // Scoped guild
   scope.register(Guild, {

@@ -1,8 +1,9 @@
-import { container } from '../Container'
 import { Client } from 'discord.js'
-import { withCommandPrefix } from '../Util'
 import { Logger } from 'winston'
+
 import { Config } from '../Config'
+import { container } from '../Container'
+import { withCommandPrefix } from '../Util'
 
 export function ready(): void {
   const client = container.resolve<Client>(Client)

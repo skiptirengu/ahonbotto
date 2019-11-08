@@ -1,15 +1,17 @@
-import { Message, MessageEmbed, ImageSize, User, MessageEmbedOptions } from 'discord.js'
-import { withCommandPrefix } from '../../Util'
-import { scoped, inject } from 'tsyringex'
-import { CommandDefinition, CommandType, Command } from '../Command'
+import { ImageSize, Message, MessageEmbed, MessageEmbedOptions, User } from 'discord.js'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+
 import { Config } from '../../Config'
+import { withCommandPrefix } from '../../Util'
+import { Command, CommandDefinition, CommandType } from '../Command'
 
 interface UserAvatar {
   user: User
   urls: string[]
 }
 
-@scoped('CommandDefinition')
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -38,7 +40,7 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('Avatar')
+@scoped(Lifecycle.ContainerScoped, 'Avatar')
 export class Avatar implements Command {
   /**
    * Avatar sizes

@@ -9,6 +9,10 @@ export interface Playlist {
    * Playlist title
    */
   title: string
+  /**
+   * Playlist thumbnail
+   */
+  thumbnail?: string
 }
 
 export function isPlaylist(info: any): info is Playlist {

@@ -1,10 +1,12 @@
-import { Parser } from './Parser'
-import { Playable } from '../Playable'
-import { getInfo, isYtdlPlaylist } from '../../Util'
+import { scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
 import { Info } from 'youtube-dl'
-import { Playlist } from '../Playlist'
+
+import { getInfo, isYtdlPlaylist } from '../../Util'
 import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat'
-import { scoped } from 'tsyringex'
+import { Playable } from '../Playable'
+import { Playlist } from '../Playlist'
+import { Parser } from './Parser'
 
 const youtubedlOptions = [
   '-f',
@@ -16,7 +18,7 @@ const youtubedlOptions = [
   '--flat-playlist'
 ]
 
-@scoped()
+@scoped(Lifecycle.ContainerScoped)
 export class AnyParser implements Parser {
   /**
    * @inheritdoc

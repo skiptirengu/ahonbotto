@@ -1,9 +1,11 @@
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { scoped, inject } from 'tsyringex'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+
 import { Player } from '../../Player/Player'
 import { Command, CommandDefinition, CommandType } from '../Command'
 
-@scoped('CommandDefinition')
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -23,7 +25,7 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('Stop')
+@scoped(Lifecycle.ContainerScoped, 'Stop')
 export class Stop implements Command {
   public constructor(
     /**

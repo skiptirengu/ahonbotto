@@ -1,11 +1,14 @@
-import { Playable } from './Playable'
 import { EventEmitter } from 'events'
-import { scoped } from 'tsyringex'
+import { scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+
+import { Playable } from './Playable'
 
 /**
  * @event PlayerQueue#playable
  */
-@scoped()
+
+@scoped(Lifecycle.ContainerScoped)
 export class PlayerQueue extends EventEmitter {
   /**
    * Music queue

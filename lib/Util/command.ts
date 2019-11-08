@@ -1,7 +1,8 @@
-import { chain, first } from 'lodash'
-import { Config } from '../Config'
-import { container } from 'tsyringex'
 import { MessageEmbedOptions, MessageOptions } from 'discord.js'
+import { chain, first } from 'lodash'
+import { container } from 'tsyringe'
+
+import { Config } from '../Config'
 
 export function embed(embed: MessageEmbedOptions): MessageOptions {
   return {

@@ -1,11 +1,13 @@
-import wiki from 'wikijs'
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { scoped, inject } from 'tsyringex'
-import { CommandDefinition, CommandType, Command } from '../Command'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+import wiki from 'wikijs'
+
 import { Config } from '../../Config'
 import { embed, withCommandPrefix } from '../../Util'
+import { Command, CommandDefinition, CommandType } from '../Command'
 
-@scoped('CommandDefinition')
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -32,7 +34,7 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('Wiki')
+@scoped(Lifecycle.ContainerScoped, 'Wiki')
 export class Wiki implements Command {
   public constructor(
     /**

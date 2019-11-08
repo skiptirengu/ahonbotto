@@ -1,16 +1,18 @@
-import { shuffle, lowerCase } from 'lodash'
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { scoped, inject } from 'tsyringex'
-import { Player } from '../../Player/Player'
-import { AutoParser } from '../../Player/Parser/AutoParser'
-import { CommandDefinition, CommandType, Command } from '../Command'
-import { embed } from '../../Util'
-import { isPlaylist, Playlist } from '../../Player/Playlist'
-import { Playable } from '../../Player/Playable'
+import { lowerCase, shuffle } from 'lodash'
+import { inject, scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+
 import { MalformedUrl } from '../../Player/Exceptions/MalformedUrl'
 import { UnsupportedFormat } from '../../Player/Exceptions/UnsupportedFormat'
+import { AutoParser } from '../../Player/Parser/AutoParser'
+import { Playable } from '../../Player/Playable'
+import { Player } from '../../Player/Player'
+import { isPlaylist, Playlist } from '../../Player/Playlist'
+import { buildPlayableInfo, embed } from '../../Util'
+import { Command, CommandDefinition, CommandType } from '../Command'
 
-@scoped('CommandDefinition')
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -41,7 +43,7 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('Queue')
+@scoped(Lifecycle.ContainerScoped, 'Queue')
 export class Queue implements Command {
   public constructor(
     /**
@@ -89,40 +91,48 @@ export class Queue implements Command {
       await message.delete()
     }
 
+    let embedOptions: MessageEmbedOptions
+
     if (isPlaylist(parsed)) {
       let playables = parsed.playables
 
       // Shuffle the playlist
       const shouldShuffle = lowerCase(params.shift()) === 'shuffle'
+
       if (shouldShuffle) {
         playables = shuffle(playables)
       }
 
       // Add all playlist itens to the queue
       this.player.pushAll(message.member.voice.channel, playables)
-      await message.channel.send(
-        embed({
-          description: `Playlist ${parsed.title} queued (${parsed.playables.length} songs)`,
-          fields: [
-            {
-              name: 'Shuffle mode',
-              value: shouldShuffle ? 'Yes' : 'No',
-              inline: true
-            }
-          ]
-        })
-      )
+
+      embedOptions = {
+        description: `Playlist ${parsed.title} queued (${parsed.playables.length} songs)`,
+        fields: [
+          {
+            name: 'Shuffle mode',
+            value: shouldShuffle ? 'Yes' : 'No',
+            inline: true
+          },
+          {
+            name: 'Playlist size',
+            value: playables.length.toString(),
+            inline: true
+          }
+        ],
+        thumbnail: {
+          url: parsed.thumbnail || undefined
+        }
+      }
     } else {
       // Add the requested item to the queue x times
       const playable = parsed as Playable
       const times = Number(params.shift()) || 1
 
       this.player.push(message.member.voice.channel, playable, times)
-      await message.channel.send(
-        embed({
-          description: `${playable.name} queued ${times} time(s)`
-        })
-      )
+      embedOptions = buildPlayableInfo(playable, undefined, times)
     }
+
+    await message.channel.send(embed(embedOptions))
   }
 }

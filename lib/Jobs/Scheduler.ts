@@ -1,6 +1,7 @@
-import { singleton, injectAll, autoInjectable, inject } from 'tsyringex'
-import { Job } from './Job'
+import { autoInjectable, inject, injectAll, singleton } from 'tsyringe'
 import { Logger } from 'winston'
+
+import { Job } from './Job'
 
 @singleton()
 @autoInjectable()

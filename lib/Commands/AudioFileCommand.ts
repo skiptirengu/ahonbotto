@@ -1,12 +1,13 @@
-import { Command, CommandDefinition, CommandType } from './Command'
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { Config } from '../Config'
-import { join } from 'path'
 import { pathExists } from 'fs-extra'
-import { Player } from '../Player/Player'
-import { Playable } from '../Player/Playable'
 import { toNumber } from 'lodash'
+import { join } from 'path'
 import { URL } from 'url'
+
+import { Config } from '../Config'
+import { Playable } from '../Player/Playable'
+import { Player } from '../Player/Player'
+import { Command, CommandDefinition, CommandType } from './Command'
 
 const audioFolder = 'audio'
 

@@ -1,6 +1,8 @@
-import { Playable } from './Playable'
 import { Message } from 'discord.js'
-import { scoped } from 'tsyringex'
+import { scoped } from 'tsyringe'
+import { Lifecycle } from 'tsyringe'
+
+import { Playable } from './Playable'
 
 interface SearchResultInternal {
   /**
@@ -15,7 +17,7 @@ interface SearchResultInternal {
 
 const defaultTimer = 300000
 
-@scoped()
+@scoped(Lifecycle.ContainerScoped)
 export class SearchRepository {
   public constructor(
     /**

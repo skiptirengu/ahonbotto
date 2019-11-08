@@ -1,10 +1,11 @@
 import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
-import { scoped, inject } from 'tsyringex'
-import json from '../../../package.json'
-import { CommandDefinition, CommandType, Command } from '../Command.js'
-import { Config } from '../../Config/index.js'
+import { inject, Lifecycle, scoped } from 'tsyringe'
 
-@scoped('CommandDefinition')
+import json from '../../../package.json'
+import { Config } from '../../Config/index.js'
+import { Command, CommandDefinition, CommandType } from '../Command.js'
+
+@scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
@@ -24,7 +25,7 @@ export class Definition implements CommandDefinition {
   }
 }
 
-@scoped('About')
+@scoped(Lifecycle.ContainerScoped, 'About')
 export class About implements Command {
   public constructor(
     /**
