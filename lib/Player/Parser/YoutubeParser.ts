@@ -58,13 +58,15 @@ export class YoutubeParser implements Parser {
   }
 
   private setStreamDetails(info: videoInfo, playable: Playable): void {
-    const webmOpusFormat = info.formats.find(
-      (format) =>
-        // @ts-ignore
-        format.audioEncoding == 'opus' &&
-        format.container == 'webm' &&
-        Number(format.audioSampleRate) === 48000
-    )
+    const webmOpusFormat = info.formats
+      .filter(
+        (format) =>
+          format.codecs == 'opus' &&
+          format.container == 'webm' &&
+          Number(format.audioSampleRate) === 48000
+      )
+      .sort((a, b) => b.averageBitrate - a.averageBitrate)
+      .shift()
 
     if (webmOpusFormat) {
       this.logger.info('Found webm/opus compatible stream!', { video: info.title })
