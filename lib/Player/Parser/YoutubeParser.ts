@@ -60,9 +60,10 @@ export class YoutubeParser implements Parser {
   private setStreamDetails(info: videoInfo, playable: Playable): void {
     const webmOpusFormat = info.formats.find(
       (format) =>
+        // @ts-ignore
         format.audioEncoding == 'opus' &&
         format.container == 'webm' &&
-        Number(format.audio_sample_rate) === 48000
+        Number(format.audioSampleRate) === 48000
     )
 
     if (webmOpusFormat) {
