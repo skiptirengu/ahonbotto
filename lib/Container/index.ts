@@ -7,7 +7,7 @@ import appRoot from 'app-root-path'
 import { Client, Guild } from 'discord.js'
 import { join } from 'path'
 import { container, DependencyContainer } from 'tsyringe'
-import { config, format, Logger, loggers, transports } from 'winston'
+import { format, Logger, loggers, transports } from 'winston'
 
 import { Config } from '../Config'
 
