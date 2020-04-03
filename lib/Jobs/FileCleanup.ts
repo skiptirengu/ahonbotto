@@ -58,10 +58,8 @@ export class FileCleanup implements Job {
 
     await Promise.all(orphans)
 
-    if (marked.length > 0 || orphans.length > 0) {
-      this.logger.info(
-        `Deleted ${marked.length} marked file(s) and ${orphans.length} orphan file(s)`
-      )
-    }
+    this.logger.debug(
+      `Deleted ${marked.length} marked file(s) and ${orphans.length} orphan file(s)`
+    )
   }
 }

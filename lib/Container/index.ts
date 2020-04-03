@@ -7,7 +7,7 @@ import appRoot from 'app-root-path'
 import { Client, Guild } from 'discord.js'
 import { join } from 'path'
 import { container, DependencyContainer } from 'tsyringe'
-import { format, Logger, loggers, transports } from 'winston'
+import { config, format, Logger, loggers, transports } from 'winston'
 
 import { Config } from '../Config'
 
@@ -19,23 +19,25 @@ const cacheFolder = 'http-cache'
 const scopeMap = new Map<string, DependencyContainer>()
 
 export function bootstrap(client: Client): void {
+  const prod = process.env['NODE_ENV'] === 'production'
+  // build config object
+  const config = {
+    discordToken: process.env['DISCORD_TOKEN'] as string,
+    youtubeToken: process.env['YOUTUBE_TOKEN'] as string,
+    commandPrefixes: (process.env['COMMAND_PREFIXES'] &&
+      process.env['COMMAND_PREFIXES']!.split(',')) || ['!'],
+    runtimeFolder: runtimeFolder,
+    embedColor: 0x1882ac,
+    cleanupInverval: 10,
+    httpCacheFolder: join(runtimeFolder, cacheFolder),
+    resourcesFolder: join(appRoot.path, resourcesFolder),
+    logLevel: process.env['LOG_LEVEL'] || (prod && 'info') || 'debug',
+  }
   // register config object
-  container.register<Config>('Config', {
-    useValue: {
-      discordToken: process.env['DISCORD_TOKEN'] as string,
-      youtubeToken: process.env['YOUTUBE_TOKEN'] as string,
-      commandPrefixes: (process.env['COMMAND_PREFIXES'] &&
-        process.env['COMMAND_PREFIXES']!.split(',')) || ['!'],
-      runtimeFolder: runtimeFolder,
-      embedColor: 0x1882ac,
-      cleanupInverval: 10,
-      httpCacheFolder: join(runtimeFolder, cacheFolder),
-      resourcesFolder: join(appRoot.path, resourcesFolder),
-    },
-  })
+  container.register<Config>('Config', { useValue: config })
   // shared logger
   container.register('Logger', {
-    useValue: createLogger('shared', 'Shared Logger'),
+    useValue: createLogger('shared', 'Shared Logger', config.logLevel),
   })
   // register client
   container.register(Client, { useValue: client })
@@ -60,17 +62,19 @@ export function scopeFactory(guild: Guild): DependencyContainer {
     useValue: scope,
   })
 
+  const config = container.resolve<Config>('Config')
   // Scoped logger
   scope.register('Logger', {
-    useValue: createLogger(name, guild.name),
+    useValue: createLogger(name, guild.name, config.logLevel),
   })
 
   return scope
 }
 
-function createLogger(id: string, label: string): Logger {
+function createLogger(id: string, label: string, level?: string): Logger {
   return loggers.add(id, {
     format: format.combine(format.label({ label }), format.timestamp()),
+    level: level,
     transports: [
       new transports.Console({
         format: format.combine(

@@ -31,4 +31,8 @@ export interface Config {
    * Folder containing bot resources
    */
   resourcesFolder: string
+  /**
+   * Minimum log level
+   */
+  logLevel?: string
 }
