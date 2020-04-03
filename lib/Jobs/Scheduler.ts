@@ -28,13 +28,13 @@ export class Scheduler {
       .execute()
       .then(() => {
         this.logger!.info('Job executed successfully', {
-          name: job.constructor.name
+          name: job.constructor.name,
         })
       })
       .catch((error) => {
         this.logger!.error('Error executing job', {
           name: job.constructor.name,
-          err: error
+          err: error,
         })
       })
   }

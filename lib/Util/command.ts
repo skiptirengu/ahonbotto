@@ -8,24 +8,17 @@ export function embed(embed: MessageEmbedOptions): MessageOptions {
   return {
     embed: {
       color: getConfig().embedColor,
-      ...embed
-    }
+      ...embed,
+    },
   }
 }
 
 export function normalizeCommandName(name: string): string {
-  return (
-    chain(name)
-      .camelCase()
-      .upperFirst()
-      .value() || ''
-  )
+  return chain(name).camelCase().upperFirst().value() || ''
 }
 
 export function typedCommandName(name: string): string {
-  return chain(name)
-    .snakeCase()
-    .value()!
+  return chain(name).snakeCase().value()!
 }
 
 export const getConfig = (): Config => container.resolve<Config>('Config')

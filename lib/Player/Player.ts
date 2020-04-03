@@ -116,7 +116,7 @@ export class Player {
       this.current = handler.getPlayable()
       const streamOptions: StreamOptions = {
         volume: this.current!.volume || false,
-        type: this.current!.streamType || 'unknown'
+        type: this.current!.streamType || 'unknown',
       }
 
       this.dispatcher = this.voiceConnection!.play(stream, streamOptions).once('error', (error) =>

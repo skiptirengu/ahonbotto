@@ -12,7 +12,7 @@ export function buildPlayableInfo(
   const messageEmbed: MessageEmbedOptions = {
     title: current!.name,
     fields: [],
-    color: getConfig().embedColor
+    color: getConfig().embedColor,
   }
 
   if (current!.totalTime && current!.totalTime > 0) {
@@ -21,7 +21,7 @@ export function buildPlayableInfo(
   if (!current!.isLocal && streamingTime != undefined && streamingTime > 0) {
     messageEmbed.fields!.push({
       name: 'Playing for',
-      value: getHumanizedTimeInfo(streamingTime / 1000) || 'Just started'
+      value: getHumanizedTimeInfo(streamingTime / 1000) || 'Just started',
     })
   }
   if (typeof times === 'number' && times > 0) {
@@ -39,9 +39,7 @@ export function buildPlayableInfo(
 
 export function getHumanizedTimeInfo(secs: number): string {
   const timeString: string[] = []
-  const timeInfo = dayjs()
-    .startOf('day')
-    .add(secs, 'second')
+  const timeInfo = dayjs().startOf('day').add(secs, 'second')
 
   if (timeInfo.hour() > 0) {
     timeString.push(`${timeInfo.hour()} hour(s)`)

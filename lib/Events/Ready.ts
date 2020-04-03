@@ -16,7 +16,7 @@ export function ready(): void {
         prefixes: config.commandPrefixes,
         embedColor: config.embedColor,
         httpCacheFolder: config.httpCacheFolder,
-        resourcesFolder: config.resourcesFolder
+        resourcesFolder: config.resourcesFolder,
       })
     })
     .catch((error: any) => logger.error('Uncaught error on ready event handler', { error }))

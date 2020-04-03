@@ -3,5 +3,5 @@ import { config } from 'dotenv'
 import { join } from 'path'
 
 config({
-  path: join(appRoot.path, '.env')
+  path: join(appRoot.path, '.env'),
 })

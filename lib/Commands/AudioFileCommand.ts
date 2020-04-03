@@ -30,7 +30,7 @@ export abstract class AudioFileCommandDefinition implements CommandDefinition {
   public usage(): MessageEmbedOptions {
     return {
       title: '[<volume>]',
-      description: `Play the file "${this.file}" with the volume set to value of "**volume**".`
+      description: `Play the file "${this.file}" with the volume set to value of "**volume**".`,
     }
   }
 }

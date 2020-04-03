@@ -30,12 +30,12 @@ export function bootstrap(client: Client): void {
       embedColor: 0x1882ac,
       cleanupInverval: 10,
       httpCacheFolder: join(runtimeFolder, cacheFolder),
-      resourcesFolder: join(appRoot.path, resourcesFolder)
-    }
+      resourcesFolder: join(appRoot.path, resourcesFolder),
+    },
   })
   // shared logger
   container.register('Logger', {
-    useValue: createLogger('shared', 'Shared Logger')
+    useValue: createLogger('shared', 'Shared Logger'),
   })
   // register client
   container.register(Client, { useValue: client })
@@ -51,18 +51,18 @@ export function scopeFactory(guild: Guild): DependencyContainer {
   scope.register(Guild, {
     useFactory: (dependencyContainer) => {
       const client = dependencyContainer.resolve(Client)
-      return client.guilds.get(name)
-    }
+      return client.guilds.resolve(name)
+    },
   })
 
   // Register this scoped container as a dependency too
   scope.register('Container', {
-    useValue: scope
+    useValue: scope,
   })
 
   // Scoped logger
   scope.register('Logger', {
-    useValue: createLogger(name, guild.name)
+    useValue: createLogger(name, guild.name),
   })
 
   return scope
@@ -81,13 +81,13 @@ function createLogger(id: string, label: string): Logger {
               Object.keys(args).length ? JSON.stringify(args, null, 2) : ''
             }`
           })
-        )
+        ),
       }),
       new transports.File({
         filename: join(runtimeFolder, logFolder, 'combined.log'),
-        format: format.prettyPrint()
-      })
-    ]
+        format: format.prettyPrint(),
+      }),
+    ],
   })
 }
 

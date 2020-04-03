@@ -13,8 +13,8 @@ import { Job } from './Job'
 @registry([
   {
     token: 'Job',
-    useClass: FileCleanup
-  }
+    useClass: FileCleanup,
+  },
 ])
 export class FileCleanup implements Job {
   /**
@@ -40,9 +40,7 @@ export class FileCleanup implements Job {
   }
 
   public async execute(): Promise<void> {
-    const time = dayjs()
-      .subtract(this.config.cleanupInverval, 'minute')
-      .unix()
+    const time = dayjs().subtract(this.config.cleanupInverval, 'minute').unix()
 
     const marked = this.media.marked(time).map(async (filename) => {
       const filepath = join(this.config.httpCacheFolder, filename)

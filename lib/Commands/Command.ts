@@ -5,7 +5,7 @@ import { Message, MessageEmbedOptions } from 'discord.js'
  */
 export enum CommandType {
   Text,
-  Voice
+  Voice,
 }
 
 /**
