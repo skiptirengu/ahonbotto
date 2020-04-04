@@ -11,7 +11,7 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "build:start": "yarn build && yarn start",
-    "build:forever": "yarn build && forever dist/index.js",
+    "build:forever": "yarn build && yarn start:forever",
     "forever:logs": "forever logs 0 -f",
     "lint": "eslint lib/**/*.ts index.ts env.ts",
     "lint:fix": "eslint lib/**/*.ts index.ts env.ts --fix",
