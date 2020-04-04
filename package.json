@@ -7,15 +7,23 @@
     "url": "https://github.com/skiptirengu/ahonbotto"
   },
   "scripts": {
+    "test": "yarn lint",
     "build": "tsc",
     "build:watch": "tsc -w",
-    "lint:fix": "eslint lib/**/*.ts index.ts env.ts --fix",
+    "build:start": "yarn build && yarn start",
+    "build:forever": "yarn build && forever dist/index.js",
+    "forever:logs": "forever logs 0 -f",
     "lint": "eslint lib/**/*.ts index.ts env.ts",
-    "start": "yarn tsc && node dist/index.js",
-    "yt": "node ./node_modules/youtube-dl/scripts/download.js",
+    "lint:fix": "eslint lib/**/*.ts index.ts env.ts --fix",
+    "start": "node dist/index.js",
+    "start:forever": "forever start dist/index.js",
+    "stop:forever": "forever stop 0 -f",
+    "install:yt": "node ./node_modules/youtube-dl/scripts/download.js",
     "runtime:cleanup": "rm -rf ./runtime/db && rm -rf ./runtime/http-cache && rm -rf ./runtime/logs"
   },
-  "pre-commit": "lint",
+  "pre-commit": {
+    "run": "lint"
+  },
   "author": "Me",
   "license": "WTFPL",
   "dependencies": {
@@ -53,6 +61,7 @@
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-simple-import-sort": "^5.0.2",
+    "forever": "^2.0.0",
     "node-gyp": "^6.1.0",
     "pre-commit": "^1.2.2",
     "prettier": "^2.0.2"
