@@ -1,5 +1,7 @@
 # アホンボット (Ahonbotto)
 
+![Node.js CI](https://github.com/skiptirengu/ahonbotto/workflows/Node.js%20CI/badge.svg)
+
 Yet another discord bot.  
 This bot is generic enough for you to use on any discord server.
 
