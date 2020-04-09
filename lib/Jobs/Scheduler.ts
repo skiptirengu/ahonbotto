@@ -27,7 +27,7 @@ export class Scheduler {
     job
       .execute()
       .then(() => {
-        this.logger!.info('Job executed successfully', {
+        this.logger!.debug('Job executed successfully', {
           name: job.constructor.name,
         })
       })
