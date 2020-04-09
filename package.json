@@ -44,6 +44,7 @@
     "typescript": "^3.8.3",
     "wikijs": "^6.0.1",
     "winston": "^3.2.1",
+    "winston-cloudwatch": "^2.3.1",
     "youtube-dl": "skiptirengu/node-youtube-dl#142970ee6e9e4581a6108e09722d89bd27c67250",
     "youtube-search": "^1.1.4",
     "ytdl-core": "^2.0.1"

@@ -35,4 +35,16 @@ export interface Config {
    * Minimum log level
    */
   logLevel?: string
+  /**
+   * Log to targets
+   */
+  logTargets: string[]
+  /**
+   * CloudWatch log group
+   */
+  cloudWatchGroup?: string
+  /**
+   * CloudWatch log stream
+   */
+  cloudWatchStream?: string
 }
