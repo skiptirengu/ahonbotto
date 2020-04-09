@@ -50,14 +50,25 @@ export class FileCleanup implements Job {
 
     await Promise.all(marked)
 
-    const orphans = xor(this.media.all(), await readdir(this.config.httpCacheFolder)).map(
-      async (filename) => {
-        return remove(join(this.config.httpCacheFolder, filename))
-      }
-    )
+    const allMedia = this.media.all()
+    const allFiles = await readdir(this.config.httpCacheFolder)
+
+    const orphans = xor(allMedia, allFiles).map(async (filename) => {
+      return remove(join(this.config.httpCacheFolder, filename))
+    })
 
     await Promise.all(orphans)
 
-    this.logger.info(`Deleted ${marked.length} marked file(s) and ${orphans.length} orphan file(s)`)
+    if (allMedia.length || allFiles.length) {
+      this.logger.info(
+        `Deleted ${marked.length} marked file(s) and ${orphans.length} orphan file(s)`,
+        {
+          mediaCount: allMedia.length,
+          fileCount: allFiles.length,
+          marked: marked.length,
+          orphans: orphans.length,
+        }
+      )
+    }
   }
 }
