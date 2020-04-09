@@ -114,11 +114,11 @@ function createCloudWatchTarget(config: Config): Transport {
   const logger = new WinstonCloudWatch({
     logGroupName: config.cloudWatchGroup,
     logStreamName: config.cloudWatchStream,
+    jsonMessage: true,
   })
-  logger.format = format.printf((info) => {
-    const base = _.pick(info, 'message', 'label', 'timestamp', 'level')
-    const meta = _.omit(info, 'message', 'label', 'timestamp', 'level')
-    return JSON.stringify({ ...base, meta })
+  logger.format = format.metadata({
+    key: 'metadata',
+    fillExcept: ['message', 'label', 'timestamp', 'level'],
   })
   return logger
 }
