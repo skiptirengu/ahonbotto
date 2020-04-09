@@ -16,7 +16,15 @@ export class AutoParser implements Parser {
     /**
      * Scoped dependency container
      */
-    @inject('Container') protected readonly container: DependencyContainer
+    @inject('Container') protected readonly container: DependencyContainer,
+    /**
+     * Youtube parser implementation
+     */
+    @inject(YoutubeParser) protected readonly youtubeParser: Parser,
+    /**
+     * Generic parser implementation
+     */
+    @inject(AnyParser) protected readonly anyParser: Parser
   ) {}
 
   /**
@@ -28,9 +36,9 @@ export class AutoParser implements Parser {
     url = this.normalizeUrl(url)
 
     if (isYoutubeUrl(url)) {
-      parser = container.resolve<Parser>(YoutubeParser)
+      parser = this.youtubeParser
     } else if (isValidUrl(url)) {
-      parser = container.resolve<Parser>(AnyParser)
+      parser = this.anyParser
     } else {
       throw new MalformedUrl("This doesn't seem to be a valid URL")
     }

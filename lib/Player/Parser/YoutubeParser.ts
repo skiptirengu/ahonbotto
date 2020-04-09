@@ -49,7 +49,7 @@ export class YoutubeParser implements Parser {
       name: info.title,
       uri: new URL(info.video_url),
       thumbnail: this.selectThumb(info),
-      totalTime: toNumber(info.length_seconds)
+      totalTime: toNumber(info.length_seconds),
     }
 
     if (full) this.setStreamDetails(info, playable)
@@ -69,7 +69,7 @@ export class YoutubeParser implements Parser {
       .shift()
 
     if (webmOpusFormat) {
-      this.logger.info('Found webm/opus compatible stream!', { video: info.title })
+      this.logger.info('Found webm/opus compatible stream!', { video: info.title, vid: info.vid })
       playable.streamType = 'webm/opus'
       playable.fileUri = new URL(webmOpusFormat.url)
       return
@@ -79,12 +79,12 @@ export class YoutubeParser implements Parser {
 
     let format = ytdlCore.chooseFormat(formats, {
       quality: 'highestaudio',
-      filter: 'audioonly'
+      filter: 'audioonly',
     })
 
     if (format instanceof Error) {
       format = ytdlCore.chooseFormat(formats, {
-        quality: 'lowestvideo'
+        quality: 'lowestvideo',
       })
     }
 
@@ -122,9 +122,9 @@ export class YoutubeParser implements Parser {
         (item): Playable => ({
           name: item.title,
           isLocal: false,
-          uri: new URL(linkFromId(item.id))
+          uri: new URL(linkFromId(item.id)),
         })
-      )
+      ),
     }
 
     return playlist

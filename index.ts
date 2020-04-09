@@ -9,6 +9,7 @@ import { Config } from './lib/Config'
 import { bootstrap as bootstrapContainer, container } from './lib/Container'
 import { bootstrap as bootstrapEvents } from './lib/Events'
 import { Scheduler } from './lib/Jobs/Scheduler'
+import { PlayerCleanup } from './lib/Player/PlayerCleanup'
 
 const client = new Client()
 bootstrapContainer(client)
@@ -18,4 +19,5 @@ const logger = container.resolve<Logger>('Logger')
 client
   .login(container.resolve<Config>('Config').discordToken)
   .then(() => Scheduler.start())
+  .then(() => container.resolve(PlayerCleanup).attatch(process))
   .catch((error) => logger.error('Uncaught initialization error', { error }))

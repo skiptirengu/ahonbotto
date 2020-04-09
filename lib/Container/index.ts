@@ -52,6 +52,10 @@ export function bootstrap(client: Client): void {
   container.register(Client, { useValue: client })
 }
 
+export function getScopes(): Map<string, DependencyContainer> {
+  return scopeMap
+}
+
 export function scopeFactory(guild: Guild): DependencyContainer {
   const name = guild.id
   if (scopeMap.has(name)) return scopeMap.get(name)!

@@ -59,12 +59,10 @@ export class FileCleanup implements Job {
 
     await Promise.all(orphans)
 
-    if (allMedia.length || allFiles.length) {
+    if (marked.length || orphans.length) {
       this.logger.info(
         `Deleted ${marked.length} marked file(s) and ${orphans.length} orphan file(s)`,
         {
-          mediaCount: allMedia.length,
-          fileCount: allFiles.length,
           marked: marked.length,
           orphans: orphans.length,
         }
