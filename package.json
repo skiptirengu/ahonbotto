@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "yarn lint",
-    "build": "tsc",
+    "build": "node --max_old_space_size=8192 node_modules/.bin/tsc",
     "build:watch": "tsc -w",
     "build:start": "yarn build && yarn start",
     "build:forever": "yarn build && yarn start:forever",

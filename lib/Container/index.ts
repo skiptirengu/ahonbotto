@@ -5,7 +5,7 @@ import './../Jobs'
 
 import appRoot from 'app-root-path'
 import { Client, Guild } from 'discord.js'
-import { split as _split } from 'lodash'
+import _ from 'lodash'
 import { join } from 'path'
 import { container, DependencyContainer } from 'tsyringe'
 import { format, Logger, loggers, transports } from 'winston'
@@ -30,14 +30,14 @@ export function bootstrap(client: Client): void {
   const config: Config = {
     discordToken: process.env['DISCORD_TOKEN'] as string,
     youtubeToken: process.env['YOUTUBE_TOKEN'] as string,
-    commandPrefixes: _split(prefixes, ',') || ['!'],
+    commandPrefixes: _.split(prefixes, ',') || ['!'],
     runtimeFolder: runtimeFolder,
     embedColor: 0x1882ac,
     cleanupInverval: 10,
     httpCacheFolder: join(runtimeFolder, cacheFolder),
     resourcesFolder: join(appRoot.path, resourcesFolder),
     logLevel: process.env['LOG_LEVEL'] || (prod && 'info') || 'debug',
-    logTargets: _split(logTargets, ',') || ['console'],
+    logTargets: _.split(logTargets, ',') || ['console'],
     cloudWatchGroup: process.env['CLOUDWATCH_GROUP'],
     cloudWatchStream: process.env['CLOUDWATCH_STREAM'],
   }
@@ -48,7 +48,6 @@ export function bootstrap(client: Client): void {
   container.register('Logger', {
     useValue: createLogger('shared', 'Shared Logger', config),
   })
-
   // register client
   container.register(Client, { useValue: client })
 }
@@ -112,11 +111,16 @@ function createFileTarget(): Transport {
 }
 
 function createCloudWatchTarget(config: Config): Transport {
-  return new WinstonCloudWatch({
+  const logger = new WinstonCloudWatch({
     logGroupName: config.cloudWatchGroup,
     logStreamName: config.cloudWatchStream,
-    jsonMessage: true,
   })
+  logger.format = format.printf((info) => {
+    const base = _.pick(info, 'message', 'label', 'timestamp', 'level')
+    const meta = _.omit(info, 'message', 'label', 'timestamp', 'level')
+    return JSON.stringify({ ...base, meta })
+  })
+  return logger
 }
 
 function createConsoleTarget(): Transport {
