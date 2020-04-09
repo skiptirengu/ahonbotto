@@ -115,6 +115,7 @@ function createCloudWatchTarget(config: Config): Transport {
   return new WinstonCloudWatch({
     logGroupName: config.cloudWatchGroup,
     logStreamName: config.cloudWatchStream,
+    jsonMessage: true,
   })
 }
 
