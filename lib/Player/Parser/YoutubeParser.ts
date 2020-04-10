@@ -69,7 +69,7 @@ export class YoutubeParser implements Parser {
       .shift()
 
     if (webmOpusFormat) {
-      this.logger.info('Found webm/opus compatible stream!', { video: info.title, vid: info.vid })
+      this.logger.info('Found webm/opus compatible stream!', { video: info.title, id: info.video_id })
       playable.streamType = 'webm/opus'
       playable.fileUri = new URL(webmOpusFormat.url)
       return
