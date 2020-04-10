@@ -40,6 +40,7 @@ export function bootstrap(client: Client): void {
     logTargets: _.split(logTargets, ',') || ['console'],
     cloudWatchGroup: process.env['CLOUDWATCH_GROUP'],
     cloudWatchStream: process.env['CLOUDWATCH_STREAM'],
+    maxDownloadSize: parseInt(process.env['MAX_DOWNLOAD_SIZE'] as string) || 12 << 23,
   }
 
   // register config object
@@ -110,7 +111,7 @@ function createTarget(config: Config, target: string): Transport {
 function createFileTarget(): Transport {
   return new transports.File({
     filename: join(runtimeFolder, logFolder, 'combined.log'),
-    format: format.prettyPrint(),
+    format: format.combine(createMetadataFormat(), format.prettyPrint()),
   })
 }
 
@@ -120,11 +121,15 @@ function createCloudWatchTarget(config: Config): Transport {
     logStreamName: config.cloudWatchStream,
     jsonMessage: true,
   })
-  logger.format = format.metadata({
+  logger.format = createMetadataFormat()
+  return logger
+}
+
+function createMetadataFormat() {
+  return format.metadata({
     key: 'metadata',
     fillExcept: ['message', 'label', 'timestamp', 'level'],
   })
-  return logger
 }
 
 function createConsoleTarget(): Transport {

@@ -1,16 +1,17 @@
 import { get } from 'lodash'
-import { toNumber } from 'lodash'
+import { toNumber, pick } from 'lodash'
 import { inject, scoped } from 'tsyringe'
 import { Lifecycle } from 'tsyringe'
 import { URL } from 'url'
 import { Logger } from 'winston'
-import ytdlCore, { videoInfo } from 'ytdl-core'
+import ytdlCore, { videoInfo, videoFormat } from 'ytdl-core'
 
 import { getInfo, linkFromId } from '../../Util'
 import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat'
 import { Playable } from '../Playable'
 import { Playlist } from '../Playlist'
 import { Parser } from './Parser'
+import { Config } from '../../Config'
 
 const mixPlaylistRe = /^([A-Za-z0-9_-]){13}$/
 const playlistArgs = ['--dump-single-json', '--flat-playlist']
@@ -21,7 +22,11 @@ export class YoutubeParser implements Parser {
     /**
      * Scoped logger
      */
-    @inject('Logger') protected readonly logger: Logger
+    @inject('Logger') protected readonly logger: Logger,
+    /**
+     * Bot config
+     */
+    @inject('Config') protected readonly config: Config
   ) {}
 
   /**
@@ -58,7 +63,9 @@ export class YoutubeParser implements Parser {
   }
 
   private setStreamDetails(info: videoInfo, playable: Playable): void {
-    const webmOpusFormat = info.formats
+    let format: videoFormat | undefined = undefined
+
+    format = info.formats
       .filter(
         (format) =>
           format.codecs == 'opus' &&
@@ -68,28 +75,32 @@ export class YoutubeParser implements Parser {
       .sort((a, b) => b.averageBitrate - a.averageBitrate)
       .shift()
 
-    if (webmOpusFormat) {
-      this.logger.info('Found webm/opus compatible stream!', { video: info.title, id: info.video_id })
+    if (format) {
+      this.logger.info('Found webm/opus compatible stream!', {
+        video: info.title,
+        id: info.video_id,
+        contentLength: format.contentLength,
+      })
       playable.streamType = 'webm/opus'
-      playable.fileUri = new URL(webmOpusFormat.url)
-      return
-    }
+    } else {
+      const formats = info.formats.filter((format) => !format.isDashMPD)
 
-    const formats = info.formats.filter((format) => !format.isDashMPD)
+      try {
+        format = ytdlCore.chooseFormat(formats, { quality: 'highestaudio', filter: 'audioonly' })
+      } catch (error) {}
 
-    let format = ytdlCore.chooseFormat(formats, {
-      quality: 'highestaudio',
-      filter: 'audioonly',
-    })
-
-    if (format instanceof Error) {
       format = ytdlCore.chooseFormat(formats, {
         quality: 'lowestvideo',
       })
+
+      this.logger.warn(
+        'No audio formats found. Falling back to "lowestvideo" format',
+        pick(format, 'audioSampleRate', 'codecs', 'container', 'contentLength', 'qualityLabel')
+      )
     }
 
-    if (format instanceof Error) {
-      throw format
+    if (Number(format.contentLength) > this.config.maxDownloadSize) {
+      throw new Error('Format exceeds maximum file size')
     }
 
     playable.fileUri = new URL(format.url)

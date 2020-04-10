@@ -47,4 +47,8 @@ export interface Config {
    * CloudWatch log stream
    */
   cloudWatchStream?: string
+  /**
+   * Max youtube file size
+   */
+  maxDownloadSize: number
 }
