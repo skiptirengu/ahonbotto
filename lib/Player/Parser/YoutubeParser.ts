@@ -100,7 +100,9 @@ export class YoutubeParser implements Parser {
     }
 
     if (Number(format.contentLength) > this.config.maxDownloadSize) {
-      throw new Error('Format exceeds maximum file size')
+      throw new Error(
+        `Format with size ${format.contentLength} exceeds maximum file size of ${this.config.maxDownloadSize}`
+      )
     }
 
     playable.fileUri = new URL(format.url)
