@@ -75,10 +75,11 @@ export class YoutubeParser implements Parser {
       .sort((a, b) => b.averageBitrate - a.averageBitrate)
       .shift()
 
+    const videoInfo = { video: info.title, id: info.video_id }
+
     if (format) {
       this.logger.info('Found webm/opus compatible stream!', {
-        video: info.title,
-        id: info.video_id,
+        ...videoInfo,
         contentLength: format.contentLength,
       })
       playable.streamType = 'webm/opus'
@@ -93,10 +94,10 @@ export class YoutubeParser implements Parser {
         quality: 'lowestvideo',
       })
 
-      this.logger.warn(
-        'No audio formats found. Falling back to "lowestvideo" format',
-        pick(format, 'audioSampleRate', 'codecs', 'container', 'contentLength', 'qualityLabel')
-      )
+      this.logger.warn('No audio formats found. Falling back to "lowestvideo" format', {
+        ...pick(format, 'audioSampleRate', 'codecs', 'container', 'contentLength', 'qualityLabel'),
+        ...videoInfo,
+      })
     }
 
     if (Number(format.contentLength) > this.config.maxDownloadSize) {
