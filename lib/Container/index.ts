@@ -6,6 +6,7 @@ import './../Jobs'
 import appRoot from 'app-root-path'
 import { Client, Guild } from 'discord.js'
 import _ from 'lodash'
+import { Format } from 'logform'
 import { join } from 'path'
 import { container, DependencyContainer } from 'tsyringe'
 import { format, Logger, loggers, transports } from 'winston'
@@ -125,7 +126,7 @@ function createCloudWatchTarget(config: Config): Transport {
   return logger
 }
 
-function createMetadataFormat() {
+function createMetadataFormat(): Format {
   return format.metadata({
     key: 'metadata',
     fillExcept: ['message', 'label', 'timestamp', 'level'],
