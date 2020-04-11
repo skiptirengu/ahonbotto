@@ -88,8 +88,12 @@ export class Select implements Command {
 
     const playable = (await this.parser.parse(value.uri.toString())) as Playable
     const options = PlayerOptions.createFromArgs(params)
+
     this.player.push(message.member!.voice.channel!, playable, options)
-    const embedOptions = buildPlayableInfo(playable, options)
+    const embedOptions = buildPlayableInfo(
+      playable,
+      new PlayerOptions(options.shuffle, this.player.getAutoPlay(), options.times)
+    )
     return message.channel.send(embed(embedOptions))
   }
 }

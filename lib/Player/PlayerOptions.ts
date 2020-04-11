@@ -12,7 +12,7 @@ export interface QueueOptions {
   /**
    * Wheter or not to enable autoplay
    */
-  autoPlay: boolean
+  autoPlay: boolean | null
 }
 
 export class PlayerOptions implements QueueOptions {
@@ -24,11 +24,11 @@ export class PlayerOptions implements QueueOptions {
     /**
      * @inheritdoc
      */
-    public readonly autoPlay: boolean,
+    public readonly autoPlay: boolean | null,
     /**
      * @inheritdoc
      */
-    public readonly times: number
+    public readonly times?: number
   ) {}
 
   public static createFromArgs(args: string[]): PlayerOptions {
@@ -36,8 +36,8 @@ export class PlayerOptions implements QueueOptions {
 
     const times = args.filter((x) => !isNaN(parseInt(x))).shift()
     const shuffle = args.some((x) => toString(x).toLowerCase() === 'shuffle')
-    const autoPlay = args.some((x) => toString(x).toLowerCase() === 'autoplay')
+    const autoPlay = args.some((x) => toString(x).toLowerCase() === 'autoplay') || null
 
-    return new PlayerOptions(shuffle, autoPlay, (times && parseInt(times)) || 1)
+    return new PlayerOptions(shuffle, autoPlay, (times && parseInt(times)) || undefined)
   }
 }

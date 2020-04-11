@@ -120,7 +120,10 @@ export class Queue implements Command {
       // Add the requested item to the queue x times
       const playable = parsed as Playable
       this.player.push(message.member.voice.channel, playable, options)
-      embedOptions = buildPlayableInfo(playable, options)
+      embedOptions = buildPlayableInfo(
+        playable,
+        new PlayerOptions(options.shuffle, this.player.getAutoPlay(), options.times)
+      )
     }
 
     await message.channel.send(embed(embedOptions))

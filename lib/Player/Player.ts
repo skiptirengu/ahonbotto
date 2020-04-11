@@ -94,7 +94,7 @@ export class Player {
         .forEach(() => this.queue.push(playable))
     }
 
-    this.autoPlay = options.autoPlay
+    this.autoPlay = options.autoPlay !== null ? options.autoPlay : this.autoPlay
   }
 
   public stop(): void {
@@ -114,7 +114,7 @@ export class Player {
     return this.autoPlay
   }
 
-  public isEmptyQueue(): boolean {
+  public isQueueEmpty(): boolean {
     return this.queue.empty()
   }
 
@@ -161,7 +161,7 @@ export class Player {
   }
 
   private handleAutoPlay(): void {
-    if (!this.autoPlay || !this.current || this.current.isLocal) return
+    if (!this.isQueueEmpty() || !this.autoPlay || !this.current || this.current.isLocal) return
 
     if (!this.current.isLocal && !this.current?.related) {
       this.logger.warn('Autoplay is enabled but playable does not have any related videos', {
@@ -169,7 +169,17 @@ export class Player {
       })
     }
 
-    const related = shuffle(this.current.related!)
+    const threshold = this.current!.totalTime! * 0.5
+
+    let related = this.current!.related!.filter(
+      (x) => x.totalTime! < this.current!.totalTime! + threshold
+    )
+
+    if (!related.length) {
+      related = this.current!.related!
+    }
+
+    related = shuffle(related)
 
     this.queue.push(related.shift()!)
   }

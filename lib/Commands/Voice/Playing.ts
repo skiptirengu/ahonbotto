@@ -52,7 +52,7 @@ export class Playing implements Command {
     const streamingTime = this.player.getStreamingTime()
     const messageEmbed = buildPlayableInfo(
       current,
-      new PlayerOptions(false, this.player.getAutoPlay(), 0),
+      new PlayerOptions(false, this.player.getAutoPlay()),
       streamingTime
     )
 

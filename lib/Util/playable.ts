@@ -25,7 +25,7 @@ export function buildPlayableInfo(
       value: getHumanizedTimeInfo(streamingTime / 1000) || 'Just started',
     })
   }
-  if (options.times > 0) {
+  if (options.times) {
     messageEmbed.description = `Repeating ${options.times} time(s)`
   }
   if (!current!.isLocal) {

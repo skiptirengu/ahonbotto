@@ -10,7 +10,7 @@ export function ready(): void {
   const logger = container.resolve<Logger>('Logger')
   const config = container.resolve<Config>('Config')
   client
-    .user!.setActivity(`Try ${withCommandPrefix('help')} command`, { type: 'PLAYING' })
+    .user!.setActivity(`Checkout new ${withCommandPrefix('autoplay')} command`, { type: 'PLAYING' })
     .then(() => {
       logger.info('Initialization completed using following configuration', {
         prefixes: config.commandPrefixes,
