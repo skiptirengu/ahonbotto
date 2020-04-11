@@ -20,7 +20,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      description: 'Skip the current playing audio'
+      description: 'Skip the current playing audio',
     }
   }
 }

@@ -3,6 +3,7 @@ import { inject, scoped } from 'tsyringe'
 import { Lifecycle } from 'tsyringe'
 
 import { Player } from '../../Player/Player'
+import { PlayerOptions } from '../../Player/PlayerOptions'
 import { buildPlayableInfo, embed } from '../../Util'
 import { Command, CommandDefinition, CommandType } from '../Command'
 
@@ -21,7 +22,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      description: 'Shows information about the current playing audio'
+      description: 'Shows information about the current playing audio',
     }
   }
 }
@@ -30,7 +31,7 @@ export class Definition implements CommandDefinition {
 export class Playing implements Command {
   public constructor(
     /**
-     * All command definitions bound to the container
+     * Scoped player
      */
     @inject(Player) private readonly player: Player
   ) {}
@@ -43,13 +44,17 @@ export class Playing implements Command {
     if (!current) {
       return message.channel.send(
         embed({
-          description: "There's nothing playing at the moment"
+          description: "There's nothing playing at the moment",
         })
       )
     }
 
     const streamingTime = this.player.getStreamingTime()
-    const messageEmbed = buildPlayableInfo(current, streamingTime)
+    const messageEmbed = buildPlayableInfo(
+      current,
+      new PlayerOptions(false, this.player.getAutoPlay(), 0),
+      streamingTime
+    )
 
     await message.channel.send({ embed: messageEmbed })
   }

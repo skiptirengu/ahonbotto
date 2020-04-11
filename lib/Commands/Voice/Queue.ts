@@ -1,5 +1,4 @@
 import { Message, MessageEmbedOptions } from 'discord.js'
-import { lowerCase, shuffle } from 'lodash'
 import { inject, scoped } from 'tsyringe'
 import { Lifecycle } from 'tsyringe'
 
@@ -8,6 +7,7 @@ import { UnsupportedFormat } from '../../Player/Exceptions/UnsupportedFormat'
 import { AutoParser } from '../../Player/Parser/AutoParser'
 import { Playable } from '../../Player/Playable'
 import { Player } from '../../Player/Player'
+import { PlayerOptions } from '../../Player/PlayerOptions'
 import { isPlaylist, Playlist } from '../../Player/Playlist'
 import { buildPlayableInfo, embed } from '../../Util'
 import { Command, CommandDefinition, CommandType } from '../Command'
@@ -27,18 +27,18 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      title: '<url> [<repeat-x-times>]',
+      title: '<url> [<repeat-x-times>] [<autoplay>]',
       description:
-        'Adds a music to the play queue, being "**url**" an youtube video id, playlist url or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites. To shuffle a playlist pass the argument "**shuffle**" after the playlist link.',
+        'Adds a music to the play queue, being "**url**" an youtube video id, playlist url or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites. To shuffle a playlist pass the argument "**shuffle**" after the playlist link. To enable auto play, pass the argument "**autoplay**" after the playlist link',
       fields: [
         { name: 'Example:', value: '`!queue http://my.video.com/xD.mp4`', inline: true },
         {
           name: 'Shuffle playlist:',
           value:
             '`!queue https://www.youtube.com/playlist?list=PLhQ3EYAhJISH9kToXYGNNQOLrCo6o2eao shuffle`',
-          inline: true
-        }
-      ]
+          inline: true,
+        },
+      ],
     }
   }
 }
@@ -61,7 +61,7 @@ export class Queue implements Command {
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
       return message.channel.send(
         embed({
-          description: 'You must be connected to a voice channel in order to queue a song'
+          description: 'You must be connected to a voice channel in order to queue a song',
         })
       )
     }
@@ -70,7 +70,7 @@ export class Queue implements Command {
     if (!url) {
       return message.channel.send(
         embed({
-          description: 'You should provide a valid URL'
+          description: 'You should provide a valid URL',
         })
       )
     }
@@ -83,7 +83,7 @@ export class Queue implements Command {
       if (err instanceof MalformedUrl || err instanceof UnsupportedFormat) {
         return message.channel.send(
           embed({
-            description: err.message
+            description: err.message,
           })
         )
       }
@@ -92,45 +92,35 @@ export class Queue implements Command {
     }
 
     let embedOptions: MessageEmbedOptions
+    const options = PlayerOptions.createFromArgs(params)
 
     if (isPlaylist(parsed)) {
-      let playables = parsed.playables
-
-      // Shuffle the playlist
-      const shouldShuffle = lowerCase(params.shift()) === 'shuffle'
-
-      if (shouldShuffle) {
-        playables = shuffle(playables)
-      }
-
       // Add all playlist itens to the queue
-      this.player.pushAll(message.member.voice.channel, playables)
+      this.player.push(message.member.voice.channel, parsed.playables, options)
 
       embedOptions = {
         description: `Playlist ${parsed.title} queued (${parsed.playables.length} songs)`,
         fields: [
           {
             name: 'Shuffle mode',
-            value: shouldShuffle ? 'Yes' : 'No',
-            inline: true
+            value: options.shuffle ? 'Yes' : 'No',
+            inline: true,
           },
           {
             name: 'Playlist size',
-            value: playables.length.toString(),
-            inline: true
-          }
+            value: parsed.playables.length.toString(),
+            inline: true,
+          },
         ],
         thumbnail: {
-          url: parsed.thumbnail || undefined
-        }
+          url: parsed.thumbnail || undefined,
+        },
       }
     } else {
       // Add the requested item to the queue x times
       const playable = parsed as Playable
-      const times = Number(params.shift()) || 1
-
-      this.player.push(message.member.voice.channel, playable, times)
-      embedOptions = buildPlayableInfo(playable, undefined, times)
+      this.player.push(message.member.voice.channel, playable, options)
+      embedOptions = buildPlayableInfo(playable, options)
     }
 
     await message.channel.send(embed(embedOptions))

@@ -2,12 +2,13 @@ import dayjs from 'dayjs'
 import { MessageEmbedOptions } from 'discord.js'
 
 import { Playable } from '../Player/Playable'
+import { PlayerOptions } from '../Player/PlayerOptions'
 import { getConfig } from './command'
 
 export function buildPlayableInfo(
   current: Playable,
-  streamingTime?: number,
-  times?: number
+  options: PlayerOptions,
+  streamingTime?: number
 ): MessageEmbedOptions {
   const messageEmbed: MessageEmbedOptions = {
     title: current!.name,
@@ -24,11 +25,15 @@ export function buildPlayableInfo(
       value: getHumanizedTimeInfo(streamingTime / 1000) || 'Just started',
     })
   }
-  if (typeof times === 'number' && times > 0) {
-    messageEmbed.description = `Repeating ${times} time(s)`
+  if (options.times > 0) {
+    messageEmbed.description = `Repeating ${options.times} time(s)`
   }
   if (!current!.isLocal) {
     messageEmbed.url = current!.uri.href
+    messageEmbed.fields!.push({
+      name: 'Auto play',
+      value: options.autoPlay ? 'enabled' : 'disabled',
+    })
   }
   if (current!.thumbnail) {
     messageEmbed.thumbnail = { url: current!.thumbnail }

@@ -6,6 +6,7 @@ import { Lifecycle } from 'tsyringe'
 import { AutoParser } from '../../Player/Parser/AutoParser'
 import { Playable } from '../../Player/Playable'
 import { Player } from '../../Player/Player'
+import { PlayerOptions } from '../../Player/PlayerOptions'
 import { SearchRepository } from '../../Player/SearchRepository'
 import { buildPlayableInfo, embed } from '../../Util'
 import { Command, CommandDefinition, CommandType } from '../Command'
@@ -25,7 +26,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      title: '<url> [<repeat-x-times>]',
+      title: '<url> [<repeat-x-times>] [<autoplay>]',
       description:
         'Adds a music to the play queue, being "**url**" an youtube video id or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites.',
       fields: [
@@ -86,9 +87,9 @@ export class Select implements Command {
     }
 
     const playable = (await this.parser.parse(value.uri.toString())) as Playable
-    const times = toNumber(params.shift()) || 1
-    this.player.push(message.member!.voice.channel!, playable, times)
-    const embedOptions = buildPlayableInfo(playable, undefined, times)
+    const options = PlayerOptions.createFromArgs(params)
+    this.player.push(message.member!.voice.channel!, playable, options)
+    const embedOptions = buildPlayableInfo(playable, options)
     return message.channel.send(embed(embedOptions))
   }
 }

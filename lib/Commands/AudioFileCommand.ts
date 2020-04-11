@@ -7,6 +7,7 @@ import { URL } from 'url'
 import { Config } from '../Config'
 import { Playable } from '../Player/Playable'
 import { Player } from '../Player/Player'
+import { PlayerOptions } from '../Player/PlayerOptions'
 import { Command, CommandDefinition, CommandType } from './Command'
 
 const audioFolder = 'audio'
@@ -76,6 +77,6 @@ export abstract class AudioFileCommand implements Command {
     const uri = new URL(`file://${path}`)
     const playable: Playable = { isLocal: true, name: this.name, uri, volume }
 
-    this.player.push(message.member.voice.channel, playable, 1)
+    this.player.push(message.member.voice.channel, playable, new PlayerOptions(false, false, 1))
   }
 }

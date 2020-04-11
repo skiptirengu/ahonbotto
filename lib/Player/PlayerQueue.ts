@@ -39,6 +39,13 @@ export class PlayerQueue extends EventEmitter {
   }
 
   /**
+   * Whether the queue is empty
+   */
+  public empty(): boolean {
+    return this.stack.length === 0
+  }
+
+  /**
    * Returns the next playable in queue
    */
   public shift(): Playable | undefined {
