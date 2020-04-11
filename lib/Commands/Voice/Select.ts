@@ -30,8 +30,8 @@ export class Definition implements CommandDefinition {
         'Adds a music to the play queue, being "**url**" an youtube video id or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites.',
       fields: [
         { name: 'Example:', value: '`!queue http://my.video.com/xD.mp4`', inline: true },
-        { name: 'Or:', value: '`!queue dQw4w9WgXcQ 4`', inline: true }
-      ]
+        { name: 'Or:', value: '`!queue dQw4w9WgXcQ 4`', inline: true },
+      ],
     }
   }
 }
@@ -58,7 +58,7 @@ export class Select implements Command {
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
       return message.channel.send(
         embed({
-          description: 'You must be connected to a voice channel in order to queue a song'
+          description: 'You must be connected to a voice channel in order to queue a song',
         })
       )
     }
@@ -69,7 +69,7 @@ export class Select implements Command {
     if (!storedSize) {
       return message.channel.send(
         embed({
-          description: 'You should use the "search" command before'
+          description: 'You should use the "search" command before',
         })
       )
     }
@@ -80,7 +80,7 @@ export class Select implements Command {
     if (!index || !value) {
       return message.channel.send(
         embed({
-          description: `You must provide a number between 1 and ${storedSize}`
+          description: `You must provide a number between 1 and ${storedSize}`,
         })
       )
     }

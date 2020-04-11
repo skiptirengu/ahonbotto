@@ -1,17 +1,17 @@
 import { get } from 'lodash'
-import { toNumber, pick } from 'lodash'
+import { pick, toNumber } from 'lodash'
 import { inject, scoped } from 'tsyringe'
 import { Lifecycle } from 'tsyringe'
 import { URL } from 'url'
 import { Logger } from 'winston'
-import ytdlCore, { videoInfo, videoFormat } from 'ytdl-core'
+import ytdlCore, { videoFormat, videoInfo } from 'ytdl-core'
 
+import { Config } from '../../Config'
 import { getInfo, linkFromId } from '../../Util'
 import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat'
 import { Playable } from '../Playable'
 import { Playlist } from '../Playlist'
 import { Parser } from './Parser'
-import { Config } from '../../Config'
 
 const mixPlaylistRe = /^([A-Za-z0-9_-]){13}$/
 const playlistArgs = ['--dump-single-json', '--flat-playlist']
@@ -55,11 +55,27 @@ export class YoutubeParser implements Parser {
       uri: new URL(info.video_url),
       thumbnail: this.selectThumb(info),
       totalTime: toNumber(info.length_seconds),
+      related: this.getRelatedVideos(info),
     }
 
     if (full) this.setStreamDetails(info, playable)
 
     return playable
+  }
+
+  private getRelatedVideos(info: videoInfo): Playable[] {
+    return info.related_videos
+      .filter((x) => x.id)
+      .map(
+        (related): Playable => ({
+          isLocal: false,
+          name: related.title || 'Unknown',
+          uri: new URL(linkFromId(related.id!)),
+          // @ts-ignore
+          thumbnail: related.video_thumbnail || null,
+          totalTime: toNumber(related.length_seconds),
+        })
+      )
   }
 
   private setStreamDetails(info: videoInfo, playable: Playable): void {

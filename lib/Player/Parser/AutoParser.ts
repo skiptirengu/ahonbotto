@@ -1,4 +1,4 @@
-import { container, DependencyContainer, inject, scoped } from 'tsyringe'
+import { inject, scoped } from 'tsyringe'
 import { Lifecycle } from 'tsyringe'
 
 import { isValidUrl } from '../../Util/url'
@@ -13,10 +13,6 @@ import { YoutubeParser } from './YoutubeParser'
 @scoped(Lifecycle.ContainerScoped)
 export class AutoParser implements Parser {
   constructor(
-    /**
-     * Scoped dependency container
-     */
-    @inject('Container') protected readonly container: DependencyContainer,
     /**
      * Youtube parser implementation
      */

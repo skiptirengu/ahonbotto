@@ -34,4 +34,8 @@ export interface Playable {
    * Stream type (opus, unknown, etc)
    */
   streamType?: StreamType
+  /**
+   * Related streams
+   */
+  related?: Playable[]
 }
