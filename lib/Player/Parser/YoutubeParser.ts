@@ -71,6 +71,7 @@ export class YoutubeParser implements Parser {
           isLocal: false,
           name: related.title || 'Unknown',
           uri: new URL(linkFromId(related.id!)),
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           thumbnail: related.video_thumbnail || null,
           totalTime: toNumber(related.length_seconds),
@@ -108,6 +109,7 @@ export class YoutubeParser implements Parser {
 
       format = ytdlCore.chooseFormat(formats, {
         quality: 'lowestvideo',
+        filter: (format: videoFormat) => !!(format.audioChannels && format.audioChannels > 0),
       })
 
       this.logger.warn('No audio formats found. Falling back to "lowestvideo" format', {

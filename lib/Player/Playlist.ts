@@ -15,6 +15,7 @@ export interface Playlist {
   thumbnail?: string
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function isPlaylist(info: any): info is Playlist {
   return typeof info === 'object' && 'playables' in info && 'title' in info
 }

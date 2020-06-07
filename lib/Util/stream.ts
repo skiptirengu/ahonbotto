@@ -3,7 +3,10 @@ import { Readable } from 'stream'
 
 export type streamCallback = (...args: any[]) => void
 
-export const handleStreamError = (stream: Readable, ...callbacks: Function[]): streamCallback => {
+export const handleStreamError = (
+  stream: Readable,
+  ...callbacks: (() => any)[]
+): streamCallback => {
   return () => {
     try {
       callbacks.forEach((callback) => callback())

@@ -15,7 +15,7 @@ const youtubedlOptions = [
   '--prefer-insecure',
   '--no-playlist',
   '--dump-single-json',
-  '--flat-playlist'
+  '--flat-playlist',
 ]
 
 @scoped(Lifecycle.ContainerScoped)
@@ -36,7 +36,7 @@ export class AnyParser implements Parser {
       uri: new URL(info.webpage_url),
       isLocal: false,
       totalTime: info._duration_raw || 0,
-      thumbnail: info.thumbnail
+      thumbnail: info.thumbnail,
     }
   }
 
