@@ -113,7 +113,15 @@ export class YoutubeParser implements Parser {
       })
 
       this.logger.warn('No audio formats found. Falling back to "lowestvideo" format', {
-        ...pick(format, 'audioSampleRate', 'codecs', 'container', 'contentLength', 'qualityLabel'),
+        ...pick(
+          format,
+          'audioSampleRate',
+          'codecs',
+          'container',
+          'contentLength',
+          'qualityLabel',
+          'url'
+        ),
         ...videoInfo,
       })
     }
