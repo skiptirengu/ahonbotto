@@ -4,11 +4,12 @@ module.exports = {
   extends: [
     'plugin:@typescript-eslint/recommended',
     'prettier/@typescript-eslint',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
   ],
   rules: {
     'object-curly-spacing': ['error', 'always'],
     'eol-last': ['error', 'always'],
+    'comma-dangle': [2, 'always-multiline'],
     quotes: ['error', 'single', { avoidEscape: true }],
     semi: ['error', 'never'],
     indent: 'off',
@@ -19,6 +20,6 @@ module.exports = {
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
-    'simple-import-sort/sort': 'error'
-  }
+    'simple-import-sort/sort': 'error',
+  },
 }

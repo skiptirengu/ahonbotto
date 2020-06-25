@@ -2,6 +2,7 @@ import { Message, MessageEmbedOptions } from 'discord.js'
 import { inject, scoped } from 'tsyringe'
 import { Lifecycle } from 'tsyringe'
 import { URL } from 'url'
+import { Logger } from 'winston'
 import youtubeSearch from 'youtube-search'
 
 import { Config } from '../../Config'
@@ -28,7 +29,7 @@ export class Definition implements CommandDefinition {
       title: '<query...>',
       description:
         'Search a video on youtube and prints the top entries. See also **select** command.',
-      fields: [{ name: 'Example:', value: '`!search open the tcheka`', inline: true }]
+      fields: [{ name: 'Example:', value: '`!search open the tcheka`', inline: true }],
     }
   }
 }
@@ -43,10 +44,14 @@ export class Search implements Command {
     /**
      * Repository containing search results
      */
-    @inject(SearchRepository) protected readonly repository: SearchRepository
+    @inject(SearchRepository) protected readonly repository: SearchRepository,
+    /**
+     * Scoped logger
+     */
+    @inject('Logger') protected readonly logger: Logger
   ) {}
 
-  public async run(message: Message, params: string[]): Promise<Message | Message[]> {
+  public async run(message: Message, params: string[]): Promise<void | Message> {
     const queryString = params.join(' ')
 
     const response = await youtubeSearch(queryString, {
@@ -54,13 +59,13 @@ export class Search implements Command {
       maxResults: 6,
       safeSearch: 'none',
       videoSyndicated: 'true',
-      type: 'video'
+      type: 'video',
     })
 
     if (!response.results.length) {
       return message.channel.send(
         embed({
-          description: "Couldn't find what you're looking for :/"
+          description: "Couldn't find what you're looking for :/",
         })
       )
     }
@@ -70,17 +75,27 @@ export class Search implements Command {
       (value): Playable => ({ name: value.title, uri: new URL(value.link), isLocal: false })
     )
 
+    const channel = message.channel
+    const messageSnowflake = message.id
+
     this.repository.push(storageKey, results)
 
     const description = response.results
       .map((value, index) => `**${index + 1}** →  ${value.title}`)
       .join('\n\n')
 
-    return message.channel.send(
+    const responseMessage = await message.channel.send(
       embed({
-        description
+        description,
       })
     )
+    const responseMessageSnowflake = responseMessage.id
+
+    this.repository.once(this.repository.getDeleteEvent(storageKey), () => {
+      channel
+        .bulkDelete([messageSnowflake, responseMessageSnowflake])
+        .catch((err) => this.logger.error('Error deleting message', err))
+    })
   }
 
   protected buildKey(message: Message): string {

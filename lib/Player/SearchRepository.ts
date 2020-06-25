@@ -1,6 +1,6 @@
 import { Message } from 'discord.js'
-import { scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { EventEmitter } from 'events'
+import { Lifecycle, scoped } from 'tsyringe'
 
 import { Playable } from './Playable'
 
@@ -15,16 +15,18 @@ interface SearchResultInternal {
   timer: NodeJS.Timeout
 }
 
-const defaultTimer = 300000
+const defaultTimer = 120000
 
 @scoped(Lifecycle.ContainerScoped)
-export class SearchRepository {
+export class SearchRepository extends EventEmitter {
   public constructor(
     /**
      *
      */
     protected readonly resultMap: Map<string, SearchResultInternal> = new Map()
-  ) {}
+  ) {
+    super()
+  }
 
   /**
    * Pushes a value to the repository
@@ -63,6 +65,7 @@ export class SearchRepository {
   public delete(key: string): void {
     const stored = this.resultMap.get(key)
     if (stored) {
+      this.emit(this.getDeleteEvent(key))
       clearTimeout(stored.timer)
     }
     this.resultMap.delete(key)
@@ -70,5 +73,9 @@ export class SearchRepository {
 
   public buildKey(message: Message): string {
     return `Guild:${message.guild!.id}|User:${message.author!.id}`
+  }
+
+  public getDeleteEvent(key: string): string {
+    return `delete[${key}]`
   }
 }
