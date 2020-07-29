@@ -21,7 +21,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      title: 'List all commands this bot has.'
+      title: 'List all commands this bot has.',
     }
   }
 }
@@ -54,13 +54,13 @@ export class Help implements Command {
       fields: [
         {
           name: 'Voice commands:',
-          value: this.filter(CommandType.Voice) || 'No commands'
+          value: this.filter(CommandType.Voice) || 'No commands',
         },
         {
           name: 'Text commands:',
-          value: this.filter(CommandType.Text) || 'No commands'
-        }
-      ]
+          value: this.filter(CommandType.Text) || 'No commands',
+        },
+      ],
     })
 
     const commandName = withCommandPrefix('usage')

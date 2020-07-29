@@ -24,7 +24,9 @@ export class Definition implements CommandDefinition {
     return {
       title: '<command>',
       description: 'It does ***EXACTLY*** what you think it does.',
-      fields: [{ name: 'Example:', value: `\`${withCommandPrefix('usage')} usage\``, inline: true }]
+      fields: [
+        { name: 'Example:', value: `\`${withCommandPrefix('usage')} usage\``, inline: true },
+      ],
     }
   }
 }
@@ -49,7 +51,7 @@ export class Usage implements Command {
     if (!commandName) {
       return message.channel.send(
         embed({
-          description: 'You should specify a command name'
+          description: 'You should specify a command name',
         })
       )
     }
@@ -67,7 +69,7 @@ export class Usage implements Command {
     if (!usage.color) usage.color = this.config.embedColor
 
     return message.channel.send({
-      embed: usage
+      embed: usage,
     })
   }
 }

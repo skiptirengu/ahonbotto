@@ -19,7 +19,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
-    '@typescript-eslint/ban-ts-ignore': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
     'simple-import-sort/sort': 'error',
   },
 }

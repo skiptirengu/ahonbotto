@@ -33,9 +33,9 @@ export class Definition implements CommandDefinition {
         {
           name: 'Example:',
           value: `\`${withCommandPrefix('avatar')} @Someone#2469\``,
-          inline: true
-        }
-      ]
+          inline: true,
+        },
+      ],
     }
   }
 }
@@ -76,8 +76,8 @@ export class Avatar implements Command {
       color: this.config.embedColor,
       description: userAvatar.urls.join('\n'),
       image: {
-        url: userAvatar.user.displayAvatarURL({ size: 1024 })
-      }
+        url: userAvatar.user.displayAvatarURL({ size: 1024 }),
+      },
     })
 
     return message.channel.send({ embed })

@@ -16,7 +16,7 @@ import { StreamingHandler } from './StreamingHandler'
 
 const initialBufferSize = 1 << 18
 const minigetOptions: Options = {
-  highWaterMark: initialBufferSize
+  highWaterMark: initialBufferSize,
 }
 
 @injectable()
@@ -141,7 +141,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   }
 
   private async getReadableStream(): Promise<Readable> {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const stream = createReadStream(this.filepath!, { emitClose: true })
     return new Promise((resolve) => {
@@ -152,9 +152,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
   private setFilenameAndPath(): void {
     const name = `${this.guild.id}-${this.playable!.uri}`
 
-    this.filename = createHash('sha256')
-      .update(name)
-      .digest('hex')
+    this.filename = createHash('sha256').update(name).digest('hex')
 
     this.filepath = join(this.config.httpCacheFolder, this.filename)
   }

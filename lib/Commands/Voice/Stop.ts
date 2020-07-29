@@ -20,7 +20,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      description: 'Stop the current playing music and clears the queue'
+      description: 'Stop the current playing music and clears the queue',
     }
   }
 }

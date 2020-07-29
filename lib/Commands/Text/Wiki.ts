@@ -27,9 +27,9 @@ export class Definition implements CommandDefinition {
         {
           name: 'Example:',
           value: `\`${withCommandPrefix('wiki')} Luiz Inácio Lula da Silva\``,
-          inline: true
-        }
-      ]
+          inline: true,
+        },
+      ],
     }
   }
 }
@@ -50,16 +50,16 @@ export class Wiki implements Command {
       const page = await wiki().page(term)
 
       const messageEmbed = embed({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         url: await page.url(),
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         title: this.getPageTitle(page.raw.title || term),
         description: this.getContent(await page.summary()),
         thumbnail: {
-          url: await page.mainImage()
-        }
+          url: await page.mainImage(),
+        },
       })
 
       await message.reply("Here's your wikipedia link", messageEmbed)
@@ -67,7 +67,7 @@ export class Wiki implements Command {
       await message.reply(
         'Sorry',
         embed({
-          description: "I'm having a hard time searching for what you're looking for ( ´•︵•` )"
+          description: "I'm having a hard time searching for what you're looking for ( ´•︵•` )",
         })
       )
       throw err

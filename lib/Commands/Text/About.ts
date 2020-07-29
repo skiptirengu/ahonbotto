@@ -20,7 +20,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      description: 'Show some useless information about this bot.'
+      description: 'Show some useless information about this bot.',
     }
   }
 }
@@ -40,20 +40,20 @@ export class About implements Command {
       url: json.repository.url,
       color: this.config.embedColor,
       thumbnail: {
-        url: message.client.user!.avatarURL() || message.client.user!.defaultAvatarURL
+        url: message.client.user!.avatarURL() || message.client.user!.defaultAvatarURL,
       },
       author: {
         name: 'Thomas Turbando (Skiptir Engu#6682)',
         url: 'https://github.com/skiptirengu',
         iconURL:
-          'https://cdn.discordapp.com/avatars/209871057295900673/189523766d448583bb6a73dbfaa2350e.webp'
+          'https://cdn.discordapp.com/avatars/209871057295900673/189523766d448583bb6a73dbfaa2350e.webp',
       },
       fields: [
         {
           name: 'License',
-          value: json.license
-        }
-      ]
+          value: json.license,
+        },
+      ],
     })
 
     return message.channel.send({ embed })

@@ -18,7 +18,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      description: 'Rola'
+      description: 'Rola',
     }
   }
 }

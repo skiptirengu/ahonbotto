@@ -22,7 +22,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      description: '¯\\_(ツ)_/¯'
+      description: '¯\\_(ツ)_/¯',
     }
   }
 }
@@ -41,13 +41,13 @@ export class Karen implements Command {
     const messageEmbed = embed({
       title: 'muu',
       image: {
-        url: 'attachment://karen.png'
+        url: 'attachment://karen.png',
       },
       files: [
         {
-          attachment: join(this.config.resourcesFolder, 'images', 'karen.png')
-        }
-      ]
+          attachment: join(this.config.resourcesFolder, 'images', 'karen.png'),
+        },
+      ],
     })
 
     return message.channel.send(messageEmbed)

@@ -20,7 +20,7 @@ export class Definition implements CommandDefinition {
    */
   public usage(): MessageEmbedOptions {
     return {
-      description: 'Pause/Resume the current audio'
+      description: 'Pause/Resume the current audio',
     }
   }
 }

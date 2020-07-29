@@ -45,7 +45,7 @@ export class YoutubeParser implements Parser {
   private async parseVideo(uri: URL, full?: boolean): Promise<Playable> {
     const info = await ytdlCore.getInfo(uri.href)
 
-    if (info.formats.some((format) => format.live)) {
+    if (info.formats.some((format) => format.isLive)) {
       throw new UnsupportedFormat('Live streaming not supported')
     }
 
