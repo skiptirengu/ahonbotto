@@ -1,2 +1,2 @@
-import './FileCleanup'
-import './Scheduler'
+import './FileCleanup';
+import './Scheduler';

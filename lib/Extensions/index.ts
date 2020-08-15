@@ -1,7 +1,7 @@
 interface String {
-  codeWrap(lang?: string): string
+  codeWrap(lang?: string): string;
 }
 
 String.prototype.codeWrap = function (lang = 'Markdown'): string {
-  return '```' + lang + '\n' + this + '\n```'
-}
+  return '```' + lang + '\n' + this + '\n```';
+};

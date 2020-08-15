@@ -2,53 +2,53 @@ export interface Config {
   /**
    * YouTube token
    */
-  youtubeToken: string
+  youtubeToken: string;
   /**
    * Discord token
    */
-  discordToken: string
+  discordToken: string;
   /**
    * Supported command prefixes
    */
-  commandPrefixes: string[]
+  commandPrefixes: string[];
   /**
    * Runtime folder
    */
-  runtimeFolder: string
+  runtimeFolder: string;
   /**
    * Color for embed messages
    */
-  embedColor: number
+  embedColor: number;
   /**
    * Job cleanup interval
    */
-  cleanupInverval: number
+  cleanupInverval: number;
   /**
    * Folder used to cache songs
    */
-  httpCacheFolder: string
+  httpCacheFolder: string;
   /**
    * Folder containing bot resources
    */
-  resourcesFolder: string
+  resourcesFolder: string;
   /**
    * Minimum log level
    */
-  logLevel?: string
+  logLevel?: string;
   /**
    * Log to targets
    */
-  logTargets: string[]
+  logTargets: string[];
   /**
    * CloudWatch log group
    */
-  cloudWatchGroup?: string
+  cloudWatchGroup?: string;
   /**
    * CloudWatch log stream
    */
-  cloudWatchStream?: string
+  cloudWatchStream?: string;
   /**
    * Max youtube file size
    */
-  maxDownloadSize: number
+  maxDownloadSize: number;
 }

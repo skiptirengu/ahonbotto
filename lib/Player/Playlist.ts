@@ -1,21 +1,21 @@
-import { Playable } from './Playable'
+import { Playable } from './Playable';
 
 export interface Playlist {
   /**
    * Playables on this playlist
    */
-  playables: Playable[]
+  playables: Playable[];
   /**
    * Playlist title
    */
-  title: string
+  title: string;
   /**
    * Playlist thumbnail
    */
-  thumbnail?: string
+  thumbnail?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function isPlaylist(info: any): info is Playlist {
-  return typeof info === 'object' && 'playables' in info && 'title' in info
+  return typeof info === 'object' && 'playables' in info && 'title' in info;
 }

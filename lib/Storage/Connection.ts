@@ -1,18 +1,18 @@
-import SqliteDatabase, { Database } from 'better-sqlite3'
-import { ensureFileSync } from 'fs-extra'
-import { join } from 'path'
-import { inject, singleton } from 'tsyringe'
+import SqliteDatabase, { Database } from 'better-sqlite3';
+import { ensureFileSync } from 'fs-extra';
+import { join } from 'path';
+import { inject, singleton } from 'tsyringe';
 
-import { Config } from '../Config'
+import { Config } from '../Config';
 
-const dbFolder = 'db'
+const dbFolder = 'db';
 
 @singleton()
 export class Connection {
   /**
    * Database connection
    */
-  public readonly database: Database
+  public readonly database: Database;
 
   public constructor(
     /**
@@ -20,10 +20,10 @@ export class Connection {
      */
     @inject('Config') protected readonly config: Config
   ) {
-    const databasePath = join(config.runtimeFolder, dbFolder, 'sqlite.db')
-    ensureFileSync(databasePath)
-    this.database = new SqliteDatabase(databasePath)
-    this.ensureTables()
+    const databasePath = join(config.runtimeFolder, dbFolder, 'sqlite.db');
+    ensureFileSync(databasePath);
+    this.database = new SqliteDatabase(databasePath);
+    this.ensureTables();
   }
 
   private ensureTables(): void {
@@ -33,6 +33,6 @@ export class Connection {
         time_marked_deletion INTEGER DEFAULT NULL,
         completed            BOOLEAN DEFAULT FALSE
       )
-    `)
+    `);
   }
 }

@@ -1,2 +1,2 @@
-import './Connection'
-import './MediaRepository'
+import './Connection';
+import './MediaRepository';

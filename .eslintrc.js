@@ -11,7 +11,7 @@ module.exports = {
     'eol-last': ['error', 'always'],
     'comma-dangle': [2, 'always-multiline'],
     quotes: ['error', 'single', { avoidEscape: true }],
-    semi: ['error', 'never'],
+    semi: ['error', 'always'],
     indent: 'off',
     '@typescript-eslint/indent': ['error', 2],
     '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],

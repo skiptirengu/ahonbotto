@@ -1,7 +1,7 @@
-import { autoInjectable, inject, injectAll, singleton } from 'tsyringe'
-import { Logger } from 'winston'
+import { autoInjectable, inject, injectAll, singleton } from 'tsyringe';
+import { Logger } from 'winston';
 
-import { Job } from './Job'
+import { Job } from './Job';
 
 @singleton()
 @autoInjectable()
@@ -16,11 +16,11 @@ export class Scheduler {
      */
     @inject('Logger') protected readonly logger?: Logger
   ) {
-    this.jobs!.forEach((job) => this.schedule(job))
+    this.jobs!.forEach((job) => this.schedule(job));
   }
 
   private schedule(job: Job): void {
-    setInterval(() => this.execute(job), job.interval * 60000)
+    setInterval(() => this.execute(job), job.interval * 60000);
   }
 
   private execute(job: Job): void {
@@ -29,17 +29,17 @@ export class Scheduler {
       .then(() => {
         this.logger!.debug('Job executed successfully', {
           name: job.constructor.name,
-        })
+        });
       })
       .catch((error) => {
         this.logger!.error('Error executing job', {
           name: job.constructor.name,
           err: error,
-        })
-      })
+        });
+      });
   }
 
   public static start(): void {
-    new Scheduler()
+    new Scheduler();
   }
 }

@@ -1,7 +1,7 @@
 export interface Job {
-  interval: number
+  interval: number;
   /**
    * Runs the job
    */
-  execute(): Promise<void>
+  execute(): Promise<void>;
 }

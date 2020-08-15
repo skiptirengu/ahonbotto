@@ -1,18 +1,18 @@
-import { toString } from 'lodash'
+import { toString } from 'lodash';
 
 export interface QueueOptions {
   /**
    * Number of times to queue the song
    */
-  times?: number
+  times?: number;
   /**
    * Whether or not to shuffle the playlist
    */
-  shuffle: boolean
+  shuffle: boolean;
   /**
    * Wheter or not to enable autoplay
    */
-  autoPlay: boolean | null
+  autoPlay: boolean | null;
 }
 
 export class PlayerOptions implements QueueOptions {
@@ -32,12 +32,12 @@ export class PlayerOptions implements QueueOptions {
   ) {}
 
   public static createFromArgs(args: string[]): PlayerOptions {
-    if (!args) throw new Error('Empty argument list')
+    if (!args) throw new Error('Empty argument list');
 
-    const times = args.filter((x) => !isNaN(parseInt(x))).shift()
-    const shuffle = args.some((x) => toString(x).toLowerCase() === 'shuffle')
-    const autoPlay = args.some((x) => toString(x).toLowerCase() === 'autoplay') || null
+    const times = args.filter((x) => !isNaN(parseInt(x))).shift();
+    const shuffle = args.some((x) => toString(x).toLowerCase() === 'shuffle');
+    const autoPlay = args.some((x) => toString(x).toLowerCase() === 'autoplay') || null;
 
-    return new PlayerOptions(shuffle, autoPlay, (times && parseInt(times)) || undefined)
+    return new PlayerOptions(shuffle, autoPlay, (times && parseInt(times)) || undefined);
   }
 }

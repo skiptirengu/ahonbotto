@@ -1,41 +1,41 @@
-import { StreamType } from 'discord.js'
-import { URL } from 'url'
+import { StreamType } from 'discord.js';
+import { URL } from 'url';
 
 export interface Playable {
   /**
    * Result name
    */
-  name: string
+  name: string;
   /**
    * URL of the search result
    */
-  uri: URL
+  uri: URL;
   /**
    * Whether this is a local stream
    */
-  isLocal: boolean
+  isLocal: boolean;
   /**
    * Parsed URL with the file
    */
-  fileUri?: URL
+  fileUri?: URL;
   /**
    * Total time in seconds
    */
-  totalTime?: number
+  totalTime?: number;
   /**
    * Video thumbnail
    */
-  thumbnail?: string
+  thumbnail?: string;
   /**
    * Audio volume
    */
-  volume?: number
+  volume?: number;
   /**
    * Stream type (opus, unknown, etc)
    */
-  streamType?: StreamType
+  streamType?: StreamType;
   /**
    * Related streams
    */
-  related?: Playable[]
+  related?: Playable[];
 }

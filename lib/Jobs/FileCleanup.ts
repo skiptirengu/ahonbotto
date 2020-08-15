@@ -1,13 +1,13 @@
-import dayjs from 'dayjs'
-import { readdir, remove } from 'fs-extra'
-import { xor } from 'lodash'
-import { join } from 'path'
-import { inject, injectable, registry } from 'tsyringe'
-import { Logger } from 'winston'
+import dayjs from 'dayjs';
+import { readdir, remove } from 'fs-extra';
+import { xor } from 'lodash';
+import { join } from 'path';
+import { inject, injectable, registry } from 'tsyringe';
+import { Logger } from 'winston';
 
-import { Config } from '../Config'
-import { MediaRepository } from '../Storage/MediaRepository'
-import { Job } from './Job'
+import { Config } from '../Config';
+import { MediaRepository } from '../Storage/MediaRepository';
+import { Job } from './Job';
 
 @injectable()
 @registry([
@@ -20,7 +20,7 @@ export class FileCleanup implements Job {
   /**
    * @inheritdoc
    */
-  public interval: number
+  public interval: number;
 
   public constructor(
     /**
@@ -36,28 +36,28 @@ export class FileCleanup implements Job {
      */
     @inject('Logger') protected readonly logger: Logger
   ) {
-    this.interval = this.config.cleanupInverval
+    this.interval = this.config.cleanupInverval;
   }
 
   public async execute(): Promise<void> {
-    const time = dayjs().subtract(this.config.cleanupInverval, 'minute').unix()
+    const time = dayjs().subtract(this.config.cleanupInverval, 'minute').unix();
 
     const marked = this.media.marked(time).map(async (filename) => {
-      const filepath = join(this.config.httpCacheFolder, filename)
-      this.media.remove(filename)
-      return remove(filepath)
-    })
+      const filepath = join(this.config.httpCacheFolder, filename);
+      this.media.remove(filename);
+      return remove(filepath);
+    });
 
-    await Promise.all(marked)
+    await Promise.all(marked);
 
-    const allMedia = this.media.all()
-    const allFiles = await readdir(this.config.httpCacheFolder)
+    const allMedia = this.media.all();
+    const allFiles = await readdir(this.config.httpCacheFolder);
 
     const orphans = xor(allMedia, allFiles).map(async (filename) => {
-      return remove(join(this.config.httpCacheFolder, filename))
-    })
+      return remove(join(this.config.httpCacheFolder, filename));
+    });
 
-    await Promise.all(orphans)
+    await Promise.all(orphans);
 
     if (marked.length || orphans.length) {
       this.logger.info(
@@ -66,7 +66,7 @@ export class FileCleanup implements Job {
           marked: marked.length,
           orphans: orphans.length,
         }
-      )
+      );
     }
   }
 }

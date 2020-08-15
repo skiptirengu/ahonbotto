@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js'
+import { Message, MessageEmbedOptions } from 'discord.js';
 
 /**
  * Types of commands
@@ -15,15 +15,15 @@ export interface CommandDefinition {
   /**
    * Command title
    */
-  command: string
+  command: string;
   /**
    * Command type
    */
-  type: CommandType
+  type: CommandType;
   /**
    * Command type
    */
-  usage: () => MessageEmbedOptions
+  usage: () => MessageEmbedOptions;
 }
 
 /**
@@ -35,5 +35,5 @@ export interface Command {
    * @param message The discord message instance
    * @param params The command params
    */
-  run(message: Message, params: string[]): Promise<Message | Message[] | void>
+  run(message: Message, params: string[]): Promise<Message | Message[] | void>;
 }
