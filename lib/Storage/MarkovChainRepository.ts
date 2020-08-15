@@ -6,6 +6,7 @@ import { MarkovChain, MarkovChainSentence } from './Models/Markov';
 
 @singleton()
 export class MarkovChainRepository {
+  private readonly cache: Map<string, MarkovChain> = new Map();
   private readonly stmtEnable: Statement<any[]>;
   private readonly stmtFindMarkovByGuild: Statement<any[]>;
   private readonly stmtDisable: Statement<any[]>;
@@ -22,7 +23,7 @@ export class MarkovChainRepository {
     this.stmtEnable = this.connection.database.prepare(`
       INSERT INTO markov_chain (guild, channel, enabled) 
       VALUES (@guild, @channel, TRUE)
-      ON CONFLICT DO UPDATE
+      ON CONFLICT (guild) DO UPDATE
       SET channel = @channel, enabled = @enabled
       WHERE id = markov_chain.id
     `);
@@ -33,7 +34,7 @@ export class MarkovChainRepository {
         SELECT id FROM markov_chain_sentences 
         WHERE markov_chain_id = @chainId
         ORDER BY timestamp DESC
-        OFFSET (@limit - 1)
+        LIMIT 9999999 OFFSET (@limit - 1)
       )
     `);
 
@@ -85,10 +86,14 @@ export class MarkovChainRepository {
     } else {
       this.stmtDisable.run({ id: markov.id });
       this.stmtDeleteAllSentences.run({ id: markov.id });
+      this.cache.delete(guild);
     }
   }
 
   public getMarkovForGuild(guild: string): MarkovChain | undefined {
-    return this.stmtFindMarkovByGuild.get({ guild });
+    if (this.cache.has(guild)) return this.cache.get(guild);
+    const value: MarkovChain = this.stmtFindMarkovByGuild.get({ guild });
+    if (value) this.cache.set(guild, value);
+    return value;
   }
 }
