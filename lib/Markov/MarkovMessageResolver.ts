@@ -21,7 +21,7 @@ export class MarkovMessageResolver {
     firstMessage: string | undefined,
     limit: number
   ): Promise<any> {
-    const channel = this.guild.channels.resolve('222761713844355072') as TextChannel;
+    const channel = this.guild.channels.resolve(markov.channel) as TextChannel;
     for await (const bulk of this.fetchMessages(channel, firstMessage, limit)) {
       this.sentenceSource.pushSentences(markov.id, this.mapMessages(bulk));
     }
