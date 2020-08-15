@@ -1,26 +1,26 @@
-import { Message, MessageEmbedOptions } from 'discord.js'
-import { inject, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
-import { URL } from 'url'
-import { Logger } from 'winston'
-import youtubeSearch from 'youtube-search'
+import { Message, MessageEmbedOptions, TextChannel } from 'discord.js';
+import { inject, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
+import { URL } from 'url';
+import { Logger } from 'winston';
+import youtubeSearch from 'youtube-search';
 
-import { Config } from '../../Config'
-import { Playable } from '../../Player/Playable'
-import { SearchRepository } from '../../Player/SearchRepository'
-import { embed } from '../../Util'
-import { Command, CommandDefinition, CommandType } from '../Command'
+import { Config } from '../../Config';
+import { Playable } from '../../Player/Playable';
+import { SearchRepository } from '../../Player/SearchRepository';
+import { embed } from '../../Util';
+import { Command, CommandDefinition, CommandType } from '../Command';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type = CommandType.Voice
+  type = CommandType.Voice;
   /**
    * @inheritdoc
    */
-  command = 'Search'
+  command = 'Search';
   /**
    * @inheritdoc
    */
@@ -30,7 +30,7 @@ export class Definition implements CommandDefinition {
       description:
         'Search a video on youtube and prints the top entries. See also **select** command.',
       fields: [{ name: 'Example:', value: '`!search open the tcheka`', inline: true }],
-    }
+    };
   }
 }
 
@@ -52,7 +52,7 @@ export class Search implements Command {
   ) {}
 
   public async run(message: Message, params: string[]): Promise<void | Message> {
-    const queryString = params.join(' ')
+    const queryString = params.join(' ');
 
     const response = await youtubeSearch(queryString, {
       key: this.config.youtubeToken,
@@ -60,45 +60,45 @@ export class Search implements Command {
       safeSearch: 'none',
       videoSyndicated: 'true',
       type: 'video',
-    })
+    });
 
     if (!response.results.length) {
       return message.channel.send(
         embed({
           description: "Couldn't find what you're looking for :/",
         })
-      )
+      );
     }
 
-    const storageKey = this.buildKey(message)
+    const storageKey = this.buildKey(message);
     const results = response.results.map(
       (value): Playable => ({ name: value.title, uri: new URL(value.link), isLocal: false })
-    )
+    );
 
-    const channel = message.channel
-    const messageSnowflake = message.id
+    const channel = message.channel as TextChannel;
+    const messageSnowflake = message.id;
 
-    this.repository.push(storageKey, results)
+    this.repository.push(storageKey, results);
 
     const description = response.results
       .map((value, index) => `**${index + 1}** →  ${value.title}`)
-      .join('\n\n')
+      .join('\n\n');
 
     const responseMessage = await message.channel.send(
       embed({
         description,
       })
-    )
-    const responseMessageSnowflake = responseMessage.id
+    );
+    const responseMessageSnowflake = responseMessage.id;
 
     this.repository.once(this.repository.getDeleteEvent(storageKey), () => {
       channel
         .bulkDelete([messageSnowflake, responseMessageSnowflake])
-        .catch((err) => this.logger.error('Error deleting message', err))
-    })
+        .catch((err) => this.logger.error('Error deleting message', err));
+    });
   }
 
   protected buildKey(message: Message): string {
-    return `Guild:${message.guild!.id}|User:${message.author!.id}`
+    return `Guild:${message.guild!.id}|User:${message.author!.id}`;
   }
 }

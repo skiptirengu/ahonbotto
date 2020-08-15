@@ -13,6 +13,9 @@ export class MarkovChainRepository {
   private readonly stmtDeleteAllSentences: Statement<any[]>;
   private readonly stmtDeleteSentences: Statement<any[]>;
   private readonly stmtInsertSentence: Statement<any[]>;
+  private readonly stmtGetAllSentences: Statement<any[]>;
+  private readonly stmtGetAllPendingEnabled: Statement<any[]>;
+  private readonly stmtGetFirstTimestamp: Statement<any[]>;
 
   public constructor(
     /**
@@ -24,7 +27,7 @@ export class MarkovChainRepository {
       INSERT INTO markov_chain (guild, channel, enabled) 
       VALUES (@guild, @channel, TRUE)
       ON CONFLICT (guild) DO UPDATE
-      SET channel = @channel, enabled = @enabled
+      SET channel = @channel, enabled = TRUE
       WHERE id = markov_chain.id
     `);
 
@@ -52,8 +55,38 @@ export class MarkovChainRepository {
     );
 
     this.stmtFindMarkovByGuild = this.connection.database.prepare(
-      'SELECT * FROM markov_chain WHERE channel = @channel'
+      'SELECT * FROM markov_chain WHERE guild = @guild'
     );
+
+    this.stmtGetAllSentences = this.connection.database.prepare(`
+      SELECT * FROM markov_chain_sentences 
+      WHERE markov_chain_id = @chainId
+      ORDER BY timestamp ASC
+      LIMIT @limit
+    `);
+
+    this.stmtGetAllPendingEnabled = this.connection.database.prepare(`
+      SELECT * FROM markov_chain markov
+      WHERE enabled IS TRUE AND (
+        SELECT COUNT(1) FROM markov_chain_sentences
+        WHERE markov_chain_id = markov.id
+      ) < @limit
+    `);
+
+    this.stmtGetFirstTimestamp = this.connection.database.prepare(`
+      SELECT id FROM markov_chain_sentences
+      WHERE markov_chain_id = @chainId
+      ORDER BY timestamp DESC 
+      LIMIT 1
+    `);
+  }
+
+  public getGuildPending(limit: number): MarkovChain[] {
+    return this.stmtGetAllPendingEnabled.all({ limit });
+  }
+
+  public getFirstMessage(chainId: number): string | undefined {
+    return this.stmtGetFirstTimestamp.pluck().get({ chainId }) || undefined;
   }
 
   public pushSentences(chainId: number, limit: number, sentences: MarkovChainSentence[]): void {
@@ -76,6 +109,10 @@ export class MarkovChainRepository {
     });
 
     writeSentences();
+  }
+
+  public getSentences(chainId: number, limit: number): MarkovChainSentence[] {
+    return this.stmtGetAllSentences.all({ chainId, limit });
   }
 
   public toggleMarkovFor(guild: string, channel: string): void {

@@ -1,7 +1,4 @@
-interface String {
-  codeWrap(lang?: string): string;
-}
+import dayjs from 'dayjs';
+import dayjsPluginUTC from 'dayjs/plugin/utc';
 
-String.prototype.codeWrap = function (lang = 'Markdown'): string {
-  return '```' + lang + '\n' + this + '\n```';
-};
+dayjs.extend(dayjsPluginUTC);

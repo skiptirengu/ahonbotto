@@ -8,13 +8,6 @@ import { scopeFactory } from '../Container';
 import { normalizeCommandName } from '../Util';
 
 export function message(message: MessagePayload): void {
-  const usrId = message.author && message.author.id;
-  const botId = message.client.user && message.client.user.id;
-
-  // ignore own messages
-  if (usrId != null && botId == usrId) return;
-  if (!message.guild) return;
-
   const container = scopeFactory(message.guild!);
   const messageParts = message.content.split(' ').filter((item): boolean => !!item);
 

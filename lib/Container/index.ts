@@ -2,6 +2,7 @@ import './../Storage';
 import './../Player';
 import './../Commands';
 import './../Jobs';
+import './../Markov';
 
 import appRoot from 'app-root-path';
 import { Client, Guild } from 'discord.js';
@@ -42,6 +43,7 @@ export function bootstrap(client: Client): void {
     cloudWatchGroup: process.env['CLOUDWATCH_GROUP'],
     cloudWatchStream: process.env['CLOUDWATCH_STREAM'],
     maxDownloadSize: parseInt(process.env['MAX_DOWNLOAD_SIZE'] as string) || 12 << 23,
+    markovSentenceCacheSize: parseInt(process.env['MARKOV_CACHE_SIZE'] as string) || 3500,
   };
 
   // register config object

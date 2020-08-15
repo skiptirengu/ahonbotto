@@ -37,7 +37,7 @@ export class Connection {
 
     this.database.exec(`
       CREATE TABLE IF NOT EXISTS markov_chain (
-        id      INTEGER AUTOINCREMENT PRIMARY KEY,
+        id      INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         guild   VARCHAR(32) NOT NULL,
         channel VARCHAR(32) NOT NULL,
         enabled BOOLEAN DEFAULT FALSE
@@ -62,6 +62,11 @@ export class Connection {
     this.database.exec(`
       CREATE INDEX IF NOT EXISTS idx_markov_chain_id 
       ON markov_chain_sentences (markov_chain_id)
+    `);
+
+    this.database.exec(`
+      CREATE INDEX IF NOT EXISTS idx_markov_chain_sentence_timestamp
+      ON markov_chain_sentences (timestamp)
     `);
   }
 }

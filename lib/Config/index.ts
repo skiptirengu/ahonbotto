@@ -51,4 +51,8 @@ export interface Config {
    * Max youtube file size
    */
   maxDownloadSize: number;
+  /**
+   * Number of sentences to keep in memory
+   */
+  markovSentenceCacheSize: number;
 }

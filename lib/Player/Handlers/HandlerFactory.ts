@@ -1,10 +1,10 @@
-import { DependencyContainer, inject, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { DependencyContainer, inject, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
 
-import { Playable } from '../Playable'
-import { BufferedHttpStreamingHandler } from './BufferedHttpStreamingHandler'
-import { LocalFileStreamingHandler } from './LocalFileStreamingHandler'
-import { StreamingHandler } from './StreamingHandler'
+import { Playable } from '../Playable';
+import { BufferedHttpStreamingHandler } from './BufferedHttpStreamingHandler';
+import { LocalFileStreamingHandler } from './LocalFileStreamingHandler';
+import { StreamingHandler } from './StreamingHandler';
 
 @scoped(Lifecycle.ContainerScoped)
 export class HandlerFactory {
@@ -22,11 +22,11 @@ export class HandlerFactory {
     switch (playable.uri.protocol.replace(':', '')) {
       case 'http':
       case 'https':
-        return this.container.resolve(BufferedHttpStreamingHandler).setContext(playable)
+        return this.container.resolve(BufferedHttpStreamingHandler).setContext(playable);
       case 'file':
-        return this.container.resolve(LocalFileStreamingHandler).setContext(playable)
+        return this.container.resolve(LocalFileStreamingHandler).setContext(playable);
       default:
-        throw new Error(`unknown scheme ${playable.uri.protocol}`)
+        throw new Error(`unknown scheme ${playable.uri.protocol}`);
     }
   }
 }
