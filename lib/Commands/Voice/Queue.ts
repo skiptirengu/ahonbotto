@@ -1,27 +1,27 @@
-import { Message, MessageEmbedOptions } from 'discord.js'
-import { inject, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { Message, MessageEmbedOptions } from 'discord.js';
+import { inject, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
 
-import { MalformedUrl } from '../../Player/Exceptions/MalformedUrl'
-import { UnsupportedFormat } from '../../Player/Exceptions/UnsupportedFormat'
-import { AutoParser } from '../../Player/Parser/AutoParser'
-import { Playable } from '../../Player/Playable'
-import { Player } from '../../Player/Player'
-import { PlayerOptions } from '../../Player/PlayerOptions'
-import { isPlaylist, Playlist } from '../../Player/Playlist'
-import { buildPlayableInfo, embed } from '../../Util'
-import { Command, CommandDefinition, CommandType } from '../Command'
+import { MalformedUrl } from '../../Player/Exceptions/MalformedUrl';
+import { UnsupportedFormat } from '../../Player/Exceptions/UnsupportedFormat';
+import { AutoParser } from '../../Player/Parser/AutoParser';
+import { Playable } from '../../Player/Playable';
+import { Player } from '../../Player/Player';
+import { PlayerOptions } from '../../Player/PlayerOptions';
+import { isPlaylist, Playlist } from '../../Player/Playlist';
+import { buildPlayableInfo, embed } from '../../Util';
+import { Command, CommandDefinition, CommandType } from '../Command';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type = CommandType.Voice
+  type = CommandType.Voice;
   /**
    * @inheritdoc
    */
-  command = 'Queue'
+  command = 'Queue';
   /**
    * @inheritdoc
    */
@@ -39,7 +39,7 @@ export class Definition implements CommandDefinition {
           inline: true,
         },
       ],
-    }
+    };
   }
 }
 
@@ -63,40 +63,40 @@ export class Queue implements Command {
         embed({
           description: 'You must be connected to a voice channel in order to queue a song',
         })
-      )
+      );
     }
 
-    const url = params.shift()
+    const url = params.shift();
     if (!url) {
       return message.channel.send(
         embed({
           description: 'You should provide a valid URL',
         })
-      )
+      );
     }
 
-    let parsed: Playable | Playlist | null = null
+    let parsed: Playable | Playlist | null = null;
 
     try {
-      parsed = await this.parser.parse(url)
+      parsed = await this.parser.parse(url);
     } catch (err) {
       if (err instanceof MalformedUrl || err instanceof UnsupportedFormat) {
         return message.channel.send(
           embed({
             description: err.message,
           })
-        )
+        );
       }
     } finally {
-      await message.delete()
+      await message.delete();
     }
 
-    let embedOptions: MessageEmbedOptions
-    const options = PlayerOptions.createFromArgs(params)
+    let embedOptions: MessageEmbedOptions;
+    const options = PlayerOptions.createFromArgs(params);
 
     if (isPlaylist(parsed)) {
       // Add all playlist itens to the queue
-      this.player.push(message.member.voice.channel, parsed.playables, options)
+      this.player.push(message.member.voice.channel, parsed.playables, options);
 
       embedOptions = {
         description: `Playlist ${parsed.title} queued (${parsed.playables.length} songs)`,
@@ -115,17 +115,17 @@ export class Queue implements Command {
         thumbnail: {
           url: parsed.thumbnail || undefined,
         },
-      }
+      };
     } else {
       // Add the requested item to the queue x times
-      const playable = parsed as Playable
-      this.player.push(message.member.voice.channel, playable, options)
+      const playable = parsed as Playable;
+      this.player.push(message.member.voice.channel, playable, options);
       embedOptions = buildPlayableInfo(
         playable,
         new PlayerOptions(options.shuffle, this.player.getAutoPlay(), options.times)
-      )
+      );
     }
 
-    await message.channel.send(embed(embedOptions))
+    await message.channel.send(embed(embedOptions));
   }
 }

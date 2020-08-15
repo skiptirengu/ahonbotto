@@ -1,29 +1,29 @@
-import { Message, MessageEmbedOptions } from 'discord.js'
-import { join } from 'path'
-import { inject, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { Message, MessageEmbedOptions } from 'discord.js';
+import { join } from 'path';
+import { inject, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
 
-import { Config } from '../../Config'
-import { embed } from '../../Util'
-import { Command, CommandDefinition, CommandType } from '../Command'
+import { Config } from '../../Config';
+import { embed } from '../../Util';
+import { Command, CommandDefinition, CommandType } from '../Command';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type = CommandType.Text
+  type = CommandType.Text;
   /**
    * @inheritdoc
    */
-  command = 'Karen'
+  command = 'Karen';
   /**
    * @inheritdoc
    */
   public usage(): MessageEmbedOptions {
     return {
       description: '¯\\_(ツ)_/¯',
-    }
+    };
   }
 }
 
@@ -48,8 +48,8 @@ export class Karen implements Command {
           attachment: join(this.config.resourcesFolder, 'images', 'karen.png'),
         },
       ],
-    })
+    });
 
-    return message.channel.send(messageEmbed)
+    return message.channel.send(messageEmbed);
   }
 }

@@ -1,20 +1,20 @@
-import { inject, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { inject, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
 
-import { Config } from '../../Config'
-import { Player } from '../../Player/Player'
-import { AudioFileCommand, AudioFileCommandDefinition } from '../AudioFileCommand'
+import { Config } from '../../Config';
+import { Player } from '../../Player/Player';
+import { AudioFileCommand, AudioFileCommandDefinition } from '../AudioFileCommand';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class CommandDefinition extends AudioFileCommandDefinition {
   /**
    * @inheritdoc
    */
-  file = 'yee-xp'
+  file = 'yee-xp';
   /**
    * @inheritdoc
    */
-  command = 'Yeexp'
+  command = 'Yeexp';
 }
 
 @scoped(Lifecycle.ContainerScoped, 'Yeexp')
@@ -22,11 +22,11 @@ export class Yeexp extends AudioFileCommand {
   /**
    * @inheritdoc
    */
-  protected filename = 'yee-xp.webm'
+  protected filename = 'yee-xp.webm';
   /**
    * @inheritdoc
    */
-  protected name = 'Yeexp'
+  protected name = 'Yeexp';
 
   public constructor(
     /**
@@ -38,6 +38,6 @@ export class Yeexp extends AudioFileCommand {
      */
     @inject(Player) protected readonly player: Player
   ) {
-    super(config, player)
+    super(config, player);
   }
 }

@@ -1,12 +1,12 @@
-import { scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
-import { Info } from 'youtube-dl'
+import { scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
+import { Info } from 'youtube-dl';
 
-import { getInfo, isYtdlPlaylist } from '../../Util'
-import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat'
-import { Playable } from '../Playable'
-import { Playlist } from '../Playlist'
-import { Parser } from './Parser'
+import { getInfo, isYtdlPlaylist } from '../../Util';
+import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat';
+import { Playable } from '../Playable';
+import { Playlist } from '../Playlist';
+import { Parser } from './Parser';
 
 const youtubedlOptions = [
   '-f',
@@ -16,7 +16,7 @@ const youtubedlOptions = [
   '--no-playlist',
   '--dump-single-json',
   '--flat-playlist',
-]
+];
 
 @scoped(Lifecycle.ContainerScoped)
 export class AnyParser implements Parser {
@@ -24,10 +24,10 @@ export class AnyParser implements Parser {
    * @inheritdoc
    */
   public async parse(url: string): Promise<Playable | Playlist> {
-    const info = await this.execute(url)
+    const info = await this.execute(url);
 
     if (isYtdlPlaylist(info)) {
-      throw new UnsupportedFormat('Only Youtube playlists are supported')
+      throw new UnsupportedFormat('Only Youtube playlists are supported');
     }
 
     return {
@@ -37,10 +37,10 @@ export class AnyParser implements Parser {
       isLocal: false,
       totalTime: info._duration_raw || 0,
       thumbnail: info.thumbnail,
-    }
+    };
   }
 
   private async execute(url: string): Promise<Info> {
-    return getInfo(url, youtubedlOptions)
+    return getInfo(url, youtubedlOptions);
   }
 }

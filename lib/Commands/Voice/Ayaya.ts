@@ -1,21 +1,21 @@
-import { Message } from 'discord.js'
-import { inject, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { Message } from 'discord.js';
+import { inject, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
 
-import { Config } from '../../Config'
-import { Player } from '../../Player/Player'
-import { AudioFileCommand, AudioFileCommandDefinition } from '../AudioFileCommand'
+import { Config } from '../../Config';
+import { Player } from '../../Player/Player';
+import { AudioFileCommand, AudioFileCommandDefinition } from '../AudioFileCommand';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class CommandDefinition extends AudioFileCommandDefinition {
   /**
    * @inheritdoc
    */
-  file = 'ayaya'
+  file = 'ayaya';
   /**
    * @inheritdoc
    */
-  command = 'Ayaya'
+  command = 'Ayaya';
 }
 
 @scoped(Lifecycle.ContainerScoped, 'Ayaya')
@@ -23,11 +23,11 @@ export class Jeff extends AudioFileCommand {
   /**
    * @inheritdoc
    */
-  protected filename = 'ayaya.webm'
+  protected filename = 'ayaya.webm';
   /**
    * @inheritdoc
    */
-  protected name = 'AYAYA! AYAYA! AYAYA! AYAYA!'
+  protected name = 'AYAYA! AYAYA! AYAYA! AYAYA!';
 
   public constructor(
     /**
@@ -39,11 +39,11 @@ export class Jeff extends AudioFileCommand {
      */
     @inject(Player) protected readonly player: Player
   ) {
-    super(config, player)
+    super(config, player);
   }
 
   public async run(message: Message, params: string[]): Promise<void> {
-    await message.reply('https://tenor.com/2F3R.gif')
-    await super.run(message, params)
+    await message.reply('https://tenor.com/2F3R.gif');
+    await super.run(message, params);
   }
 }

@@ -22,4 +22,4 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'off',
     'simple-import-sort/sort': 'error',
   },
-}
+};

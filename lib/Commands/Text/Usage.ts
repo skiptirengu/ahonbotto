@@ -1,22 +1,22 @@
-import { Message, MessageEmbedOptions } from 'discord.js'
-import { first } from 'lodash'
-import { inject, injectAll, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { Message, MessageEmbedOptions } from 'discord.js';
+import { first } from 'lodash';
+import { inject, injectAll, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
 
-import { Config } from '../../Config'
-import { embed, normalizeCommandName, typedCommandName, withCommandPrefix } from '../../Util'
-import { Command, CommandDefinition, CommandType } from '../Command'
+import { Config } from '../../Config';
+import { embed, normalizeCommandName, typedCommandName, withCommandPrefix } from '../../Util';
+import { Command, CommandDefinition, CommandType } from '../Command';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type = CommandType.Text
+  type = CommandType.Text;
   /**
    * @inheritdoc
    */
-  command = 'Usage'
+  command = 'Usage';
   /**
    * @inheritdoc
    */
@@ -27,7 +27,7 @@ export class Definition implements CommandDefinition {
       fields: [
         { name: 'Example:', value: `\`${withCommandPrefix('usage')} usage\``, inline: true },
       ],
-    }
+    };
   }
 }
 
@@ -46,30 +46,30 @@ export class Usage implements Command {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<Message | Message[]> {
-    const commandName = first(params)
+    const commandName = first(params);
 
     if (!commandName) {
       return message.channel.send(
         embed({
           description: 'You should specify a command name',
         })
-      )
+      );
     }
 
     const definition = this.definitions.find(
       (x) => x.command === normalizeCommandName(commandName)
-    )!
+    )!;
 
-    const usage = definition.usage()
+    const usage = definition.usage();
 
     usage.title = withCommandPrefix(typedCommandName(definition.command))
       .concat(' ')
-      .concat(usage.title || '')
+      .concat(usage.title || '');
 
-    if (!usage.color) usage.color = this.config.embedColor
+    if (!usage.color) usage.color = this.config.embedColor;
 
     return message.channel.send({
       embed: usage,
-    })
+    });
   }
 }

@@ -1,25 +1,25 @@
-import { Message, MessageEmbedOptions } from 'discord.js'
-import { Lifecycle, scoped } from 'tsyringe'
+import { Message, MessageEmbedOptions } from 'discord.js';
+import { Lifecycle, scoped } from 'tsyringe';
 
-import { Command, CommandDefinition, CommandType } from '../Command.js'
+import { Command, CommandDefinition, CommandType } from '../Command.js';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type = CommandType.Text
+  type = CommandType.Text;
   /**
    * @inheritdoc
    */
-  command = 'Rola'
+  command = 'Rola';
   /**
    * @inheritdoc
    */
   public usage(): MessageEmbedOptions {
     return {
       description: 'Rola',
-    }
+    };
   }
 }
 
@@ -27,24 +27,24 @@ export class Definition implements CommandDefinition {
 export class Rola implements Command {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<Message | Message[]> {
-    const id = message.id
+    const id = message.id;
 
-    let response: string
+    let response: string;
     if (this.repeats(id, 4)) {
-      response = 'Quads do deabo!'
+      response = 'Quads do deabo!';
     } else if (this.repeats(id, 3)) {
-      response = 'Triplos!'
+      response = 'Triplos!';
     } else if (this.repeats(id, 2)) {
-      response = 'Duplos!'
+      response = 'Duplos!';
     } else {
-      response = 'Num foi'
+      response = 'Num foi';
     }
 
-    return message.reply(`${response} (${id})`)
+    return message.reply(`${response} (${id})`);
   }
 
   private repeats(id: string, times: number): boolean {
-    const split = id.slice(-times).split('')
-    return split.every((x) => x == split[0])
+    const split = id.slice(-times).split('');
+    return split.every((x) => x == split[0]);
   }
 }

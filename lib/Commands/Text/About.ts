@@ -1,27 +1,27 @@
-import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
-import { inject, Lifecycle, scoped } from 'tsyringe'
+import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js';
+import { inject, Lifecycle, scoped } from 'tsyringe';
 
-import json from '../../../package.json'
-import { Config } from '../../Config/index.js'
-import { Command, CommandDefinition, CommandType } from '../Command.js'
+import json from '../../../package.json';
+import { Config } from '../../Config/index.js';
+import { Command, CommandDefinition, CommandType } from '../Command.js';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type = CommandType.Text
+  type = CommandType.Text;
   /**
    * @inheritdoc
    */
-  command = 'About'
+  command = 'About';
   /**
    * @inheritdoc
    */
   public usage(): MessageEmbedOptions {
     return {
       description: 'Show some useless information about this bot.',
-    }
+    };
   }
 }
 
@@ -54,8 +54,8 @@ export class About implements Command {
           value: json.license,
         },
       ],
-    })
+    });
 
-    return message.channel.send({ embed })
+    return message.channel.send({ embed });
   }
 }

@@ -1,5 +1,5 @@
-import { Playable } from '../Playable'
-import { Playlist } from '../Playlist'
+import { Playable } from '../Playable';
+import { Playlist } from '../Playlist';
 
 declare module 'youtube-dl' {
   /**
@@ -9,11 +9,11 @@ declare module 'youtube-dl' {
     /**
      * Video title
      */
-    title: string
+    title: string;
     /**
      * Video ID
      */
-    id: string
+    id: string;
   }
 
   /**
@@ -23,23 +23,23 @@ declare module 'youtube-dl' {
     /**
      * Actual URL with the video
      */
-    url: string
+    url: string;
     /**
      * Video title
      */
-    title: string
+    title: string;
     /**
      * Friendly URL
      */
-    webpage_url: string
+    webpage_url: string;
     /**
      * Video thumb
      */
-    thumbnail: string
+    thumbnail: string;
     /**
      * Playlist videos
      */
-    entries?: PlaylistEntry[]
+    entries?: PlaylistEntry[];
   }
 }
 
@@ -47,5 +47,5 @@ export interface Parser {
   /**
    * Parses the URL and returns the corresponding playable
    */
-  parse(url: string, full?: boolean): Promise<Playable | Playlist>
+  parse(url: string, full?: boolean): Promise<Playable | Playlist>;
 }

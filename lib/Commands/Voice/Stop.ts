@@ -1,27 +1,27 @@
-import { Message, MessageEmbedOptions } from 'discord.js'
-import { inject, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { Message, MessageEmbedOptions } from 'discord.js';
+import { inject, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
 
-import { Player } from '../../Player/Player'
-import { Command, CommandDefinition, CommandType } from '../Command'
+import { Player } from '../../Player/Player';
+import { Command, CommandDefinition, CommandType } from '../Command';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type = CommandType.Voice
+  type = CommandType.Voice;
   /**
    * @inheritdoc
    */
-  command = 'Stop'
+  command = 'Stop';
   /**
    * @inheritdoc
    */
   public usage(): MessageEmbedOptions {
     return {
       description: 'Stop the current playing music and clears the queue',
-    }
+    };
   }
 }
 
@@ -36,7 +36,7 @@ export class Stop implements Command {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<void> {
-    await message.delete()
-    this.player.stop()
+    await message.delete();
+    this.player.stop();
   }
 }

@@ -1,28 +1,28 @@
-import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js'
-import { inject, injectAll, scoped } from 'tsyringe'
-import { Lifecycle } from 'tsyringe'
+import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js';
+import { inject, injectAll, scoped } from 'tsyringe';
+import { Lifecycle } from 'tsyringe';
 
-import { Config } from '../../Config'
-import { withCommandPrefix } from '../../Util'
-import { Command, CommandDefinition, CommandType } from '../Command'
+import { Config } from '../../Config';
+import { withCommandPrefix } from '../../Util';
+import { Command, CommandDefinition, CommandType } from '../Command';
 
 @scoped(Lifecycle.ContainerScoped, 'CommandDefinition')
 export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  type = CommandType.Text
+  type = CommandType.Text;
   /**
    * @inheritdoc
    */
-  command = 'Help'
+  command = 'Help';
   /**
    * @inheritdoc
    */
   public usage(): MessageEmbedOptions {
     return {
       title: 'List all commands this bot has.',
-    }
+    };
   }
 }
 
@@ -44,7 +44,7 @@ export class Help implements Command {
       .filter((x): boolean => x.type == type)
       .map((x): string => withCommandPrefix(x.command.toLowerCase()))
       .sort()
-      .join(' ')
+      .join(' ');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,13 +61,13 @@ export class Help implements Command {
           value: this.filter(CommandType.Text) || 'No commands',
         },
       ],
-    })
+    });
 
-    const commandName = withCommandPrefix('usage')
+    const commandName = withCommandPrefix('usage');
 
     return message.channel.send(
       `Use \`${commandName} <command-name>\` for information about an specific command`,
       embed
-    )
+    );
   }
 }
