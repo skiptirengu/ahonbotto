@@ -38,6 +38,7 @@
     "fs-extra": "^9.0.1",
     "libsodium-wrappers": "^0.7.6",
     "lodash": "^4.17.19",
+    "markov-generator": "^1.2.3",
     "miniget": "^2.0.1",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0",

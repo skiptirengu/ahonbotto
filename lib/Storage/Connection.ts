@@ -34,5 +34,34 @@ export class Connection {
         completed            BOOLEAN DEFAULT FALSE
       )
     `);
+
+    this.database.exec(`
+      CREATE TABLE IF NOT EXISTS markov_chain (
+        id      INTEGER AUTOINCREMENT PRIMARY KEY,
+        guild   VARCHAR(32) NOT NULL,
+        channel VARCHAR(32) NOT NULL,
+        enabled BOOLEAN DEFAULT FALSE
+      )
+    `);
+
+    this.database.exec(`
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_markov_chain_guild
+      ON markov_chain (guild)
+    `);
+
+    this.database.exec(`
+      CREATE TABLE IF NOT EXISTS markov_chain_sentences (
+        id              VARCHAR(64) PRIMARY KEY,
+        text            TEXT    NOT NULL,
+        timestamp       INTEGER NOT NULL,
+        markov_chain_id INTEGER NOT NULL,
+        FOREIGN KEY(markov_chain_id) REFERENCES markov_chain(id)
+      );
+    `);
+
+    this.database.exec(`
+      CREATE INDEX IF NOT EXISTS idx_markov_chain_id 
+      ON markov_chain_sentences (markov_chain_id)
+    `);
   }
 }
