@@ -15,7 +15,7 @@ export class MarkovChainRepository {
   private readonly stmtInsertSentence: Statement<any[]>;
   private readonly stmtGetAllSentences: Statement<any[]>;
   private readonly stmtGetAllPendingEnabled: Statement<any[]>;
-  private readonly stmtGetFirstTimestamp: Statement<any[]>;
+  private readonly stmtGetFirstMessage: Statement<any[]>;
 
   public constructor(
     /**
@@ -42,7 +42,7 @@ export class MarkovChainRepository {
     `);
 
     this.stmtInsertSentence = this.connection.database.prepare(`
-      INSERT INTO markov_chain_sentences (id, text, timestamp, markov_chain_id) 
+      INSERT OR IGNORE INTO markov_chain_sentences (id, text, timestamp, markov_chain_id) 
       VALUES (@id, @text, @timestamp, @chainId)
     `);
 
@@ -73,7 +73,7 @@ export class MarkovChainRepository {
       ) < @limit
     `);
 
-    this.stmtGetFirstTimestamp = this.connection.database.prepare(`
+    this.stmtGetFirstMessage = this.connection.database.prepare(`
       SELECT id FROM markov_chain_sentences
       WHERE markov_chain_id = @chainId
       ORDER BY timestamp DESC 
@@ -86,13 +86,13 @@ export class MarkovChainRepository {
   }
 
   public getFirstMessage(chainId: number): string | undefined {
-    return this.stmtGetFirstTimestamp.pluck().get({ chainId }) || undefined;
+    return this.stmtGetFirstMessage.pluck().get({ chainId }) || undefined;
   }
 
   public pushSentences(chainId: number, limit: number, sentences: MarkovChainSentence[]): void {
     if (!sentences.length) return;
 
-    const insertSentences = this.connection.database.transaction((s: MarkovChainSentence[]) => {
+    const writeSentences = this.connection.database.transaction((s: MarkovChainSentence[]) => {
       s.forEach((x) =>
         this.stmtInsertSentence.run({
           chainId,
@@ -101,29 +101,27 @@ export class MarkovChainRepository {
           timestamp: x.timestamp,
         })
       );
-    });
-
-    const writeSentences = this.connection.database.transaction(() => {
-      insertSentences(sentences);
       this.stmtDeleteSentences.run({ chainId, limit });
     });
 
-    writeSentences();
+    writeSentences(sentences);
   }
 
   public getSentences(chainId: number, limit: number): MarkovChainSentence[] {
     return this.stmtGetAllSentences.all({ chainId, limit });
   }
 
-  public toggleMarkovFor(guild: string, channel: string): void {
+  public toggleMarkovFor(guild: string, channel: string): boolean {
     const markov = this.getMarkovForGuild(guild);
 
     if (!markov || !markov.enabled) {
       this.stmtEnable.run({ guild, channel });
+      return true;
     } else {
       this.stmtDisable.run({ id: markov.id });
       this.stmtDeleteAllSentences.run({ id: markov.id });
       this.cache.delete(guild);
+      return false;
     }
   }
 

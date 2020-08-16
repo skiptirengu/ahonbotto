@@ -2,6 +2,7 @@ import './Text/About';
 import './Text/Avatar';
 import './Text/Help';
 import './Text/Karen';
+import './Text/Markov';
 import './Text/Usage';
 import './Text/Rola';
 import './Text/Wiki';

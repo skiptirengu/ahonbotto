@@ -94,7 +94,7 @@ export class Search implements Command {
     this.repository.once(this.repository.getDeleteEvent(storageKey), () => {
       channel
         .bulkDelete([messageSnowflake, responseMessageSnowflake])
-        .catch((err) => this.logger.error('Error deleting message', err));
+        .catch((error) => this.logger.error('Error deleting message', { error }));
     });
   }
 

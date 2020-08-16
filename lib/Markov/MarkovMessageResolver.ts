@@ -1,5 +1,6 @@
 import { Guild, Message, TextChannel } from 'discord.js';
 import { inject, Lifecycle, scoped } from 'tsyringe';
+import { Logger } from 'winston';
 
 import { MarkovChain, MarkovChainSentence } from '../Storage/Models/Markov';
 import { MarkovMessageSanitizer } from './MarkovMessageSanitizer';
@@ -7,13 +8,17 @@ import { SynchronizedSentenceSource } from './SynchronizedSentenceSource';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MarkovMessageResolver {
+  private isRunning = false;
+
   public constructor(
     @inject(Guild)
     private readonly guild: Guild,
     @inject(MarkovMessageSanitizer)
     private readonly sanitizer: MarkovMessageSanitizer,
     @inject(SynchronizedSentenceSource)
-    private readonly sentenceSource: SynchronizedSentenceSource
+    private readonly sentenceSource: SynchronizedSentenceSource,
+    @inject('Logger')
+    private readonly logger: Logger
   ) {}
 
   public async resolveMessages(
@@ -21,10 +26,15 @@ export class MarkovMessageResolver {
     firstMessage: string | undefined,
     limit: number
   ): Promise<any> {
+    if (this.isRunning) return;
+    this.logger.info('importing messages from discord', { firstMessage, limit });
+    this.isRunning = true;
     const channel = this.guild.channels.resolve(markov.channel) as TextChannel;
     for await (const bulk of this.fetchMessages(channel, firstMessage, limit)) {
       this.sentenceSource.pushSentences(markov.id, this.mapMessages(bulk));
     }
+    this.logger.info('finished importing messages from discord');
+    this.isRunning = false;
   }
 
   private mapMessages(messages: Message[]): MarkovChainSentence[] {
@@ -44,7 +54,9 @@ export class MarkovMessageResolver {
   ): AsyncGenerator<Message[], any, any> {
     let fetchedCount = 0;
     while (fetchedCount < limit) {
-      const result = await channel.messages.fetch({ before }, false);
+      const filter = before ? { before } : undefined;
+      this.logger.debug('received message bulk', { before, fetchedCount });
+      const result = await channel.messages.fetch(filter, false);
       result.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
       if (result.size) {
         before = result.first()!.id;
