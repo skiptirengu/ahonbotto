@@ -74,7 +74,7 @@ export class MarkovHandler {
   public increaseProbability(count = 1): void {
     this.responseProbability += Array(count)
       .fill(0)
-      .map(() => numberInRage(0.5, 1.5))
+      .map(() => numberInRage(0.5, 1.9))
       .reduce((prev, next) => prev + next);
   }
 
