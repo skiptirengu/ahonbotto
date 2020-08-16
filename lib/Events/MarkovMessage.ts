@@ -14,7 +14,7 @@ export function markovMessage(message: Message): void {
     const sanitizer = container.resolve(MarkovMessageSanitizer);
 
     const markov = handler.get(message.guild!.id);
-    if (!markov?.enabled) return;
+    if (!markov?.enabled || markov.channel != message.channel.id) return;
 
     handler.sentenceSource.warmUpCache(markov.id);
 
