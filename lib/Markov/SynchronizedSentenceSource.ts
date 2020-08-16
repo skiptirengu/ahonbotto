@@ -6,8 +6,7 @@ import { MarkovChainRepository } from '../Storage/MarkovChainRepository';
 import { MarkovChainSentence } from '../Storage/Models/Markov';
 
 interface FlushBatch {
-  start: number;
-  count: number;
+  value: MarkovChainSentence[];
   chain: number;
 }
 
@@ -50,12 +49,11 @@ export class SynchronizedSentenceSource {
   }
 
   public pushSentences(chainId: number, sentences: MarkovChainSentence[]): void {
-    const length = this.cachedSentences.unshift(...sentences);
-    this.cachedSentences.splice(this.markovSentenceCacheSize - 1);
+    this.cachedSentences.unshift(...sentences);
+    this.cachedSentences.splice(this.markovSentenceCacheSize);
     this.flushBatch.push({
-      start: length === 1 ? 0 : length - sentences.length,
-      count: sentences.length,
       chain: chainId,
+      value: sentences,
     });
   }
 
@@ -73,13 +71,12 @@ export class SynchronizedSentenceSource {
       this.logger.debug('flusing batches', { size: this.flushBatch.length });
       let flushedCount = 0;
       let totalFlushed = 0;
-      for (const value of this.flushBatch) {
+      for (const batch of this.flushBatch) {
         flushedCount += 1;
-        const slice = this.cachedSentences.slice(value.start, value.start + value.count);
-        this.logger.debug('starting batch flush', { batch: value, flushedCount });
-        this.repository.pushSentences(value.chain, this.markovSentenceCacheSize, slice);
-        this.logger.debug('flushed new batch', { batch: value, totalFlushed });
-        totalFlushed += slice.length;
+        this.logger.debug('starting batch flush', { batchSize: batch.value.length, flushedCount });
+        this.repository.pushSentences(batch.chain, this.markovSentenceCacheSize, batch.value);
+        totalFlushed += batch.value.length;
+        this.logger.debug('flushed new batch', { totalFlushed });
         if (totalFlushed >= 100) break;
       }
       this.flushBatch.splice(0, flushedCount);

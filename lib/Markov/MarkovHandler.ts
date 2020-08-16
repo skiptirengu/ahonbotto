@@ -29,6 +29,8 @@ export class MarkovHandler {
     this.increaseProbability(messages.length);
   }
 
+  // public generateSentence(): string {}
+
   public shouldGenerateSentence(): boolean {
     if (!this.sentenceSource.isReady()) {
       return false;

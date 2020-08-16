@@ -37,7 +37,7 @@ export class MarkovChainRepository {
         SELECT id FROM markov_chain_sentences 
         WHERE markov_chain_id = @chainId
         ORDER BY timestamp DESC
-        LIMIT 9999999 OFFSET (@limit - 1)
+        LIMIT 9999999 OFFSET @limit
       )
     `);
 
