@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { Message } from 'discord.js';
 import inRage from 'lodash/inRange';
+import { TextGenerator } from 'node-markov-generator';
 import { inject, Lifecycle, scoped } from 'tsyringe';
 
 import { MarkovChainRepository } from '../Storage/MarkovChainRepository';
@@ -29,7 +30,11 @@ export class MarkovHandler {
     this.increaseProbability(messages.length);
   }
 
-  // public generateSentence(): string {}
+  public generateSentence(): string {
+    const sentences = this.sentenceSource.getSentences().map((x) => x.text);
+    const generator = new TextGenerator(sentences);
+    return generator.generateSentence();
+  }
 
   public shouldGenerateSentence(): boolean {
     if (!this.sentenceSource.isReady()) {
@@ -67,7 +72,7 @@ export class MarkovHandler {
   }
 
   public increaseProbability(count = 1): void {
-    this.responseProbability = Array(count)
+    this.responseProbability += Array(count)
       .fill(0)
       .map(() => numberInRage(0.5, 1.5))
       .reduce((prev, next) => prev + next);
