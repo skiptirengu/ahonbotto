@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import './env';
 import './lib/Extensions';
 
 import { Client } from 'discord.js';

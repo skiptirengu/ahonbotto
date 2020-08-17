@@ -4,10 +4,7 @@ import './../Commands';
 import './../Jobs';
 import './../Markov';
 
-import appRoot from 'app-root-path';
 import { Client, Guild } from 'discord.js';
-import { ensureDirSync } from 'fs-extra';
-import _ from 'lodash';
 import { Format } from 'logform';
 import { join } from 'path';
 import { container, DependencyContainer } from 'tsyringe';
@@ -15,54 +12,18 @@ import { format, Logger, loggers, transports } from 'winston';
 import WinstonCloudWatch from 'winston-cloudwatch';
 import * as Transport from 'winston-transport';
 
-import { Config } from '../Config';
-
-const runtimeFolder = join(appRoot.path, 'runtime');
-const resourcesFolder = 'resources';
-const logFolder = 'logs';
-const cacheFolder = 'http-cache';
+import { Config, Env } from '../Config';
 
 const scopeMap = new Map<string, DependencyContainer>();
 
 export function bootstrap(client: Client): void {
-  const prod = process.env['NODE_ENV'] === 'production';
-  const prefixes = process.env['COMMAND_PREFIXES'] as string;
-  const logTargets = process.env['LOG_TARGETS'] as string;
-  const markovProb = ((process.env['MARKOV_PROBABILITY_INCREASE'] || '') as string)
-    .split(',')
-    .filter((x) => x);
-
-  // build config object
-  const config: Config = {
-    discordToken: process.env['DISCORD_TOKEN'] as string,
-    youtubeToken: process.env['YOUTUBE_TOKEN'] as string,
-    commandPrefixes: _.split(prefixes, ',') || ['!'],
-    runtimeFolder: runtimeFolder,
-    embedColor: 0x1882ac,
-    cleanupInverval: 10,
-    httpCacheFolder: join(runtimeFolder, cacheFolder),
-    resourcesFolder: join(appRoot.path, resourcesFolder),
-    logLevel: process.env['LOG_LEVEL'] || (prod && 'info') || 'debug',
-    logTargets: _.split(logTargets, ',') || ['console'],
-    cloudWatchGroup: process.env['CLOUDWATCH_GROUP'],
-    cloudWatchStream: process.env['CLOUDWATCH_STREAM'],
-    maxDownloadSize: parseInt(process.env['MAX_DOWNLOAD_SIZE'] as string) || 12 << 23,
-    markovSentenceCacheSize: parseInt(process.env['MARKOV_CACHE_SIZE'] as string) || 3500,
-    markovMinLength: parseInt(process.env['MARKOV_MIN_LENGTH'] as string) || 10,
-    markovMaxLength: parseInt(process.env['MARKOV_MAX_LENGTH'] as string) || 50,
-    markovProbabilityIncrease: markovProb.length
-      ? [parseFloat(markovProb[0]), parseFloat(markovProb[1])]
-      : [0.25, 1.5],
-  };
-
-  ensureDirSync(config.httpCacheFolder);
-
-  // register config object
-  container.register<Config>('Config', { useValue: config });
-  // shared logger
-  container.register('Logger', {
-    useValue: createLogger('shared', 'Shared Logger', config),
+  Env.bootstrap(container, () => {
+    const config = container.resolve<Config>('Config');
+    const logger = createLogger('shared', 'Shared Logger', config);
+    container.register('Logger', { useValue: logger });
+    return logger;
   });
+
   // register client
   container.register(Client, { useValue: client });
 }
@@ -125,7 +86,7 @@ function createTarget(config: Config, target: string): Transport {
 function createFileTarget(config: Config): Transport {
   return new transports.File({
     level: config.logLevel,
-    filename: join(runtimeFolder, logFolder, 'combined.log'),
+    filename: join(config.runtimeFolder, 'logs', 'combined.log'),
     format: format.combine(createMetadataFormat(), format.prettyPrint()),
   });
 }
