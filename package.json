@@ -39,7 +39,7 @@
     "libsodium-wrappers": "^0.7.8",
     "lodash": "^4.17.20",
     "miniget": "^2.0.1",
-    "node-markov-generator": "^0.4.2",
+    "node-markov-generator": "skiptirengu/node-markov-generator#publish",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0",
     "typescript": "^3.9.7",
