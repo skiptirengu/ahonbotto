@@ -20,9 +20,10 @@ export function markovMessage(message: Message): void {
 
     if (!sanitizer.sanitize([message]).length) {
       handler.increaseProbability();
-    } else {
-      handler.pushMessages(markov.id, [message]);
+      return;
     }
+
+    handler.pushMessages(markov.id, [message]);
 
     if (handler.shouldGenerateSentence()) {
       const sentence = handler.generateSentence();
