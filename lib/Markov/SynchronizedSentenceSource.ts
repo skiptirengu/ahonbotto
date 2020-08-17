@@ -48,13 +48,14 @@ export class SynchronizedSentenceSource {
     return this.markovSentenceCacheSize - this.cachedSentences.length;
   }
 
-  public pushSentences(chainId: number, sentences: MarkovChainSentence[]): void {
+  public pushSentences(chainId: number, sentences: MarkovChainSentence[]): number {
     this.cachedSentences.unshift(...sentences);
     this.cachedSentences.splice(this.markovSentenceCacheSize);
     this.flushBatch.push({
       chain: chainId,
       value: sentences,
     });
+    return sentences.length;
   }
 
   public getSentences(): MarkovChainSentence[] {

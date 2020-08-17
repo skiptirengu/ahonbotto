@@ -30,10 +30,11 @@ export class MarkovMessageResolver {
     this.logger.info('importing messages from discord', { firstMessage, limit });
     this.isRunning = true;
     const channel = this.guild.channels.resolve(markov.channel) as TextChannel;
+    let messageCount = 0;
     for await (const bulk of this.fetchMessages(channel, firstMessage, limit)) {
-      this.sentenceSource.pushSentences(markov.id, this.mapMessages(bulk));
+      messageCount += this.sentenceSource.pushSentences(markov.id, this.mapMessages(bulk));
     }
-    this.logger.info('finished importing messages from discord');
+    this.logger.info('finished importing messages from discord', { messageCount });
     this.isRunning = false;
   }
 
