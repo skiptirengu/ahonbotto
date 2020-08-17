@@ -37,7 +37,10 @@ export class MarkovHandler {
   public generateSentence(): string {
     const sentences = this.sentenceSource.getSentences().map((x) => x.text);
     const generator = new TextGenerator(sentences);
-    return generator.generateSentence({ maxWordCount: 45 });
+    return generator.generateSentence({
+      minWordCount: this.config.markovMinLength,
+      maxWordCount: this.config.markovMaxLength,
+    });
   }
 
   public shouldGenerateSentence(): boolean {

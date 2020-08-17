@@ -48,6 +48,8 @@ export function bootstrap(client: Client): void {
     cloudWatchStream: process.env['CLOUDWATCH_STREAM'],
     maxDownloadSize: parseInt(process.env['MAX_DOWNLOAD_SIZE'] as string) || 12 << 23,
     markovSentenceCacheSize: parseInt(process.env['MARKOV_CACHE_SIZE'] as string) || 3500,
+    markovMinLength: parseInt(process.env['MARKOV_MIN_LENGTH'] as string) || 10,
+    markovMaxLength: parseInt(process.env['MARKOV_MAX_LENGTH'] as string) || 50,
     markovProbabilityIncrease: markovProb.length
       ? [parseFloat(markovProb[0]), parseFloat(markovProb[1])]
       : [0.25, 1.5],

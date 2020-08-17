@@ -59,4 +59,12 @@ export interface Config {
    * Increase probability between x and y
    */
   markovProbabilityIncrease: number[];
+  /**
+   * Min sentence length
+   */
+  markovMinLength: number;
+  /**
+   * Max sentence length
+   */
+  markovMaxLength: number;
 }
