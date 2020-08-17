@@ -120,8 +120,11 @@ function createFileTarget(): Transport {
 
 function createCloudWatchTarget(config: Config): Transport {
   const logger = new WinstonCloudWatch({
+    logStreamName: () => {
+      const date = new Date().toISOString().split('T')[0];
+      return `${config.cloudWatchStream}-${date}`;
+    },
     logGroupName: config.cloudWatchGroup,
-    logStreamName: config.cloudWatchStream,
     jsonMessage: true,
   });
   logger.format = createMetadataFormat();
