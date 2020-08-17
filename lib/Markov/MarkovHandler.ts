@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { Message } from 'discord.js';
 import { TextGenerator } from 'node-markov-generator';
 import { inject, Lifecycle, scoped } from 'tsyringe';
+import { Logger } from 'winston';
 
 import { MarkovChainRepository } from '../Storage/MarkovChainRepository';
 import { MarkovChain, MarkovChainSentence } from '../Storage/Models/Markov';
@@ -17,7 +18,9 @@ export class MarkovHandler {
     @inject(SynchronizedSentenceSource)
     public readonly sentenceSource: SynchronizedSentenceSource,
     @inject(MarkovChainRepository)
-    public readonly repository: MarkovChainRepository
+    public readonly repository: MarkovChainRepository,
+    @inject('Logger')
+    private readonly logger: Logger
   ) {}
 
   public get(guild: string): MarkovChain | undefined {
@@ -57,6 +60,7 @@ export class MarkovHandler {
     }
 
     const randomChance = numberInRage(1, 100);
+    this.logger.debug('random chance generated', { randomChance });
     if (this.responseProbability >= randomChance) {
       this.resetProbability();
       return true;
@@ -74,6 +78,7 @@ export class MarkovHandler {
       .fill(0)
       .map(() => numberInRage(0.25, 0.75))
       .reduce((prev, next) => prev + next);
+    this.logger.debug('probability increased', { probability: this.responseProbability });
   }
 
   private mapMessages(messages: Message[]): MarkovChainSentence[] {

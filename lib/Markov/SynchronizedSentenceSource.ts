@@ -74,10 +74,13 @@ export class SynchronizedSentenceSource {
       let totalFlushed = 0;
       for (const batch of this.flushBatch) {
         flushedCount += 1;
-        this.logger.debug('starting batch flush', { batchSize: batch.value.length, flushedCount });
+        this.logger.verbose('starting batch flush', {
+          batchSize: batch.value.length,
+          flushedCount,
+        });
         this.repository.pushSentences(batch.chain, this.markovSentenceCacheSize, batch.value);
         totalFlushed += batch.value.length;
-        this.logger.debug('flushed new batch', { totalFlushed });
+        this.logger.verbose('flushed new batch', { totalFlushed });
         if (totalFlushed >= 100) break;
       }
       this.flushBatch.splice(0, flushedCount);

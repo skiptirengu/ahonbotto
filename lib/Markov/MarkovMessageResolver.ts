@@ -56,7 +56,7 @@ export class MarkovMessageResolver {
     let fetchedCount = 0;
     while (fetchedCount < limit) {
       const filter = before ? { before } : undefined;
-      this.logger.debug('received message bulk', { before, fetchedCount });
+      this.logger.verbose('received message bulk', { before, fetchedCount });
       const result = await channel.messages.fetch(filter, false);
       result.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
       if (result.size) {
