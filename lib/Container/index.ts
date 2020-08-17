@@ -6,6 +6,7 @@ import './../Markov';
 
 import appRoot from 'app-root-path';
 import { Client, Guild } from 'discord.js';
+import { ensureDirSync } from 'fs-extra';
 import _ from 'lodash';
 import { Format } from 'logform';
 import { join } from 'path';
@@ -45,6 +46,8 @@ export function bootstrap(client: Client): void {
     maxDownloadSize: parseInt(process.env['MAX_DOWNLOAD_SIZE'] as string) || 12 << 23,
     markovSentenceCacheSize: parseInt(process.env['MARKOV_CACHE_SIZE'] as string) || 3500,
   };
+
+  ensureDirSync(config.httpCacheFolder);
 
   // register config object
   container.register<Config>('Config', { useValue: config });
