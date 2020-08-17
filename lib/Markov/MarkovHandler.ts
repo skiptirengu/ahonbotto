@@ -40,6 +40,9 @@ export class MarkovHandler {
 
   public shouldGenerateSentence(): boolean {
     if (!this.sentenceSource.isReady()) {
+      this.logger.debug('source is not ready', {
+        count: this.sentenceSource.getSentences().length,
+      });
       return false;
     }
 

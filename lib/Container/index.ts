@@ -104,9 +104,9 @@ function createLogger(id: string, label: string, config: Config): Logger {
 function createTarget(config: Config, target: string): Transport {
   switch (target.toLowerCase()) {
     case 'console':
-      return createConsoleTarget();
+      return createConsoleTarget(config);
     case 'file':
-      return createFileTarget();
+      return createFileTarget(config);
     case 'cloudwatch':
       return createCloudWatchTarget(config);
     default:
@@ -114,8 +114,9 @@ function createTarget(config: Config, target: string): Transport {
   }
 }
 
-function createFileTarget(): Transport {
+function createFileTarget(config: Config): Transport {
   return new transports.File({
+    level: config.logLevel,
     filename: join(runtimeFolder, logFolder, 'combined.log'),
     format: format.combine(createMetadataFormat(), format.prettyPrint()),
   });
@@ -129,6 +130,7 @@ function createCloudWatchTarget(config: Config): Transport {
     },
     logGroupName: config.cloudWatchGroup,
     jsonMessage: true,
+    level: config.logLevel,
   });
   logger.format = createMetadataFormat();
   return logger;
@@ -141,8 +143,9 @@ function createMetadataFormat(): Format {
   });
 }
 
-function createConsoleTarget(): Transport {
+function createConsoleTarget(config: Config): Transport {
   return new transports.Console({
+    level: config.logLevel,
     format: format.combine(
       format.colorize({ all: true }),
       format.printf((info): string => {

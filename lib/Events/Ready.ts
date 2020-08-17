@@ -17,6 +17,7 @@ export function ready(): void {
         embedColor: config.embedColor,
         httpCacheFolder: config.httpCacheFolder,
         resourcesFolder: config.resourcesFolder,
+        logLevel: config.logLevel,
       });
     })
     .catch((error: any) => logger.error('Uncaught error on ready event handler', { error }));
