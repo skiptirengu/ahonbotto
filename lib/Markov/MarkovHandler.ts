@@ -4,6 +4,7 @@ import { TextGenerator } from 'node-markov-generator';
 import { inject, Lifecycle, scoped } from 'tsyringe';
 import { Logger } from 'winston';
 
+import { Config } from '../Config';
 import { MarkovChainRepository } from '../Storage/MarkovChainRepository';
 import { MarkovChain, MarkovChainSentence } from '../Storage/Models/Markov';
 import { numberInRage } from '../Util/random';
@@ -20,7 +21,8 @@ export class MarkovHandler {
     @inject(MarkovChainRepository)
     public readonly repository: MarkovChainRepository,
     @inject('Logger')
-    private readonly logger: Logger
+    private readonly logger: Logger,
+    @inject('Config') protected readonly config: Config
   ) {}
 
   public get(guild: string): MarkovChain | undefined {
@@ -63,7 +65,10 @@ export class MarkovHandler {
     }
 
     const randomChance = numberInRage(1, 100);
-    this.logger.debug('random chance generated', { randomChance });
+    this.logger.debug('response chance', {
+      randomChance,
+      probability: this.responseProbability,
+    });
     if (this.responseProbability >= randomChance) {
       this.resetProbability();
       return true;
@@ -77,11 +82,11 @@ export class MarkovHandler {
   }
 
   public increaseProbability(count = 1): void {
+    const [start, end] = this.config.markovProbabilityIncrease;
     this.responseProbability += Array(count)
       .fill(0)
-      .map(() => numberInRage(0.25, 0.75))
+      .map(() => numberInRage(start, end))
       .reduce((prev, next) => prev + next);
-    this.logger.debug('probability increased', { probability: this.responseProbability });
   }
 
   private mapMessages(messages: Message[]): MarkovChainSentence[] {

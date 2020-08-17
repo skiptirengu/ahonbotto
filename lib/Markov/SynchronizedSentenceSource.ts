@@ -69,7 +69,7 @@ export class SynchronizedSentenceSource {
   private flushMessages(): void {
     try {
       if (!this.flushBatch.length) return;
-      this.logger.debug('flusing batches', { size: this.flushBatch.length });
+      this.logger.verbose('flusing batches', { size: this.flushBatch.length });
       let flushedCount = 0;
       let totalFlushed = 0;
       for (const batch of this.flushBatch) {

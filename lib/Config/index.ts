@@ -55,4 +55,8 @@ export interface Config {
    * Number of sentences to keep in memory
    */
   markovSentenceCacheSize: number;
+  /**
+   * Increase probability between x and y
+   */
+  markovProbabilityIncrease: number[];
 }

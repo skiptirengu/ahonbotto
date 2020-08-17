@@ -28,6 +28,9 @@ export function bootstrap(client: Client): void {
   const prod = process.env['NODE_ENV'] === 'production';
   const prefixes = process.env['COMMAND_PREFIXES'] as string;
   const logTargets = process.env['LOG_TARGETS'] as string;
+  const markovProb = ((process.env['MARKOV_PROBABILITY_INCREASE'] || '') as string)
+    .split(',')
+    .filter((x) => x);
 
   // build config object
   const config: Config = {
@@ -45,6 +48,9 @@ export function bootstrap(client: Client): void {
     cloudWatchStream: process.env['CLOUDWATCH_STREAM'],
     maxDownloadSize: parseInt(process.env['MAX_DOWNLOAD_SIZE'] as string) || 12 << 23,
     markovSentenceCacheSize: parseInt(process.env['MARKOV_CACHE_SIZE'] as string) || 3500,
+    markovProbabilityIncrease: markovProb.length
+      ? [parseFloat(markovProb[0]), parseFloat(markovProb[1])]
+      : [0.25, 1.5],
   };
 
   ensureDirSync(config.httpCacheFolder);
