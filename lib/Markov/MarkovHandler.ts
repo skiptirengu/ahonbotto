@@ -34,12 +34,13 @@ export class MarkovHandler {
     this.increaseProbability(messages.length);
   }
 
-  public generateSentence(): string {
+  public generateSentence(word?: string | undefined): string {
     const sentences = this.sentenceSource.getSentences().map((x) => x.text);
     const generator = new TextGenerator(sentences);
     return generator.generateSentence({
       minWordCount: this.config.markovMinLength,
       maxWordCount: this.config.markovMaxLength,
+      wordToStart: word,
     });
   }
 

@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+import { sample } from 'lodash';
 import { Logger } from 'winston';
 
 import { scopeFactory } from '../Container';
@@ -26,7 +27,8 @@ export function markovMessage(message: Message): void {
     handler.pushMessages(markov.id, [message]);
 
     if (handler.shouldGenerateSentence()) {
-      const sentence = handler.generateSentence();
+      const firstWord = sample(message.content.split(' '));
+      const sentence = handler.generateSentence(firstWord);
       message.channel.send(sentence).catch((error) => logger.error('markov send error', { error }));
     }
   } catch (error) {
