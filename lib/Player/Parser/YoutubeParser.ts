@@ -51,10 +51,10 @@ export class YoutubeParser implements Parser {
 
     const playable: Playable = {
       isLocal: false,
-      name: info.title,
-      uri: new URL(info.video_url),
+      name: info.videoDetails.title,
+      uri: new URL(info.videoDetails.video_url),
       thumbnail: this.selectThumb(info),
-      totalTime: toNumber(info.length_seconds),
+      totalTime: toNumber(info.videoDetails.lengthSeconds),
       related: this.getRelatedVideos(info),
     };
 
@@ -89,10 +89,10 @@ export class YoutubeParser implements Parser {
           format.container == 'webm' &&
           Number(format.audioSampleRate) === 48000
       )
-      .sort((a, b) => b.averageBitrate - a.averageBitrate)
+      .sort((a, b) => (b.averageBitrate || 0) - (a.averageBitrate || 0))
       .shift();
 
-    const videoInfo = { video: info.title, id: info.video_id };
+    const videoInfo = { video: info.videoDetails.title, id: info.videoDetails.videoId };
 
     if (format) {
       this.logger.info('Found webm/opus compatible stream!', {

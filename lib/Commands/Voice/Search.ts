@@ -51,7 +51,7 @@ export class Search implements Command {
     @inject('Logger') protected readonly logger: Logger
   ) {}
 
-  public async run(message: Message, params: string[]): Promise<void | Message> {
+  public async run(message: Message, params: string[]): Promise<any> {
     const queryString = params.join(' ');
 
     const response = await youtubeSearch(queryString, {
@@ -84,11 +84,11 @@ export class Search implements Command {
       .map((value, index) => `**${index + 1}** →  ${value.title}`)
       .join('\n\n');
 
-    const responseMessage = await message.channel.send(
+    const responseMessage = (await message.channel.send(
       embed({
         description,
       })
-    );
+    )) as Message;
     const responseMessageSnowflake = responseMessage.id;
 
     this.repository.once(this.repository.getDeleteEvent(storageKey), () => {

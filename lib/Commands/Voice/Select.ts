@@ -54,7 +54,7 @@ export class Select implements Command {
     @inject(AutoParser) private readonly parser: AutoParser
   ) {}
 
-  public async run(message: Message, params: string[]): Promise<Message> {
+  public async run(message: Message, params: string[]): Promise<any> {
     await message.delete();
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
       return message.channel.send(

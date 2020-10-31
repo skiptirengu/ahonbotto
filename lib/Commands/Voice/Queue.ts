@@ -57,7 +57,7 @@ export class Queue implements Command {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async run(message: Message, params: string[]): Promise<Message | void> {
+  public async run(message: Message, params: string[]): Promise<any> {
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
       return message.channel.send(
         embed({
