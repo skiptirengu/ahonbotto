@@ -34,7 +34,6 @@
     "dayjs": "^1.8.33",
     "discord.js": "^12.4.1",
     "dotenv-override-true": "^6.2.2",
-    "ffmpeg-static": "^4.2.7",
     "fs-extra": "^9.0.1",
     "libsodium-wrappers": "^0.7.8",
     "lodash": "^4.17.20",
@@ -67,5 +66,8 @@
     "node-gyp": "^7.1.0",
     "pre-commit": "^1.2.2",
     "prettier": "^2.0.5"
+  },
+  "optionalDependencies": {
+    "ffmpeg-static": "^4.2.7"
   }
 }
