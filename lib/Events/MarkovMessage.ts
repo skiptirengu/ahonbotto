@@ -5,6 +5,7 @@ import { Logger } from 'winston';
 import { scopeFactory } from '../Container';
 import { MarkovHandler } from '../Markov';
 import { MarkovMessageSanitizer } from '../Markov/MarkovMessageSanitizer';
+import { numberInRage } from '../Util/random';
 
 export function markovMessage(message: Message): void {
   const container = scopeFactory(message.guild!);
@@ -27,7 +28,8 @@ export function markovMessage(message: Message): void {
     handler.pushMessages(markov.id, [message]);
 
     if (handler.shouldGenerateSentence()) {
-      const firstWord = sample(message.content.split(' '));
+      const shouldUseLastSentence = numberInRage(0, 100) <= 10;
+      const firstWord = shouldUseLastSentence ? sample(message.content.split(' ')) : undefined;
       const sentence = handler.generateSentence(firstWord);
       message.channel.send(sentence).catch((error) => logger.error('markov send error', { error }));
     }

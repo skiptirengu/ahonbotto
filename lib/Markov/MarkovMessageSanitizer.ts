@@ -4,8 +4,6 @@ import { inject, singleton } from 'tsyringe';
 
 import { Config } from '../Config';
 
-const hasCodeRegex = /^```.*```$/gim;
-
 @singleton()
 export class MarkovMessageSanitizer {
   public constructor(
@@ -18,6 +16,7 @@ export class MarkovMessageSanitizer {
    * @param messages
    */
   public sanitize(messages: Message[]): Message[] {
+    const hasCodeRegex = /(?=```).*(?<=```)/gim;
     return messages.filter((message) => {
       return (
         !hasCodeRegex.exec(message.content) &&
