@@ -29,7 +29,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
     "app-root-path": "^3.0.0",
-    "better-sqlite3": "^7.1.0",
+    "better-sqlite3": "7.0.1",
     "bufferutil": "^4.0.1",
     "dayjs": "^1.8.33",
     "discord.js": "^12.4.1",
