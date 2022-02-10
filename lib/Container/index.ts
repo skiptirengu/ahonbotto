@@ -93,6 +93,7 @@ function createFileTarget(config: Config): Transport {
 
 function createCloudWatchTarget(config: Config): Transport {
   const logger = new WinstonCloudWatch({
+    name: 'default',
     logStreamName: () => {
       const date = new Date().toISOString().split('T')[0];
       return `${config.cloudWatchStream}-${date}`;
