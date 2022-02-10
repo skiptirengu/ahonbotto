@@ -2,6 +2,7 @@ import { Message, TextChannel } from 'discord.js';
 import { inject, Lifecycle, scoped } from 'tsyringe';
 import { Logger } from 'winston';
 
+import { Config } from '../../Config';
 import { SynchronizedSentenceSource } from '../../Markov';
 import { MarkovMessageResolver } from '../../Markov/MarkovMessageResolver';
 import { MarkovChainRepository } from '../../Storage/MarkovChainRepository';
@@ -17,14 +18,16 @@ export class Markov implements Command {
     @inject(MarkovMessageResolver)
     protected readonly messageResolver: MarkovMessageResolver,
     @inject(SynchronizedSentenceSource)
-    protected readonly messageSource: SynchronizedSentenceSource
+    protected readonly messageSource: SynchronizedSentenceSource,
+    @inject('Config') protected readonly config: Config
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, _: string[]): Promise<any> {
-    if (message.author.id !== '209871057295900673') return;
-    const channel = message.channel as TextChannel;
+    const author = `${message.author.username}#${message.author.discriminator}`;
+    if (author !== this.config.rootUser) return;
 
+    const channel = message.channel as TextChannel;
     const enabled = this.repository.toggleMarkovFor(message.guild!.id, channel.id!);
     this.logger.info('markov state changed', { enabled });
 

@@ -73,7 +73,7 @@ export class YoutubeParser implements Parser {
           uri: new URL(linkFromId(related.id!)),
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          thumbnail: related.video_thumbnail || null,
+          thumbnail: related.thumbnails[0].url || null,
           totalTime: toNumber(related.length_seconds),
         })
       );

@@ -67,6 +67,7 @@ export class Env {
 
     // build config object
     Env.config = {
+      rootUser: process.env['ROOT_DISCORD_USER'] as string,
       discordToken: process.env['DISCORD_TOKEN'] as string,
       youtubeToken: process.env['YOUTUBE_TOKEN'] as string,
       commandPrefixes: _.split(prefixes, ',') || ['!'],

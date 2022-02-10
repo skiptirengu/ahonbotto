@@ -67,4 +67,8 @@ export interface Config {
    * Max sentence length
    */
   markovMaxLength: number;
+  /**
+   * Owner user, allowed to run root commands
+   */
+  rootUser: string;
 }
