@@ -35,6 +35,7 @@
     "dayjs": "^1.11.3",
     "discord.js": "~12.5.3",
     "dotenv-override-true": "^6.2.2",
+    "erlpack": "github:discord/erlpack",
     "fs-extra": "^10.1.0",
     "libsodium-wrappers": "^0.7.10",
     "lodash": "^4.17.21",
@@ -48,7 +49,8 @@
     "winston-cloudwatch": "^6.0.1",
     "youtube-dl": "skiptirengu/node-youtube-dl#142970ee6e9e4581a6108e09722d89bd27c67250",
     "youtube-search": "^1.1.6",
-    "ytdl-core": "^4.11.0"
+    "ytdl-core": "^4.11.0",
+    "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
