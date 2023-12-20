@@ -2,7 +2,6 @@ import { Message, TextChannel } from 'discord.js';
 import { inject, Lifecycle, scoped } from 'tsyringe';
 import { Logger } from 'winston';
 
-import { Config } from '../../Config';
 import { SynchronizedSentenceSource } from '../../Markov';
 import { MarkovMessageResolver } from '../../Markov/MarkovMessageResolver';
 import { MarkovChainRepository } from '../../Storage/MarkovChainRepository';
@@ -18,7 +17,7 @@ export class Markov implements Command {
     @inject(MarkovMessageResolver)
     protected readonly messageResolver: MarkovMessageResolver,
     @inject(SynchronizedSentenceSource)
-    protected readonly messageSource: SynchronizedSentenceSource,
+    protected readonly messageSource: SynchronizedSentenceSource
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

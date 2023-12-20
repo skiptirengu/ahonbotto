@@ -14,7 +14,7 @@ export class AutoParser implements Parser {
     /**
      * Youtube parser implementation
      */
-    @inject(YoutubeParser) protected readonly youtubeParser: Parser,
+    @inject(YoutubeParser) protected readonly youtubeParser: Parser
   ) {}
 
   /**

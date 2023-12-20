@@ -5,17 +5,17 @@ import { Lifecycle } from 'tsyringe';
 import { URL } from 'url';
 import { Logger } from 'winston';
 import ytdlCore, { videoFormat, videoInfo } from 'ytdl-core';
+import { getInfo } from 'ytdl-core';
 
 import { Config } from '../../Config';
-import { getInfo } from 'ytdl-core';
+import { linkFromId } from '../../Util';
 import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat';
 import { Playable } from '../Playable';
 import { Playlist } from '../Playlist';
 import { Parser } from './Parser';
-import { linkFromId } from '../../Util';
 
-const mixPlaylistRe = /^([A-Za-z0-9_-]){13}$/;
-const playlistArgs = ['--dump-single-json', '--flat-playlist'];
+// const mixPlaylistRe = /^([A-Za-z0-9_-]){13}$/;
+// const playlistArgs = ['--dump-single-json', '--flat-playlist'];
 
 @scoped(Lifecycle.ContainerScoped)
 export class YoutubeParser implements Parser {
