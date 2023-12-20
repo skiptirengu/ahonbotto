@@ -29,7 +29,7 @@ export class Definition implements CommandDefinition {
     return {
       title: '<url> [<repeat-x-times>] [<autoplay>]',
       description:
-        'Adds a music to the play queue, being "**url**" an youtube video id, playlist url or any valid link. Check [this](https://rg3.github.io/youtube-dl/supportedsites.html) for a complete list of the 1000+ supported sites. To shuffle a playlist pass the argument "**shuffle**" after the playlist link. To enable auto play, pass the argument "**autoplay**" after the playlist link',
+        'Adds a music to the play queue, being "**url**" an youtube video id or playlist url.',
       fields: [
         { name: 'Example:', value: '`!queue http://my.video.com/xD.mp4`', inline: true },
         {

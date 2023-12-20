@@ -7,11 +7,12 @@ import { Logger } from 'winston';
 import ytdlCore, { videoFormat, videoInfo } from 'ytdl-core';
 
 import { Config } from '../../Config';
-import { getInfo, linkFromId } from '../../Util';
+import { getInfo } from 'ytdl-core';
 import { UnsupportedFormat } from '../Exceptions/UnsupportedFormat';
 import { Playable } from '../Playable';
 import { Playlist } from '../Playlist';
 import { Parser } from './Parser';
+import { linkFromId } from '../../Util';
 
 const mixPlaylistRe = /^([A-Za-z0-9_-]){13}$/;
 const playlistArgs = ['--dump-single-json', '--flat-playlist'];
@@ -36,14 +37,14 @@ export class YoutubeParser implements Parser {
     const uri = new URL(url);
 
     if (uri.searchParams.has('list')) {
-      return this.parsePlaylist(uri);
+      throw new UnsupportedFormat('Playlist not supported');
     }
 
     return this.parseVideo(uri, full);
   }
 
   private async parseVideo(uri: URL, full?: boolean): Promise<Playable> {
-    const info = await ytdlCore.getInfo(uri.href);
+    const info = await getInfo(uri.href);
 
     if (info.formats.some((format) => format.isLive)) {
       throw new UnsupportedFormat('Live streaming not supported');
@@ -143,30 +144,5 @@ export class YoutubeParser implements Parser {
     }[] = get(info, 'player_response.videoDetails.thumbnail.thumbnails') || [];
     const selected = thumbs.pop();
     return selected && selected.url;
-  }
-
-  private async parsePlaylist(uri: URL): Promise<Playlist> {
-    const list = uri.searchParams.get('list')!;
-
-    if (mixPlaylistRe.test(list)) {
-      throw new UnsupportedFormat(
-        'Youtube "Mix" playlists are not supported. Consider saving the playlist before queing it up again.'
-      );
-    }
-
-    const info = await getInfo(uri.href, playlistArgs);
-    const playlist: Playlist = {
-      title: info.title,
-      thumbnail: info.thumbnail,
-      playables: info.entries!.map(
-        (item): Playable => ({
-          name: item.title,
-          isLocal: false,
-          uri: new URL(linkFromId(item.id)),
-        })
-      ),
-    };
-
-    return playlist;
   }
 }

@@ -1,12 +1,10 @@
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 
-import { isValidUrl } from '../../Util/url';
 import { isVideoId, isYoutubeUrl, linkFromId } from '../../Util/youtube';
 import { MalformedUrl } from '../Exceptions/MalformedUrl';
 import { Playable } from '../Playable';
 import { Playlist } from '../Playlist';
-import { AnyParser } from './AnyParser';
 import { Parser } from './Parser';
 import { YoutubeParser } from './YoutubeParser';
 
@@ -17,10 +15,6 @@ export class AutoParser implements Parser {
      * Youtube parser implementation
      */
     @inject(YoutubeParser) protected readonly youtubeParser: Parser,
-    /**
-     * Generic parser implementation
-     */
-    @inject(AnyParser) protected readonly anyParser: Parser
   ) {}
 
   /**
@@ -33,8 +27,6 @@ export class AutoParser implements Parser {
 
     if (isYoutubeUrl(url)) {
       parser = this.youtubeParser;
-    } else if (isValidUrl(url)) {
-      parser = this.anyParser;
     } else {
       throw new MalformedUrl("This doesn't seem to be a valid URL");
     }

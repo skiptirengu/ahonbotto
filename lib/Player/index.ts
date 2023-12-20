@@ -4,7 +4,6 @@ import './SearchRepository';
 import './Handlers/BufferedHttpStreamingHandler';
 import './Handlers/HandlerFactory';
 import './Handlers/LocalFileStreamingHandler';
-import './Parser/AnyParser';
 import './Parser/AutoParser';
 import './Parser/Parser';
 import './Parser/YoutubeParser';

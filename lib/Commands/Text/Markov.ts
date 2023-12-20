@@ -19,14 +19,10 @@ export class Markov implements Command {
     protected readonly messageResolver: MarkovMessageResolver,
     @inject(SynchronizedSentenceSource)
     protected readonly messageSource: SynchronizedSentenceSource,
-    @inject('Config') protected readonly config: Config
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, _: string[]): Promise<any> {
-    const author = `${message.author.username}#${message.author.discriminator}`;
-    if (author !== this.config.rootUser) return;
-
     const channel = message.channel as TextChannel;
     const enabled = this.repository.toggleMarkovFor(message.guild!.id, channel.id!);
     this.logger.info('markov state changed', { enabled });

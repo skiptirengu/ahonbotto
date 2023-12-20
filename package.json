@@ -47,7 +47,6 @@
     "wikijs": "^6.3.3",
     "winston": "^3.7.2",
     "winston-cloudwatch": "^6.0.1",
-    "youtube-dl": "skiptirengu/node-youtube-dl#142970ee6e9e4581a6108e09722d89bd27c67250",
     "youtube-search": "^1.1.6",
     "ytdl-core": "^4.11.0",
     "zlib-sync": "^0.1.7"
@@ -55,11 +54,10 @@
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
     "@types/aws-sdk": "^2.7.0",
-    "@types/better-sqlite3": "^7.5.0",
+    "@types/better-sqlite3": "7.5.0",
     "@types/fs-extra": "^9.0.13",
     "@types/lodash": "^4.14.182",
-    "@types/node": "^17.0.40",
-    "@types/youtube-dl": "^3.0.1",
+    "@types/node": "18",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
     "eslint": "^8.17.0",
