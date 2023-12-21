@@ -1,3 +1,4 @@
+import { StreamType } from '@discordjs/voice';
 import { get } from 'lodash';
 import { pick, toNumber } from 'lodash';
 import { inject, scoped } from 'tsyringe';
@@ -100,7 +101,7 @@ export class YoutubeParser implements Parser {
         ...videoInfo,
         contentLength: format.contentLength,
       });
-      playable.streamType = 'webm/opus';
+      playable.streamType = StreamType.WebmOpus;
     } else {
       const formats = info.formats.filter((format) => !format.isDashMPD);
 

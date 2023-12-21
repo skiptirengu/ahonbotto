@@ -1,3 +1,4 @@
+import { StreamType } from '@discordjs/voice';
 import { createReadStream } from 'fs-extra';
 import { Readable } from 'stream';
 import { injectable } from 'tsyringe';
@@ -16,7 +17,7 @@ export class LocalFileStreamingHandler implements StreamingHandler {
     this.playable = playable;
     this.playable.fileUri = this.playable.uri;
     this.playable.isLocal = true;
-    this.playable.streamType = 'webm/opus';
+    this.playable.streamType = StreamType.WebmOpus;
     return Promise.resolve(this);
   }
 

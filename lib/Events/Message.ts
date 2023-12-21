@@ -27,5 +27,5 @@ export function message(message: MessagePayload): void {
     .resolve<Command>(command)
     // Run the command
     .run(message, messageParts)
-    .catch((error) => logger.error('Uncaught message event handler error', { error }));
+    .catch((error) => logger.error('Uncaught message event handler error', error));
 }

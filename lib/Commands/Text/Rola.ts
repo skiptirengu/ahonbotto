@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 import { Lifecycle, scoped } from 'tsyringe';
 
 import { Command, CommandDefinition, CommandType } from '../Command.js';
@@ -16,7 +16,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       description: 'Rola',
     };

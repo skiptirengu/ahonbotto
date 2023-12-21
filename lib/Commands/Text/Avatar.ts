@@ -1,4 +1,4 @@
-import { ImageSize, Message, MessageEmbed, MessageEmbedOptions, User } from 'discord.js';
+import { EmbedBuilder, EmbedData, ImageSize, Message, User } from 'discord.js';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 
@@ -24,7 +24,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       title: '<mention>',
       description:
@@ -72,7 +72,7 @@ export class Avatar implements Command {
   public async run(message: Message, params: string[]): Promise<Message | Message[]> {
     const userAvatar = this.getUserAvatar(message);
 
-    const embed = new MessageEmbed({
+    const embed = EmbedBuilder.from({
       color: this.config.embedColor,
       description: userAvatar.urls.join('\n'),
       image: {
@@ -80,6 +80,6 @@ export class Avatar implements Command {
       },
     });
 
-    return message.channel.send({ embed });
+    return message.channel.send({ embeds: [embed] });
   }
 }

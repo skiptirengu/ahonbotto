@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 import { inject, Lifecycle, scoped } from 'tsyringe';
 
 import { Player } from '../../Player/Player';
@@ -18,7 +18,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       description: 'Enables automatic queing of related songs for the current session',
     };

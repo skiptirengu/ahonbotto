@@ -31,9 +31,9 @@ export function markovMessage(message: Message): void {
       const shouldUseLastSentence = numberInRage(0, 100) <= 10;
       const firstWord = shouldUseLastSentence ? sample(message.content.split(' ')) : undefined;
       const sentence = handler.generateSentence(firstWord);
-      message.channel.send(sentence).catch((error) => logger.error('markov send error', { error }));
+      message.channel.send(sentence).catch((error) => logger.error('markov send error', error));
     }
   } catch (error) {
-    logger.error('markov error', { error });
+    logger.error('markov error', error);
   }
 }

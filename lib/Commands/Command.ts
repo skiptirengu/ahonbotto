@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 
 /**
  * Types of commands
@@ -23,7 +23,7 @@ export interface CommandDefinition {
   /**
    * Command type
    */
-  usage: () => MessageEmbedOptions;
+  usage: () => EmbedData;
 }
 
 /**

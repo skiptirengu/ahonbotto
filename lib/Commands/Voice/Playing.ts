@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 
@@ -20,7 +20,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       description: 'Shows information about the current playing audio',
     };
@@ -42,11 +42,13 @@ export class Playing implements Command {
     const current = this.player.getCurrentPlayable();
 
     if (!current) {
-      return message.channel.send(
-        embed({
-          description: "There's nothing playing at the moment",
-        })
-      );
+      return message.channel.send({
+        embeds: [
+          embed({
+            description: "There's nothing playing at the moment",
+          }),
+        ],
+      });
     }
 
     const streamingTime = this.player.getStreamingTime();
@@ -56,6 +58,6 @@ export class Playing implements Command {
       streamingTime
     );
 
-    await message.channel.send({ embed: messageEmbed });
+    await message.channel.send({ embeds: [messageEmbed as any] });
   }
 }

@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 import { pathExists } from 'fs-extra';
 import { toNumber } from 'lodash';
 import { join } from 'path';
@@ -28,7 +28,7 @@ export abstract class AudioFileCommandDefinition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       title: '[<volume>]',
       description: `Play the file "${this.file}" with the volume set to value of "**volume**".`,

@@ -1,10 +1,20 @@
-import { Guild, StreamDispatcher, StreamOptions, VoiceChannel, VoiceConnection } from 'discord.js';
+import {
+  AudioPlayer,
+  AudioPlayerStatus,
+  createAudioPlayer,
+  createAudioResource,
+  joinVoiceChannel,
+  NoSubscriberBehavior,
+  StreamType,
+  VoiceConnection,
+} from '@discordjs/voice';
+import { Guild, VoiceBasedChannel } from 'discord.js';
 import { shuffle } from 'lodash';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 import { Logger } from 'winston';
 
-import { anyOnce } from '../Util';
+import { TOKENS } from '../Container/tokens';
 import { HandlerFactory } from './Handlers/HandlerFactory';
 import { AutoParser } from './Parser/AutoParser';
 import { Playable } from './Playable';
@@ -16,7 +26,7 @@ export class Player {
   /**
    * The voice channel the bot is currently connected to
    */
-  protected voiceChannel?: VoiceChannel;
+  protected voiceChannel?: VoiceBasedChannel;
   /**
    * The current voice connection the bot is streaming to
    */
@@ -28,7 +38,7 @@ export class Player {
   /**
    * Current stream dispatcher
    */
-  protected dispatcher?: StreamDispatcher;
+  protected player?: AudioPlayer;
   /**
    * Whether or not to automatically queue related videos once the queue is empty
    */
@@ -46,7 +56,7 @@ export class Player {
     /**
      * Current guild
      */
-    @inject(Guild) protected readonly guild: Guild,
+    @inject(TOKENS.Guild) protected readonly guild: Guild,
     /**
      * Scoped dependency container
      */
@@ -60,17 +70,18 @@ export class Player {
   }
 
   public togglePlayingState(): void {
-    if (!this.current || this.current.isLocal || !this.dispatcher) return;
+    if (!this.current || this.current.isLocal || !this.player) return;
 
-    if (!this.dispatcher.paused) {
-      this.dispatcher.pause(true);
+    if (this.player.state.status === AudioPlayerStatus.Playing) {
+      this.player.pause(true);
     } else {
-      this.dispatcher.resume();
+      this.player.unpause();
     }
   }
 
   public getStreamingTime(): number {
-    return (this.dispatcher && this.dispatcher.streamTime) || 0;
+    // return (this.player && this.player.streamTime) || 0;
+    return 0;
   }
 
   public getCurrentPlayable(): Playable | undefined {
@@ -78,7 +89,7 @@ export class Player {
   }
 
   public push(
-    channel: VoiceChannel,
+    channel: VoiceBasedChannel,
     playable: Playable | Playable[],
     options: PlayerOptions
   ): void {
@@ -103,7 +114,7 @@ export class Player {
   }
 
   public next(): void {
-    if (this.dispatcher) this.dispatcher.end();
+    if (this.player) this.player.stop();
   }
 
   public setAutoPlay(arg: boolean): void {
@@ -121,10 +132,19 @@ export class Player {
   private startPlaying(): void {
     if (this.current) return;
 
-    this.voiceChannel!.join()
-      .then((connection) => (this.voiceConnection = connection))
-      .then(async () => this.playNext())
-      .catch((error) => this.logger.error('Error starting voice connection', { error }));
+    this.voiceConnection = joinVoiceChannel({
+      guildId: this.voiceChannel!.guild.id,
+      channelId: this.voiceChannel!.id,
+      adapterCreator: this.voiceChannel!.guild.voiceAdapterCreator,
+    });
+
+    this.player = createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Pause,
+      },
+    });
+
+    this.playNext();
   }
 
   private async playNext(): Promise<void> {
@@ -140,16 +160,22 @@ export class Player {
       const stream = await handler.stream();
 
       this.current = handler.getPlayable();
-      const streamOptions: StreamOptions = {
-        volume: this.current!.volume || false,
-        type: this.current!.streamType || 'unknown',
-      };
 
-      this.dispatcher = this.voiceConnection!.play(stream, streamOptions).once('error', (error) =>
-        this.logger.error('Stream dispatcher error', { error })
-      );
+      const source = createAudioResource(stream, {
+        inlineVolume: !!this.current!.volume,
+        inputType: this.current!.streamType || StreamType.Arbitrary,
+      });
 
-      anyOnce(this.dispatcher, ['end', 'finish', 'close'], () => {
+      if (this.current!.volume) {
+        source.volume?.setVolume(this.current!.volume);
+      }
+
+      this.player!.play(source);
+      this.player!.once('error', (error) => this.logger.error('Stream dispatcher error', error));
+
+      this.voiceConnection!.subscribe(this.player!);
+
+      this.player?.on(AudioPlayerStatus.Idle, () => {
         this.handleAutoPlay();
         this.playNext();
         stream.destroy();
@@ -197,9 +223,9 @@ export class Player {
   }
 
   private clearCurrentHandler(): void {
-    if (this.dispatcher) {
-      this.dispatcher.destroy();
-      this.dispatcher = undefined;
+    if (this.player) {
+      this.player.stop();
+      this.player = undefined;
     }
   }
 
@@ -209,7 +235,7 @@ export class Player {
 
   private disconnectVoiceConnection(): void {
     if (this.voiceConnection) {
-      this.voiceConnection.disconnect();
+      this.voiceConnection.destroy();
       this.voiceConnection = undefined;
     }
   }

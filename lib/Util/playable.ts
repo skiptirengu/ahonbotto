@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { EmbedFieldData, MessageEmbedOptions } from 'discord.js';
+import { APIEmbed, EmbedField } from 'discord.js';
 
 import { Playable } from '../Player/Playable';
 import { PlayerOptions } from '../Player/PlayerOptions';
@@ -9,20 +9,21 @@ export function buildPlayableInfo(
   current: Playable,
   options: PlayerOptions,
   streamingTime?: number
-): MessageEmbedOptions {
-  const fields: EmbedFieldData[] = [];
-  const messageEmbed: MessageEmbedOptions = {
+): APIEmbed {
+  const fields: EmbedField[] = [];
+  const messageEmbed: APIEmbed = {
     title: current!.name,
     color: getConfig().embedColor,
   };
 
   if (current!.totalTime && current!.totalTime > 0) {
-    fields.push({ name: 'Length', value: getHumanizedTimeInfo(current!.totalTime) });
+    fields.push({ name: 'Length', value: getHumanizedTimeInfo(current!.totalTime), inline: true });
   }
   if (!current!.isLocal && streamingTime != undefined && streamingTime > 0) {
     fields.push({
       name: 'Playing for',
       value: getHumanizedTimeInfo(streamingTime / 1000) || 'Just started',
+      inline: true,
     });
   }
   if (options.times) {
@@ -33,6 +34,7 @@ export function buildPlayableInfo(
     fields.push({
       name: 'Auto play',
       value: options.autoPlay ? 'enabled' : 'disabled',
+      inline: true,
     });
   }
   if (current!.thumbnail) {

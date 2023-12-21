@@ -85,7 +85,7 @@ export class SynchronizedSentenceSource {
       }
       this.flushBatch.splice(0, flushedCount);
     } catch (error) {
-      this.logger.error('error flushing batch', { error });
+      this.logger.error('error flushing batch', error);
     }
   }
 }

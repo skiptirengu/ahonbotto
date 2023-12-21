@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 import { first } from 'lodash';
 import { inject, injectAll, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
@@ -20,7 +20,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       title: '<command>',
       description: 'It does ***EXACTLY*** what you think it does.',
@@ -49,11 +49,13 @@ export class Usage implements Command {
     const commandName = first(params);
 
     if (!commandName) {
-      return message.channel.send(
-        embed({
-          description: 'You should specify a command name',
-        })
-      );
+      return message.channel.send({
+        embeds: [
+          embed({
+            description: 'You should specify a command name',
+          }),
+        ],
+      });
     }
 
     const definition = this.definitions.find(
@@ -69,7 +71,7 @@ export class Usage implements Command {
     if (!usage.color) usage.color = this.config.embedColor;
 
     return message.channel.send({
-      embed: usage,
+      embeds: [usage as any],
     });
   }
 }

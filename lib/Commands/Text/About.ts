@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js';
+import { EmbedBuilder, EmbedData, Message } from 'discord.js';
 import { inject, Lifecycle, scoped } from 'tsyringe';
 
 import json from '../../../package.json';
@@ -18,7 +18,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       description: 'Show some useless information about this bot.',
     };
@@ -35,18 +35,19 @@ export class About implements Command {
   ) {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<Message | Message[]> {
-    const embed = new MessageEmbed({
+    const imageUrl = message.client.user!.avatarURL() || message.client.user!.defaultAvatarURL;
+
+    const embed = EmbedBuilder.from({
       title: json.description,
       url: json.repository.url,
       color: this.config.embedColor,
       thumbnail: {
-        url: message.client.user!.avatarURL() || message.client.user!.defaultAvatarURL,
+        url: imageUrl,
       },
       author: {
-        name: 'Thomas Turbando (Skiptir Engu#6682)',
-        url: 'https://github.com/skiptirengu',
-        iconURL:
-          'https://cdn.discordapp.com/avatars/209871057295900673/189523766d448583bb6a73dbfaa2350e.webp',
+        name: 'Some guy',
+        url: 'https://github.com/skiptirengu/ahonbotto',
+        icon_url: imageUrl,
       },
       fields: [
         {
@@ -56,6 +57,6 @@ export class About implements Command {
       ],
     });
 
-    return message.channel.send({ embed });
+    return message.channel.send({ embeds: [embed] });
   }
 }

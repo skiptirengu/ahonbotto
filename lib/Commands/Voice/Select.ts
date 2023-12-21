@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 import { toNumber } from 'lodash';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
@@ -24,7 +24,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       title: '<url> [<repeat-x-times>] [<autoplay>]',
       description:
@@ -57,33 +57,39 @@ export class Select implements Command {
   public async run(message: Message, params: string[]): Promise<any> {
     await message.delete();
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
-      return message.channel.send(
-        embed({
-          description: 'You must be connected to a voice channel in order to queue a song',
-        })
-      );
+      return message.channel.send({
+        embeds: [
+          embed({
+            description: 'You must be connected to a voice channel in order to queue a song',
+          }),
+        ],
+      });
     }
 
     const storageKey = this.repository.buildKey(message);
     const storedSize = this.repository.size(storageKey);
 
     if (!storedSize) {
-      return message.channel.send(
-        embed({
-          description: 'You should use the "search" command before',
-        })
-      );
+      return message.channel.send({
+        embeds: [
+          embed({
+            description: 'You should use the "search" command before',
+          }),
+        ],
+      });
     }
 
     const index = toNumber(params.shift());
     const value = this.repository.get(storageKey, index);
 
     if (!index || !value) {
-      return message.channel.send(
-        embed({
-          description: `You must provide a number between 1 and ${storedSize}`,
-        })
-      );
+      return message.channel.send({
+        embeds: [
+          embed({
+            description: `You must provide a number between 1 and ${storedSize}`,
+          }),
+        ],
+      });
     }
 
     const playable = (await this.parser.parse(value.uri.toString())) as Playable;
@@ -94,6 +100,8 @@ export class Select implements Command {
       playable,
       new PlayerOptions(options.shuffle, this.player.getAutoPlay(), options.times)
     );
-    return message.channel.send(embed(embedOptions));
+    return message.channel.send({
+      embeds: [embed(embedOptions)],
+    });
   }
 }

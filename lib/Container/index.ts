@@ -39,7 +39,7 @@ export function scopeFactory(guild: Guild): DependencyContainer {
   const scope = scopeMap.set(name, container.createChildContainer()).get(name)!;
 
   // Scoped guild
-  scope.register(Guild, {
+  scope.register('Guild', {
     useFactory: (dependencyContainer) => {
       const client = dependencyContainer.resolve(Client);
       return client.guilds.resolve(name);

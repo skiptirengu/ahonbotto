@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, MessageEmbedOptions } from 'discord.js';
+import { EmbedBuilder, EmbedData, Message } from 'discord.js';
 import { inject, injectAll, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 
@@ -19,7 +19,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       title: 'List all commands this bot has.',
     };
@@ -49,7 +49,7 @@ export class Help implements Command {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<Message | Message[]> {
-    const embed = new MessageEmbed({
+    const embed = EmbedBuilder.from({
       color: this.config.embedColor,
       fields: [
         {
@@ -65,9 +65,9 @@ export class Help implements Command {
 
     const commandName = withCommandPrefix('usage');
 
-    return message.channel.send(
-      `Use \`${commandName} <command-name>\` for information about an specific command`,
-      embed
-    );
+    return message.channel.send({
+      content: `Use \`${commandName} <command-name>\` for information about an specific command`,
+      embeds: [embed],
+    });
   }
 }

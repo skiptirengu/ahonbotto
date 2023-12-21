@@ -1,15 +1,13 @@
-import { MessageEmbedOptions, MessageOptions } from 'discord.js';
+import { APIEmbed } from 'discord.js';
 import { chain, first } from 'lodash';
 import { container } from 'tsyringe';
 
 import { Config } from '../Config';
 
-export function embed(embed: MessageEmbedOptions): MessageOptions {
+export function embed(embed: APIEmbed): APIEmbed {
   return {
-    embed: {
-      color: getConfig().embedColor,
-      ...embed,
-    },
+    color: getConfig().embedColor,
+    ...embed,
   };
 }
 

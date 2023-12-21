@@ -43,6 +43,6 @@ export const markovReady = (client: Client): void => {
       logger.info('succesfully imported all messages for all guilds', { count: promises.length })
     )
     .catch((error: Error) => {
-      logger.error('failed to import messages from one or more guilds', { error });
+      logger.error('failed to import messages from one or more guilds', error);
     });
 };

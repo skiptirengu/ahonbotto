@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { AttachmentBuilder, EmbedBuilder, EmbedData, Message } from 'discord.js';
 import { join } from 'path';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
@@ -20,7 +20,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       description: '¯\\_(ツ)_/¯',
     };
@@ -38,18 +38,17 @@ export class Karen implements Command {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<Message | Message[]> {
-    const messageEmbed = embed({
-      title: 'muu',
-      image: {
-        url: 'attachment://karen.png',
-      },
-      files: [
-        {
-          attachment: join(this.config.resourcesFolder, 'images', 'karen.png'),
-        },
-      ],
-    });
+    const file = new AttachmentBuilder(join(this.config.resourcesFolder, 'images', 'karen.png'));
 
-    return message.channel.send(messageEmbed);
+    const messageEmbed = EmbedBuilder.from(
+      embed({
+        title: 'muu',
+        image: {
+          url: 'attachment://karen.png',
+        },
+      })
+    );
+
+    return message.channel.send({ embeds: [messageEmbed], files: [file] });
   }
 }

@@ -2,6 +2,7 @@ import { Guild, Message, TextChannel } from 'discord.js';
 import { inject, Lifecycle, scoped } from 'tsyringe';
 import { Logger } from 'winston';
 
+import { TOKENS } from '../Container/tokens';
 import { MarkovChain, MarkovChainSentence } from '../Storage/Models/Markov';
 import { MarkovMessageSanitizer } from './MarkovMessageSanitizer';
 import { SynchronizedSentenceSource } from './SynchronizedSentenceSource';
@@ -11,7 +12,7 @@ export class MarkovMessageResolver {
   private isRunning = false;
 
   public constructor(
-    @inject(Guild)
+    @inject(TOKENS.Guild)
     private readonly guild: Guild,
     @inject(MarkovMessageSanitizer)
     private readonly sanitizer: MarkovMessageSanitizer,
@@ -55,13 +56,13 @@ export class MarkovMessageResolver {
   ): AsyncGenerator<Message[], any, any> {
     let fetchedCount = 0;
     while (fetchedCount < limit) {
-      const filter = before ? { before } : undefined;
+      const filter = before ? { before } : {};
       this.logger.verbose('received message bulk', { before, fetchedCount });
-      const result = await channel.messages.fetch(filter, false);
+      const result = await channel.messages.fetch({ ...filter, cache: false });
       result.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
       if (result.size) {
         before = result.first()!.id;
-        const messages = this.sanitizer.sanitize(result.array());
+        const messages = this.sanitizer.sanitize(Array.from(result.values()));
         fetchedCount += messages.length;
         yield messages;
       }

@@ -1,3 +1,4 @@
+import { StreamType } from '@discordjs/voice';
 import { createHash } from 'crypto';
 import { Guild } from 'discord.js';
 import { ensureFile, pathExists } from 'fs-extra';
@@ -8,6 +9,7 @@ import { Readable, Writable } from 'stream';
 import { inject, injectable } from 'tsyringe';
 
 import { Config } from '../../Config';
+import { TOKENS } from '../../Container/tokens';
 import { MediaRepository } from '../../Storage/MediaRepository';
 import { anyOnce, handleStreamError } from '../../Util';
 import { AutoParser } from '../Parser/AutoParser';
@@ -50,7 +52,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
     /**
      * Current guild
      */
-    @inject(Guild) protected readonly guild: Guild
+    @inject(TOKENS.Guild) protected readonly guild: Guild
   ) {}
 
   public async setContext(playable: Playable): Promise<StreamingHandler> {
@@ -61,7 +63,7 @@ export class BufferedHttpStreamingHandler implements StreamingHandler {
       : playable;
 
     if (!this.playable.streamType) {
-      this.playable.streamType = 'unknown';
+      this.playable.streamType = StreamType.Arbitrary;
     }
 
     this.setFilenameAndPath();

@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 
@@ -18,7 +18,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       description: 'Pause/Resume the current audio',
     };

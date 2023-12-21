@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { APIEmbed, EmbedData, Message } from 'discord.js';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 
@@ -25,7 +25,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       title: '<url> [<repeat-x-times>] [<autoplay>]',
       description:
@@ -59,20 +59,24 @@ export class Queue implements Command {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async run(message: Message, params: string[]): Promise<any> {
     if (!message.member || !message.member.voice || !message.member.voice.channel) {
-      return message.channel.send(
-        embed({
-          description: 'You must be connected to a voice channel in order to queue a song',
-        })
-      );
+      return message.channel.send({
+        embeds: [
+          embed({
+            description: 'You must be connected to a voice channel in order to queue a song',
+          }),
+        ],
+      });
     }
 
     const url = params.shift();
     if (!url) {
-      return message.channel.send(
-        embed({
-          description: 'You should provide a valid URL',
-        })
-      );
+      return message.channel.send({
+        embeds: [
+          embed({
+            description: 'You should provide a valid URL',
+          }),
+        ],
+      });
     }
 
     let parsed: Playable | Playlist | null = null;
@@ -81,17 +85,19 @@ export class Queue implements Command {
       parsed = await this.parser.parse(url);
     } catch (err) {
       if (err instanceof MalformedUrl || err instanceof UnsupportedFormat) {
-        return message.channel.send(
-          embed({
-            description: err.message,
-          })
-        );
+        return message.channel.send({
+          embeds: [
+            embed({
+              description: err.message,
+            }),
+          ],
+        });
       }
     } finally {
       await message.delete();
     }
 
-    let embedOptions: MessageEmbedOptions;
+    let embedOptions: APIEmbed;
     const options = PlayerOptions.createFromArgs(params);
 
     if (isPlaylist(parsed)) {
@@ -113,7 +119,7 @@ export class Queue implements Command {
           },
         ],
         thumbnail: {
-          url: parsed.thumbnail || undefined,
+          url: parsed.thumbnail || '',
         },
       };
     } else {
@@ -126,6 +132,8 @@ export class Queue implements Command {
       );
     }
 
-    await message.channel.send(embed(embedOptions));
+    await message.channel.send({
+      embeds: [embed(embedOptions)],
+    });
   }
 }

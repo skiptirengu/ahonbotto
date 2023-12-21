@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions } from 'discord.js';
+import { EmbedData, Message } from 'discord.js';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 import wiki from 'wikijs';
@@ -20,7 +20,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       description: 'Search something on Wikipedia',
       fields: [
@@ -62,14 +62,15 @@ export class Wiki implements Command {
         },
       });
 
-      await message.reply("Here's your wikipedia link", messageEmbed);
+      await message.reply({ embeds: [messageEmbed] });
     } catch (err) {
-      await message.reply(
-        'Sorry',
-        embed({
-          description: "I'm having a hard time searching for what you're looking for ( ´•︵•` )",
-        })
-      );
+      await message.reply({
+        embeds: [
+          embed({
+            description: "I'm having a hard time searching for what you're looking for ( ´•︵•` )",
+          }),
+        ],
+      });
       throw err;
     } finally {
       await message.delete();

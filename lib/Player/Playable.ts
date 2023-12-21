@@ -1,4 +1,4 @@
-import { StreamType } from 'discord.js';
+import { StreamType } from '@discordjs/voice';
 import { URL } from 'url';
 
 export interface Playable {

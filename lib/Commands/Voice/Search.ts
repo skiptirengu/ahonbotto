@@ -1,4 +1,4 @@
-import { Message, MessageEmbedOptions, TextChannel } from 'discord.js';
+import { EmbedData, Message, TextChannel } from 'discord.js';
 import { inject, scoped } from 'tsyringe';
 import { Lifecycle } from 'tsyringe';
 import { URL } from 'url';
@@ -24,7 +24,7 @@ export class Definition implements CommandDefinition {
   /**
    * @inheritdoc
    */
-  public usage(): MessageEmbedOptions {
+  public usage(): EmbedData {
     return {
       title: '<query...>',
       description:
@@ -63,11 +63,13 @@ export class Search implements Command {
     });
 
     if (!response.results.length) {
-      return message.channel.send(
-        embed({
-          description: "Couldn't find what you're looking for :/",
-        })
-      );
+      return message.channel.send({
+        embeds: [
+          embed({
+            description: "Couldn't find what you're looking for :/",
+          }),
+        ],
+      });
     }
 
     const storageKey = this.buildKey(message);
@@ -84,17 +86,19 @@ export class Search implements Command {
       .map((value, index) => `**${index + 1}** →  ${value.title}`)
       .join('\n\n');
 
-    const responseMessage = (await message.channel.send(
-      embed({
-        description,
-      })
-    )) as Message;
+    const responseMessage = (await message.channel.send({
+      embeds: [
+        embed({
+          description,
+        }),
+      ],
+    })) as Message;
     const responseMessageSnowflake = responseMessage.id;
 
     this.repository.once(this.repository.getDeleteEvent(storageKey), () => {
       channel
         .bulkDelete([messageSnowflake, responseMessageSnowflake])
-        .catch((error) => this.logger.error('Error deleting message', { error }));
+        .catch((error) => this.logger.error('Error deleting message', error));
     });
   }
 
