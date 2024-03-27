@@ -27,4 +27,7 @@ client
   .login(container.resolve<Config>('Config').discordToken)
   .then(() => Scheduler.start())
   .then(() => container.resolve(PlayerCleanup).attatch(process))
-  .catch((error) => logger.error('Uncaught initialization error', error));
+  .catch((error) => {
+    logger.error('Uncaught initialization error', error);
+    process.exit(1);
+  });
