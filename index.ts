@@ -29,5 +29,5 @@ client
   .then(() => container.resolve(PlayerCleanup).attatch(process))
   .catch((error) => {
     logger.error('Uncaught initialization error', error);
-    process.exit(1);
+    setTimeout(() => process.exit(1), 1250);
   });
